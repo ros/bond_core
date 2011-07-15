@@ -72,6 +72,9 @@ Bond::Bond(const std::string &topic, const std::string &id,
 
 Bond::~Bond()
 {
+  if (!started_)
+    return;
+  
   breakBond();
   if (!waitUntilBroken(ros::Duration(1.0)))
   {
