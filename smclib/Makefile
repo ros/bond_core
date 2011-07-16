@@ -3,7 +3,7 @@ all: installed
 #include $(shell rospack find mk)/cmake.mk
 
 TARBALL = build/smc_6_0_1.tgz
-TARBALL_URL = http://downloads.sourceforge.net/project/smc/smc/6_0_1/smc_6_0_1.tgz
+TARBALL_URL =https://code.ros.org/svn/release/download/thirdparty/smc_6_0_1.tgz
 UNPACK_CMD = tar xzf
 SOURCE_DIR = build/smc_6_0_1
 MD5SUM_FILE = smc_6_0_1.tgz.md5sum
