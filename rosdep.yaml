@@ -1,4 +1,5 @@
 uuid:
   ubuntu: uuid-dev
+  debian: uuid-dev
   fedora: libuuid-devel
   macports: ossp-uuid
