@@ -3,3 +3,8 @@ uuid:
   debian: uuid-dev
   fedora: libuuid-devel
   macports: ossp-uuid
+  osxbrew: 
+    lion:
+      homebrew:
+        packages: [ ossp-uuid ]
+        args: [ --universal ]
