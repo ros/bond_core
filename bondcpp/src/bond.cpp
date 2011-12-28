@@ -177,19 +177,23 @@ void Bond::setBrokenCallback(boost::function<void(void)> on_broken)
 
 bool Bond::waitUntilFormed(ros::Duration timeout)
 {
+  return waitUntilFormed(ros::WallDuration(timeout.sec, timeout.nsec));
+}
+bool Bond::waitUntilFormed(ros::WallDuration timeout)
+{
   boost::mutex::scoped_lock lock(mutex_);
-  ros::Time deadline(ros::Time::now() + timeout);
+  ros::WallTime deadline(ros::WallTime::now() + timeout);
 
   while (sm_.getState().getId() == SM::WaitingForSister.getId())
   {
     if (!ros::ok())
       break;
 
-    ros::Duration wait_time = ros::Duration(0.1);
-    if (timeout >= ros::Duration(0.0))
-      wait_time = std::min(wait_time, deadline - ros::Time::now());
+    ros::WallDuration wait_time = ros::WallDuration(0.1);
+    if (timeout >= ros::WallDuration(0.0))
+      wait_time = std::min(wait_time, deadline - ros::WallTime::now());
 
-    if (wait_time <= ros::Duration(0.0))
+    if (wait_time <= ros::WallDuration(0.0))
       break;  // The deadline has expired
 
     condition_.timed_wait(mutex_, boost::posix_time::milliseconds(wait_time.toSec() * 1000.0f));
@@ -199,19 +203,23 @@ bool Bond::waitUntilFormed(ros::Duration timeout)
 
 bool Bond::waitUntilBroken(ros::Duration timeout)
 {
+  return waitUntilBroken(ros::WallDuration(timeout.sec, timeout.nsec));
+}
+bool Bond::waitUntilBroken(ros::WallDuration timeout)
+{
   boost::mutex::scoped_lock lock(mutex_);
-  ros::Time deadline(ros::Time::now() + timeout);
+  ros::WallTime deadline(ros::WallTime::now() + timeout);
   
   while (sm_.getState().getId() != SM::Dead.getId())
   {
     if (!ros::ok())
       break;
 
-    ros::Duration wait_time = ros::Duration(0.1);
-    if (timeout >= ros::Duration(0.0))
-      wait_time = std::min(wait_time, deadline - ros::Time::now());
+    ros::WallDuration wait_time = ros::WallDuration(0.1);
+    if (timeout >= ros::WallDuration(0.0))
+      wait_time = std::min(wait_time, deadline - ros::WallTime::now());
 
-    if (wait_time <= ros::Duration(0.0))
+    if (wait_time <= ros::WallDuration(0.0))
       break; // The deadline has expired
 
     condition_.timed_wait(mutex_, boost::posix_time::milliseconds(wait_time.toSec() * 1000.0f));

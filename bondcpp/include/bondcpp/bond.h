@@ -100,12 +100,26 @@ public:
    */
   bool waitUntilFormed(ros::Duration timeout = ros::Duration(-1));
 
+  /** \brief Blocks until the bond is formed for at most 'duration'.
+   *
+   * \param timeout Maximum duration to wait.  If -1 then this call will not timeout.
+   * \return true iff the bond has been formed.
+   */
+  bool waitUntilFormed(ros::WallDuration timeout = ros::WallDuration(-1));
+
   /** \brief Blocks until the bond is broken for at most 'duration'.
    *
    * \param timeout Maximum duration to wait.  If -1 then this call will not timeout.
    * \return true iff the bond has been broken, even if it has never been formed.
    */
   bool waitUntilBroken(ros::Duration timeout = ros::Duration(-1));
+
+  /** \brief Blocks until the bond is broken for at most 'duration'.
+   *
+   * \param timeout Maximum duration to wait.  If -1 then this call will not timeout.
+   * \return true iff the bond has been broken, even if it has never been formed.
+   */
+  bool waitUntilBroken(ros::WallDuration timeout = ros::WallDuration(-1));
 
   /** \brief Indicates if the bond is broken
    * \return true iff the bond has been broken.
