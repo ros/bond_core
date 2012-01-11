@@ -19,6 +19,7 @@ rosbuild_add_library(${PROJECT_NAME}
   src/bond.cpp
   src/BondSM_sm.cpp
 )
+target_link_libraries(${PROJECT_NAME} ros)
 
 #rosbuild_genmsg()
 #rosbuild_gensrv()
