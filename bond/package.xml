@@ -1,6 +1,6 @@
 <package>
   <name>bond</name>
-  <version>1.7.2</version>
+  <version>1.7.3</version>
   <description brief="bond">
 
      A bond allows two processes, A and B, to know when the other has
