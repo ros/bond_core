@@ -32,7 +32,6 @@ import threading
 import time
 import uuid
 
-import roslib; roslib.load_manifest('bondpy')
 import rospy
 from bond.msg import *
 

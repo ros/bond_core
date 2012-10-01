@@ -11,6 +11,7 @@
   <license>BSD</license>
   <url>http://ros.org/wiki/test_bond</url>
 
+  <build_depend>catkin</build_depend>
   <build_depend>genmsg</build_depend>
 
   <test_depend>bondcpp</test_depend>

@@ -12,9 +12,10 @@
   <license>BSD</license>
   <url>http://ros.org/wiki/bondpy</url>
 
-  <build_depend package="bond"/>
-  <depend package="rospy"/>
-  <depend package="smclib" />
+  <build_depend>bond</build_depend>
+  <build_depend>catkin</build_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>smclib</build_depend>
+
+  <run_depend>uuid</run_depend>
 </package>
-
-
