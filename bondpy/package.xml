@@ -1,4 +1,6 @@
 <package>
+  <name>bondpy</name>
+  <version>1.7.0</version>
   <description brief="bondpy">
 
      Python implementation of bond, a mechanism for checking when
@@ -6,13 +8,13 @@
 
   </description>
   <author>Stuart Glaser</author>
+  <maintainer email="vrabaud@willowgarage.com">Vincent Rabaud</maintainer>
   <license>BSD</license>
-  <review status="API cleared" notes="http://www.ros.org/wiki/bond/Reviews/2010-07-28_API_Review"/>
   <url>http://ros.org/wiki/bondpy</url>
-  <depend package="bond"/>
+
+  <build_depend package="bond"/>
   <depend package="rospy"/>
   <depend package="smclib" />
-
 </package>
 
 

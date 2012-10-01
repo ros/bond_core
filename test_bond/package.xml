@@ -1,0 +1,20 @@
+<package>
+  <name>test_bond</name>
+  <version>1.7.0</version>
+  <description brief="test_bond">
+
+     Contains tests for [[bond]], including tests for [[bondpy]] and [[bondcpp]].
+
+  </description>
+  <author>Stuart Glaser</author>
+  <maintainer email="vrabaud@willowgarage.com">Vincent Rabaud</maintainer>
+  <license>BSD</license>
+  <url>http://ros.org/wiki/test_bond</url>
+
+  <build_depend>genmsg</build_depend>
+
+  <test_depend>bondcpp</test_depend>
+  <test_depend>bondpy</test_depend>
+  <test_depend>genmsg</test_depend>
+  <test_depend>rostest</test_depend>
+</package>

@@ -1,0 +1,19 @@
+<package>
+  <name>bondcpp</name>
+  <version>1.7.0</version>
+  <description brief="bondcpp">
+
+     C++ implementation of bond, a mechanism for checking when
+     another process has terminated.
+
+  </description>
+  <author>Stuart Glaser</author>
+  <maintainer email="vrabaud@willowgarage.com">Vincent Rabaud</maintainer>
+  <license>BSD</license>
+  <url>http://ros.org/wiki/bondcpp</url>
+
+  <build_depend>bond</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>smclib</build_depend>
+  <build_depend>uuid</build_depend>
+</package>

@@ -1,4 +1,6 @@
 <package>
+  <name>bond</name>
+  <version>1.7.0</version>
   <description brief="bond">
 
      A bond allows two processes, A and B, to know when the other has
@@ -8,11 +10,12 @@
 
   </description>
   <author>Stuart Glaser</author>
+  <maintainer email="vrabaud@willowgarage.com">Vincent Rabaud</maintainer>
   <license>BSD</license>
-  <review status="API cleared" notes="http://www.ros.org/wiki/bond/Reviews/2010-07-28_API_Review"/>
   <url>http://ros.org/wiki/bond</url>
-  <depend package="roslib"/>
 
+  <build_depend>langs-dev</build_depend>
+  <build_depend>std_msgs</build_depend>
+
+  <run_depend>std_msgs</run_depend>
 </package>
-
-

@@ -1,32 +1,32 @@
-cmake_minimum_required(VERSION 2.4.6)
-include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
+cmake_minimum_required(VERSION 2.8.0)
+project(bondcpp)
 
-# Set the build type.  Options are:
-#  Coverage       : w/ debug symbols, w/o optimization, w/ code-coverage
-#  Debug          : w/ debug symbols, w/o optimization
-#  Release        : w/o debug symbols, w/ optimization
-#  RelWithDebInfo : w/ debug symbols, w/ optimization
-#  MinSizeRel     : w/o debug symbols, w/ optimization, stripped binaries
-#set(ROS_BUILD_TYPE RelWithDebInfo)
+find_package(catkin REQUIRED)
 
-rosbuild_init()
+find_package(Boost REQUIRED)
+find_package(catkin REQUIRED roscpp)
+catkin_package(LIBRARIES ${PROJECT_NAME}
+               DEPENDS Boost roscpp
+)
 
-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
-set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
+include_directories(SYSTEM ${BOOST_INCLUDE_DIRS})
+include_directories(include)
 
-rosbuild_add_boost_directories()
-rosbuild_add_library(${PROJECT_NAME} 
+add_library(${PROJECT_NAME}
   src/timeout.cpp
   src/bond.cpp
   src/BondSM_sm.cpp
 )
-target_link_libraries(${PROJECT_NAME})
-rosbuild_link_boost(${PROJECT_NAME} thread)
+target_link_libraries(${PROJECT_NAME} ${BOOST_LIBRARIES})
 
-#rosbuild_genmsg()
-#rosbuild_gensrv()
-
-#common commands for building c++ executables and libraries
-#target_link_libraries(${PROJECT_NAME} another_library)
-#rosbuild_add_executable(example examples/example.cpp)
-#target_link_libraries(example ${PROJECT_NAME})
+# install stuff
+install(DIRECTORY include/${PROJECT_NAME}/
+        DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+)
+# vrabaud: not sure why this one is not in a folder
+install(FILES include/BondSM_sm.h
+        DESTINATION ${CATKIN_GLOBAL_INCLUDE_DESTINATION}
+)
+install(TARGETS ${PROJECT_NAME}
+        DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+)
