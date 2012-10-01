@@ -41,7 +41,7 @@
 #include <bondcpp/timeout.h>
 #include <bond/Constants.h>
 #include <bond/Status.h>
-#include <BondSM_sm.h>
+#include "BondSM_sm.h"
 
 namespace bond {
 

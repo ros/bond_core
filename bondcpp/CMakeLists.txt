@@ -4,12 +4,15 @@ project(bondcpp)
 find_package(catkin REQUIRED)
 
 find_package(Boost REQUIRED)
-find_package(catkin REQUIRED roscpp)
-catkin_package(LIBRARIES ${PROJECT_NAME}
-               DEPENDS Boost roscpp
+find_package(catkin REQUIRED bond roscpp smclib)
+catkin_package(DEPENDS bond Boost roscpp smclib
+               INCLUDE_DIRS include
+               LIBRARIES ${PROJECT_NAME}
 )
 
-include_directories(SYSTEM ${BOOST_INCLUDE_DIRS})
+include_directories(SYSTEM ${catkin_INCLUDE_DIRS}
+                           ${BOOST_INCLUDE_DIRS}
+)
 include_directories(include)
 
 add_library(${PROJECT_NAME}

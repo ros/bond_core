@@ -1,4 +1,6 @@
 <package>
+  <name>smclib</name>
+  <version>1.7.0</version>
   <description brief="smclib">
     The State Machine Compiler (SMC) from http://smc.sourceforge.net/
     converts a language-independent description of a state machine
@@ -8,15 +10,8 @@
     depends on, but it does not contain the compiler itself.
 
   </description>
-  <author>Various, ROS package maintained by Stuart Glaser</author>
+  <author>Various</author>
+  <maintainer email="vrabaud@willowgarage.com">Vincent Rabaud</maintainer>
   <license>Mozilla Public License Version 1.1</license>
-  <review status="3rdparty" notes=""/>
   <url>http://smc.sourceforge.net/</url>
-
-  <export>
-    <cpp cflags="-I${prefix}/include" />
-  </export>
-
 </package>
-
-

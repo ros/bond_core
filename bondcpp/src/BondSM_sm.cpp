@@ -6,7 +6,7 @@
  */
 
 #include "bondcpp/bond.h"
-#include "BondSM_sm.h"
+#include "bondcpp/BondSM_sm.h"
 
 using namespace statemap;
 
