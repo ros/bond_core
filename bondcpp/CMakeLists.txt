@@ -26,10 +26,6 @@ target_link_libraries(${PROJECT_NAME} ${BOOST_LIBRARIES})
 install(DIRECTORY include/${PROJECT_NAME}/
         DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
-# vrabaud: not sure why this one is not in a folder
-install(FILES include/BondSM_sm.h
-        DESTINATION ${CATKIN_GLOBAL_INCLUDE_DESTINATION}
-)
 install(TARGETS ${PROJECT_NAME}
         DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 )
