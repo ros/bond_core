@@ -13,7 +13,14 @@
   <url>http://ros.org/wiki/bondcpp</url>
 
   <build_depend>bond</build_depend>
+  <build_depend>boost</build_depend>
   <build_depend>roscpp</build_depend>
   <build_depend>smclib</build_depend>
   <build_depend>uuid</build_depend>
+
+  <run_depend>bond</run_depend>
+  <run_depend>boost</run_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>smclib</run_depend>
+  <run_depend>uuid</run_depend>
 </package>
