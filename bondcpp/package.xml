@@ -1,6 +1,6 @@
 <package>
   <name>bondcpp</name>
-  <version>1.7.3</version>
+  <version>1.7.4</version>
   <description brief="bondcpp">
 
      C++ implementation of bond, a mechanism for checking when
