@@ -12,10 +12,9 @@
   <url>http://ros.org/wiki/test_bond</url>
 
   <build_depend>catkin</build_depend>
+  <build_depend>bondcpp</build_depend>
   <build_depend>genmsg</build_depend>
+  <build_depend>rostest</build_depend>
 
-  <test_depend>bondcpp</test_depend>
   <test_depend>bondpy</test_depend>
-  <test_depend>genmsg</test_depend>
-  <test_depend>rostest</test_depend>
 </package>

@@ -1,10 +1,8 @@
 cmake_minimum_required(VERSION 2.8.0)
 project(test_bond)
 
-find_package(catkin REQUIRED)
+find_package(catkin REQUIRED COMPONENTS bondcpp genmsg rostest)
 catkin_package()
-
-find_package(catkin REQUIRED bondcpp genmsg rostest)
 
 include_directories(${GTEST_INCLUDE_DIRS})
 include_directories(SYSTEM ${bondcpp_INCLUDE_DIRS})
