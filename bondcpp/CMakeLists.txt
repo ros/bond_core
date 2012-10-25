@@ -21,6 +21,9 @@ add_library(${PROJECT_NAME}
   src/BondSM_sm.cpp
 )
 target_link_libraries(${PROJECT_NAME} ${BOOST_LIBRARIES})
+if(TARGET bond_gencpp)
+  add_dependencies(${PROJECT_NAME} bond_gencpp)
+endif()
 
 # install stuff
 install(DIRECTORY include/${PROJECT_NAME}/
