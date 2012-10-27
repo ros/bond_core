@@ -1,13 +1,11 @@
 <package>
   <name>bond</name>
   <version>1.7.4</version>
-  <description brief="bond">
-
-     A bond allows two processes, A and B, to know when the other has
-     terminated, either cleanly or by crashing.  The bond remains
-     connected until it is either broken explicitly or until a
-     heartbeat times out.
-
+  <description>
+    A bond allows two processes, A and B, to know when the other has
+    terminated, either cleanly or by crashing.  The bond remains
+    connected until it is either broken explicitly or until a
+    heartbeat times out.
   </description>
   <author>Stuart Glaser</author>
   <maintainer email="vrabaud@willowgarage.com">Vincent Rabaud</maintainer>

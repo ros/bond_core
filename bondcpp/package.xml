@@ -1,11 +1,9 @@
 <package>
   <name>bondcpp</name>
   <version>1.7.4</version>
-  <description brief="bondcpp">
-
-     C++ implementation of bond, a mechanism for checking when
-     another process has terminated.
-
+  <description>
+    C++ implementation of bond, a mechanism for checking when
+    another process has terminated.
   </description>
   <author>Stuart Glaser</author>
   <maintainer email="vrabaud@willowgarage.com">Vincent Rabaud</maintainer>

@@ -1,11 +1,9 @@
 <package>
   <name>bondpy</name>
   <version>1.7.4</version>
-  <description brief="bondpy">
-
-     Python implementation of bond, a mechanism for checking when
-     another process has terminated.
-
+  <description>
+    Python implementation of bond, a mechanism for checking when
+    another process has terminated.
   </description>
   <author>Stuart Glaser</author>
   <maintainer email="vrabaud@willowgarage.com">Vincent Rabaud</maintainer>
