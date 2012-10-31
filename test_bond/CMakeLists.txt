@@ -1,8 +1,7 @@
-cmake_minimum_required(VERSION 2.8.0)
+cmake_minimum_required(VERSION 2.8.3)
 project(test_bond)
 
 find_package(catkin REQUIRED COMPONENTS bondcpp genmsg rostest)
-catkin_package()
 
 include_directories(${GTEST_INCLUDE_DIRS})
 include_directories(SYSTEM ${bondcpp_INCLUDE_DIRS})
@@ -10,6 +9,8 @@ include_directories(SYSTEM ${bondcpp_INCLUDE_DIRS})
 # create the service
 add_service_files(DIRECTORY srv FILES TestBond.srv)
 generate_messages()
+
+catkin_package()
 
 # add more tests
 add_executable(exercise_bond EXCLUDE_FROM_ALL test/exercise_bond.cpp)
