@@ -5,9 +5,11 @@ find_package(catkin REQUIRED)
 
 find_package(Boost REQUIRED)
 find_package(catkin REQUIRED bond roscpp smclib)
-catkin_package(DEPENDS bond Boost roscpp smclib
-               INCLUDE_DIRS include
-               LIBRARIES ${PROJECT_NAME}
+catkin_package(
+  INCLUDE_DIRS include
+  LIBRARIES ${PROJECT_NAME}
+  CATKIN_DEPENDS bond roscpp smclib
+  DEPENDS Boost
 )
 
 include_directories(SYSTEM ${catkin_INCLUDE_DIRS}
