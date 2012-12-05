@@ -12,7 +12,9 @@
   <author>Various</author>
   <maintainer email="vrabaud@willowgarage.com">Vincent Rabaud</maintainer>
   <license>Mozilla Public License Version 1.1</license>
-  <url>http://smc.sourceforge.net/</url>
+  <url type="website">http://smc.sourceforge.net/</url>
+  <url type="bugtracker">https://github.com/ros/bond_core/issues</url>
+  <url type="repository">https://github.com/ros/bond_core</url>
 
   <build_depend>catkin</build_depend>
 </package>

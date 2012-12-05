@@ -8,7 +8,9 @@
   <author>Stuart Glaser</author>
   <maintainer email="vrabaud@willowgarage.com">Vincent Rabaud</maintainer>
   <license>BSD</license>
-  <url>http://ros.org/wiki/bondcpp</url>
+  <url type="website">http://www.ros.org/wiki/bondcpp</url>
+  <url type="bugtracker">https://github.com/ros/bond_core/issues</url>
+  <url type="repository">https://github.com/ros/bond_core</url>
 
   <build_depend>bond</build_depend>
   <build_depend>boost</build_depend>
