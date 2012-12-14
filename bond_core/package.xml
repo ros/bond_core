@@ -16,7 +16,7 @@
   <url type="repository">https://github.com/ros/bond_core</url>
   <author>Stu Glaser</author>
 
-  <build_depend>catkin</build_depend>
+  <buildtool_depend>catkin</buildtool_depend>
 
   <run_depend>bond</run_depend>
   <run_depend>bondcpp</run_depend>
