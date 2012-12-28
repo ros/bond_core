@@ -38,11 +38,11 @@ from bond.msg import *
 import BondSM_sm
 
 def as_ros_duration(d):
-    if not isinstance(d, roslib.rostime.Duration):
+    if not isinstance(d, rospy.Duration):
         return rospy.Duration.from_sec(d)
     return d
 def as_float_duration(d):
-    if isinstance(d, roslib.rostime.Duration):
+    if isinstance(d, rospy.Duration):
         return d.to_sec()
     return d
 
