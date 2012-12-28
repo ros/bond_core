@@ -121,7 +121,7 @@ TEST(ExerciseBondCpp, cleanLocalDeath)
 
   EXPECT_TRUE(bond.waitUntilFormed(ros::Duration(2.0)));
   bond.breakBond();
-  EXPECT_TRUE(bond.waitUntilBroken(ros::Duration(2.0)));
+  EXPECT_TRUE(bond.waitUntilBroken(ros::Duration(5.0)));
 }
 
 TEST(ExerciseBondCpp, localDeathNoAck)
