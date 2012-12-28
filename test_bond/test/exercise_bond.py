@@ -36,7 +36,7 @@ import uuid
 PKG = 'test_bond'
 import roslib; roslib.load_manifest(PKG)
 import rospy
-import bondpy
+from bondpy import bondpy
 from test_bond.srv import *
 
 import unittest
