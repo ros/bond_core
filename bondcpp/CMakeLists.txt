@@ -20,7 +20,9 @@ add_library(${PROJECT_NAME}
   src/BondSM_sm.cpp
 )
 target_link_libraries(${PROJECT_NAME} uuid ${catkin_LIBRARIES} ${BOOST_LIBRARIES})
-add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
+if(catkin_EXPORTED_TARGETS)
+  add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
+endif()
 
 # install stuff
 install(DIRECTORY include/${PROJECT_NAME}/
