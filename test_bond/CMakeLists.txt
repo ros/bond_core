@@ -15,7 +15,9 @@ catkin_package()
 # add more tests
 add_executable(exercise_bond EXCLUDE_FROM_ALL test/exercise_bond.cpp)
 target_link_libraries(exercise_bond ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
-add_dependencies(exercise_bond ${test_bond_EXPORTED_TARGETS})
+if(test_bond_EXPORTED_TARGETS)
+  add_dependencies(exercise_bond ${test_bond_EXPORTED_TARGETS})
+endif()
 add_dependencies(tests exercise_bond)
 
 add_rostest(test/test_cpp.launch)
@@ -23,7 +25,9 @@ add_rostest(test/test_python.launch)
 
 add_executable(test_callbacks_cpp EXCLUDE_FROM_ALL test/test_callbacks_cpp.cpp)
 target_link_libraries(test_callbacks_cpp ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
-add_dependencies(test_callbacks_cpp ${test_bond_EXPORTED_TARGETS})
+if(test_bond_EXPORTED_TARGETS)
+  add_dependencies(test_callbacks_cpp ${test_bond_EXPORTED_TARGETS})
+endif()
 add_dependencies(tests test_callbacks_cpp)
 
 add_rostest(test/test_callbacks_cpp.launch)
