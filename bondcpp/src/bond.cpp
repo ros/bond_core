@@ -32,17 +32,32 @@
 #include <bondcpp/bond.h>
 #include <boost/thread/thread_time.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
+
+#ifdef _WIN32
+#include <Rpc.h>
+#else
 #include <uuid/uuid.h>
+#endif
 
 namespace bond {
 
 static std::string makeUUID()
 {
+#ifdef _WIN32
+  UUID uuid;
+  UuidCreate(&uuid);
+  unsigned char *str;
+  UuidToStringA(&uuid, &str);
+  std::string return_string((char*)str);
+  RpcStringFreeA(&str);
+  return return_string;
+#else
   uuid_t uuid;
   uuid_generate_random(uuid);
   char uuid_str[40];
   uuid_unparse(uuid, uuid_str);
   return std::string(uuid_str);
+#endif
 }
 
 Bond::Bond(const std::string &topic, const std::string &id,
