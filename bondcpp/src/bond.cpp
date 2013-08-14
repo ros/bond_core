@@ -48,7 +48,7 @@ static std::string makeUUID()
   UuidCreate(&uuid);
   unsigned char *str;
   UuidToStringA(&uuid, &str);
-  std::string return_string((char*)str);
+  std::string return_string(reinterpret_cast<char *>(str));
   RpcStringFreeA(&str);
   return return_string;
 #else
