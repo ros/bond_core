@@ -8,7 +8,7 @@
     connected until it is either broken explicitly or until a
     heartbeat times out.
   </description>
-  <maintainer email="mshah@willowgarage.com">Mirza Shah</maintainer>
+  <maintainer email="esteve@osrfoundation.org">Esteve Fernandez</maintainer>
   <license>BSD</license>
 
   <url type="website">http://www.ros.org/wiki/bond_core</url>
