@@ -21,4 +21,8 @@
   <run_depend>rospy</run_depend>
   <run_depend>smclib</run_depend>
   <run_depend>uuid</run_depend>
+
+  <export>
+    <architecture_independent/>
+  </export>
 </package>
