@@ -12,7 +12,7 @@ include_directories(include ${catkin_INCLUDE_DIRS})
 
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES ${PROJECT_NAME} ${UUID_LIBRARY}
+  LIBRARIES ${PROJECT_NAME} ${UUID_LIBRARIES}
   CATKIN_DEPENDS bond roscpp smclib
   DEPENDS Boost
 )
@@ -22,7 +22,7 @@ add_library(${PROJECT_NAME}
   src/bond.cpp
   src/BondSM_sm.cpp
 )
-target_link_libraries(${PROJECT_NAME} ${UUID_LIBRARY} ${catkin_LIBRARIES} ${BOOST_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${UUID_LIBRARIES} ${catkin_LIBRARIES} ${BOOST_LIBRARIES})
 
 if(catkin_EXPORTED_TARGETS)
   add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})

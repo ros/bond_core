@@ -1,21 +1,21 @@
 if(WIN32)
-  find_library(UUID_LIBRARY NAMES Rpcrt4 PATH)
+  find_library(UUID_LIBRARIES NAMES Rpcrt4 PATH)
 
-  if(UUID_LIBRARY)
+  if(UUID_LIBRARIES)
     set(UUID_FOUND true)
-  endif(UUID_LIBRARY)
+  endif(UUID_LIBRARIES)
 
 else()
-  find_path(UUID_INCLUDE_DIR uuid/uuid.h)
-  find_library(UUID_LIBRARY NAMES uuid PATH)
+  find_path(UUID_INCLUDE_DIRS uuid/uuid.h)
+  find_library(UUID_LIBRARIES NAMES uuid PATH)
 
-  if(UUID_INCLUDE_DIR)
+  if(UUID_INCLUDE_DIRS)
     set(UUID_FOUND true)
-  endif(UUID_INCLUDE_DIR)
+  endif(UUID_INCLUDE_DIRS)
 
-  if(NOT UUID_LIBRARY)
-    set(UUID_LIBRARY "")
-  endif(NOT UUID_LIBRARY)
+  if(NOT UUID_LIBRARIES)
+    set(UUID_LIBRARIES "")
+  endif(NOT UUID_LIBRARIES)
 
 endif(WIN32)
 
