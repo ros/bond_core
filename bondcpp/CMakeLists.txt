@@ -1,14 +1,13 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(bondcpp)
 
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-
 find_package(Boost REQUIRED)
 find_package(catkin REQUIRED bond roscpp smclib)
-find_package(UUID REQUIRED)
+include("${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 include_directories(SYSTEM ${BOOST_INCLUDE_DIRS})
 include_directories(include ${catkin_INCLUDE_DIRS})
+include_directories(include ${UUID_INCLUDE_DIRS})
 
 catkin_package(
   INCLUDE_DIRS include
