@@ -1,21 +1,18 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(bondcpp)
 
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
 find_package(Boost REQUIRED)
 find_package(catkin REQUIRED bond roscpp smclib)
+find_package(UUID REQUIRED)
 
 include_directories(SYSTEM ${BOOST_INCLUDE_DIRS})
 include_directories(include ${catkin_INCLUDE_DIRS})
 
-if(WIN32)
-  set(UUID_LIB "Rpcrt4")
-else()
-  set(UUID_LIB "uuid")
-endif()
-
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES ${PROJECT_NAME} ${UUID_LIB}
+  LIBRARIES ${PROJECT_NAME} ${UUID_LIBRARY}
   CATKIN_DEPENDS bond roscpp smclib
   DEPENDS Boost
 )
@@ -25,7 +22,7 @@ add_library(${PROJECT_NAME}
   src/bond.cpp
   src/BondSM_sm.cpp
 )
-target_link_libraries(${PROJECT_NAME} ${UUID_LIB} ${catkin_LIBRARIES} ${BOOST_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${UUID_LIBRARY} ${catkin_LIBRARIES} ${BOOST_LIBRARIES})
 
 if(catkin_EXPORTED_TARGETS)
   add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
