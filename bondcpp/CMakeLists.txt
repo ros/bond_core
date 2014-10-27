@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(bondcpp)
 
 find_package(Boost REQUIRED)
-find_package(catkin REQUIRED bond roscpp smclib cmake_modules)
+find_package(catkin REQUIRED bond cmake_modules roscpp smclib)
 find_package(UUID REQUIRED)
 
 include_directories(SYSTEM ${BOOST_INCLUDE_DIRS})
