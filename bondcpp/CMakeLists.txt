@@ -7,7 +7,6 @@ find_package(UUID REQUIRED)
 
 include_directories(SYSTEM ${BOOST_INCLUDE_DIRS})
 include_directories(include ${catkin_INCLUDE_DIRS})
-include_directories(include ${UUID_INCLUDE_DIRS})
 
 catkin_package(
   INCLUDE_DIRS include
