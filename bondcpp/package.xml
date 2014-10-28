@@ -1,6 +1,6 @@
 <package>
   <name>bondcpp</name>
-  <version>1.7.14</version>
+  <version>1.7.15</version>
   <description>
     C++ implementation of bond, a mechanism for checking when
     another process has terminated.
