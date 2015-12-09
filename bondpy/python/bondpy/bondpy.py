@@ -296,7 +296,11 @@ class Bond(object):
     # \param timeout Maximum duration to wait.  If None then this call will not timeout.
     # \return true iff the bond has been formed.
     def wait_until_formed(self, timeout = None):
-        self.deadline = timeout and Timeout(timeout).reset()
+        if self.deadline:
+            self.deadline.cancel()
+            self.deadline = None
+        if timeout:
+            self.deadline = Timeout(timeout).reset()
         with self.lock:
             while self.sm.getState().getName() == 'SM.WaitingForSister':
                 if rospy.is_shutdown():
@@ -314,7 +318,11 @@ class Bond(object):
     # \param timeout Maximum duration to wait.  If None then this call will not timeout.
     # \return true iff the bond has been broken, even if it has never been formed.
     def wait_until_broken(self, timeout = None):
-        self.deadline = timeout and Timeout(timeout).reset()
+        if self.deadline:
+            self.deadline.cancel()
+            self.deadline = None
+        if timeout:
+            self.deadline = Timeout(timeout).reset()
         with self.lock:
             while self.sm.getState().getName() != 'SM.Dead':
                 if rospy.is_shutdown():
