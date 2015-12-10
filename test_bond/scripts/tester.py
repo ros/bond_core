@@ -102,6 +102,8 @@ class BondTester:
         if req.delay_death >= rospy.Duration(0.0):
             self.death_timeout = Timeout(req.delay_death, self.die).reset()
 
+        self.deadline = None
+
     def _on_connect_timeout(self):
         with self.lock:
             self.sm.ConnectTimeout()
@@ -201,7 +203,11 @@ class BondTester:
             self.death_started = rospy.Time.now()
 
     def wait_for_life(self, timeout = None):
-        deadline = timeout and Timeout(timeout).reset()
+        if self.deadline:
+            self.deadline.cancel()
+            self.deadline = None
+        if timeout:
+            self.deadline = Timeout(timeout).reset()
         with self.lock:
             while self.sm.getState().getName() == 'SM.WaitingForSister':
                 if deadline and deadline.left() == rospy.Duration(0):
@@ -210,7 +216,11 @@ class BondTester:
             return self.sm.getState().getName() != 'SM.WaitingForSister'
 
     def wait_for_death(self, timeout = None):
-        deadline = timeout and Timeout(timeout).reset()
+        if self.deadline:
+            self.deadline.cancel()
+            self.deadline = None
+        if timeout:
+            self.deadline = Timeout(timeout).reset()
         with self.lock:
             while self.sm.getState().getName() != 'SM.Dead':
                 if deadline and deadline.left() == rospy.Duration(0):
