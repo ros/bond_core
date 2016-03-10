@@ -6,7 +6,7 @@
     another process has terminated.
   </description>
   <author>Stuart Glaser</author>
-  <maintainer email="esteve@osrfoundation.org">Esteve Fernandez</maintainer>
+  <maintainer email="mikael@osrfoundation.org">Mikael Arguedas</maintainer>
   <license>BSD</license>
   <url type="website">http://www.ros.org/wiki/bondcpp</url>
   <url type="bugtracker">https://github.com/ros/bond_core/issues</url>

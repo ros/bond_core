@@ -10,7 +10,7 @@
     depends on, but it does not contain the compiler itself.
   </description>
   <author>Various</author>
-  <maintainer email="esteve@osrfoundation.org">Esteve Fernandez</maintainer>
+  <maintainer email="mikael@osrfoundation.org">Mikael Arguedas</maintainer>
   <license>Mozilla Public License Version 1.1</license>
   <url type="website">http://smc.sourceforge.net/</url>
   <url type="bugtracker">https://github.com/ros/bond_core/issues</url>
