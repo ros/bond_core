@@ -113,8 +113,9 @@ class Bond(object):
         self.disconnect_timeout = Constants.DEFAULT_DISCONNECT_TIMEOUT
         self.heartbeat_period = Constants.DEFAULT_HEARTBEAT_PERIOD
 
-        self.pub = rospy.Publisher(self.topic, Status)
-
+        # queue_size 1 : avoid having a client receive backed up, potentially
+        # late heartbearts, discussion@https://github.com/ros/bond_core/pull/10
+        self.pub = rospy.Publisher(self.topic, Status, queue_size=1)
 
     def get_connect_timeout(self):
         return self.__connect_timeout
