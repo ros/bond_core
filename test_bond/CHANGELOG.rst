@@ -2,8 +2,8 @@
 Changelog for package test_bond
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.7.17 (2016-03-15)
+-------------------
 * update maintainer
 * Made code a bit more readable `#12 <https://github.com/ros/bond_core/pull/12>`_
 * Contributors: Esteve Fernandez, Mikael Arguedas

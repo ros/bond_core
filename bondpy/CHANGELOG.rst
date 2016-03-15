@@ -2,8 +2,8 @@
 Changelog for package bondpy
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.7.17 (2016-03-15)
+-------------------
 * Queue size for a publisher `#10 <https://github.com/ros/bond_core/issues/10>`_ 
   Squash the warning.
 * update maintainer
