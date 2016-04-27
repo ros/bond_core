@@ -32,6 +32,7 @@
 #include <bondcpp/bond.h>
 #include <boost/thread/thread_time.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
+#include <boost/bind.hpp>
 
 #ifdef _WIN32
 #include <Rpc.h>

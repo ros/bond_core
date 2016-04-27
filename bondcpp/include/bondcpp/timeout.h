@@ -31,6 +31,7 @@
 #define BONDCPP_TIMEOUT_H
 
 #include <ros/ros.h>
+#include <boost/function.hpp>
 
 namespace bond {
 
