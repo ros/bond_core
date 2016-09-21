@@ -6,7 +6,7 @@ find_package(catkin REQUIRED COMPONENTS bondcpp genmsg rostest)
 
 if(CATKIN_ENABLE_TESTING)
   include_directories(${GTEST_INCLUDE_DIRS})
-  include_directories(SYSTEM ${bondcpp_INCLUDE_DIRS})
+  include_directories(include ${bondcpp_INCLUDE_DIRS})
 
   # create the service
   add_service_files(DIRECTORY srv FILES TestBond.srv)
