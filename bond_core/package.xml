@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>bond_core</name>
-  <version>1.7.17</version>
+  <version>1.7.18</version>
   <description>
     A bond allows two processes, A and B, to know when the other has
     terminated, either cleanly or by crashing. The bond remains

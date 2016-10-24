@@ -1,6 +1,6 @@
 <package>
   <name>smclib</name>
-  <version>1.7.17</version>
+  <version>1.7.18</version>
   <description>
     The State Machine Compiler (SMC) from http://smc.sourceforge.net/
     converts a language-independent description of a state machine

@@ -1,6 +1,6 @@
 <package>
   <name>bondpy</name>
-  <version>1.7.17</version>
+  <version>1.7.18</version>
   <description>
     Python implementation of bond, a mechanism for checking when
     another process has terminated.
