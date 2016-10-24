@@ -2,6 +2,9 @@
 Changelog for package bond_core
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 1.7.17 (2016-03-15)
 -------------------
 * update maintainer

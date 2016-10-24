@@ -2,6 +2,11 @@
 Changelog for package test_bond
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix -isystem /usr/include build breakage in gcc6
+* Contributors: Mikael Arguedas
+
 1.7.17 (2016-03-15)
 -------------------
 * update maintainer
