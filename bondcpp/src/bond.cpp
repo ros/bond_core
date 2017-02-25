@@ -202,7 +202,7 @@ bool Bond::waitUntilFormed(ros::Duration timeout)
 bool Bond::waitUntilFormed(ros::WallDuration timeout)
 {
   boost::mutex::scoped_lock lock(mutex_);
-  ros::WallTime deadline(ros::WallTime::now() + timeout);
+  ros::SteadyTime deadline(ros::SteadyTime::now() + timeout);
 
   while (sm_.getState().getId() == SM::WaitingForSister.getId()) {
     if (!ros::ok()) {
@@ -211,7 +211,7 @@ bool Bond::waitUntilFormed(ros::WallDuration timeout)
 
     ros::WallDuration wait_time = ros::WallDuration(0.1);
     if (timeout >= ros::WallDuration(0.0)) {
-      wait_time = std::min(wait_time, deadline - ros::WallTime::now());
+      wait_time = std::min(wait_time, deadline - ros::SteadyTime::now());
     }
 
     if (wait_time <= ros::WallDuration(0.0)) {
@@ -230,16 +230,17 @@ bool Bond::waitUntilBroken(ros::Duration timeout)
 bool Bond::waitUntilBroken(ros::WallDuration timeout)
 {
   boost::mutex::scoped_lock lock(mutex_);
-  ros::WallTime deadline(ros::WallTime::now() + timeout);
+  ros::SteadyTime deadline(ros::SteadyTime::now() + timeout);
 
-  while (sm_.getState().getId() != SM::Dead.getId()) {
-    if (!ros::ok()) {
+  while (sm_.getState().getId() != SM::Dead.getId())
+  {
+    if (!ros::ok())
       break;
     }
 
-    ros::WallDuration wait_time = ros::WallDuration(0.1);
+    ros::SteadyTime deadline(ros::SteadyTime::now() + timeout);
     if (timeout >= ros::WallDuration(0.0)) {
-      wait_time = std::min(wait_time, deadline - ros::WallTime::now());
+      wait_time = std::min(wait_time, deadline - ros::SteadyTime::now());
     }
 
     if (wait_time <= ros::WallDuration(0.0)) {
