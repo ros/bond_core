@@ -52,7 +52,7 @@ public:
 private:
   ros::NodeHandle nh_;
   ros::WallTimer timer_;
-  ros::WallTime deadline_;
+  ros::MonotonicTime deadline_;
   ros::WallDuration duration_;
   boost::function<void(void)> on_timeout_;
 
