@@ -178,7 +178,7 @@ void Bond::start()
   pub_ = nh_.advertise<bond::Status>(topic_, 5);
   sub_ = nh_.subscribe<bond::Status>(topic_, 30, boost::bind(&Bond::bondStatusCB, this, _1));
 
-  publishingTimer_ = nh_.createWallTimer(
+  publishingTimer_ = nh_.createSteadyTimer(
     ros::WallDuration(heartbeat_period_), &Bond::doPublishing, this);
   started_ = true;
 }
@@ -338,7 +338,7 @@ void Bond::bondStatusCB(const bond::Status::ConstPtr &msg)
   }
 }
 
-void Bond::doPublishing(const ros::WallTimerEvent &)
+void Bond::doPublishing(const ros::SteadyTimerEvent &)
 {
   boost::mutex::scoped_lock lock(mutex_);
   if (sm_.getState().getId() == SM::WaitingForSister.getId() ||

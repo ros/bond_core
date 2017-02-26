@@ -167,7 +167,7 @@ private:
 
   ros::Subscriber sub_;
   ros::Publisher pub_;
-  ros::WallTimer publishingTimer_;
+  ros::SteadyTimer publishingTimer_;
 
   void onConnectTimeout();
   void onHeartbeatTimeout();
@@ -175,7 +175,7 @@ private:
 
   void bondStatusCB(const bond::Status::ConstPtr &msg);
 
-  void doPublishing(const ros::WallTimerEvent &e);
+  void doPublishing(const ros::SteadyTimerEvent &e);
   void publishStatus(bool active);
 
   std::vector<boost::function<void(void)> > pending_callbacks_;
