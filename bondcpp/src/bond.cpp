@@ -89,7 +89,7 @@ Bond::~Bond()
 {
   if (!started_)
     return;
-  
+
   breakBond();
   if (!waitUntilBroken(ros::Duration(1.0)))
   {
@@ -107,7 +107,7 @@ Bond::~Bond()
   connect_timer_.cancel();
   heartbeat_timer_.cancel();
   disconnect_timer_.cancel();
-  
+
   boost::mutex::scoped_lock lock(mutex_);
   pub_.shutdown();
 }
@@ -174,7 +174,7 @@ void Bond::start()
   pub_ = nh_.advertise<bond::Status>(topic_, 5);
   sub_ = nh_.subscribe<bond::Status>(topic_, 30, boost::bind(&Bond::bondStatusCB, this, _1));
 
-  publishingTimer_ = nh_.createWallTimer(ros::WallDuration(heartbeat_period_), &Bond::doPublishing, this);
+  publishingTimer_ = nh_.createMonotonicTimer(ros::WallDuration(heartbeat_period_), &Bond::doPublishing, this);
   started_ = true;
 }
 
@@ -197,7 +197,7 @@ bool Bond::waitUntilFormed(ros::Duration timeout)
 bool Bond::waitUntilFormed(ros::WallDuration timeout)
 {
   boost::mutex::scoped_lock lock(mutex_);
-  ros::WallTime deadline(ros::WallTime::now() + timeout);
+  ros::MonotonicTime deadline(ros::MonotonicTime::now() + timeout);
 
   while (sm_.getState().getId() == SM::WaitingForSister.getId())
   {
@@ -206,7 +206,7 @@ bool Bond::waitUntilFormed(ros::WallDuration timeout)
 
     ros::WallDuration wait_time = ros::WallDuration(0.1);
     if (timeout >= ros::WallDuration(0.0))
-      wait_time = std::min(wait_time, deadline - ros::WallTime::now());
+      wait_time = std::min(wait_time, deadline - ros::MonotonicTime::now());
 
     if (wait_time <= ros::WallDuration(0.0))
       break;  // The deadline has expired
@@ -223,8 +223,8 @@ bool Bond::waitUntilBroken(ros::Duration timeout)
 bool Bond::waitUntilBroken(ros::WallDuration timeout)
 {
   boost::mutex::scoped_lock lock(mutex_);
-  ros::WallTime deadline(ros::WallTime::now() + timeout);
-  
+  ros::MonotonicTime deadline(ros::MonotonicTime::now() + timeout);
+
   while (sm_.getState().getId() != SM::Dead.getId())
   {
     if (!ros::ok())
@@ -232,7 +232,7 @@ bool Bond::waitUntilBroken(ros::WallDuration timeout)
 
     ros::WallDuration wait_time = ros::WallDuration(0.1);
     if (timeout >= ros::WallDuration(0.0))
-      wait_time = std::min(wait_time, deadline - ros::WallTime::now());
+      wait_time = std::min(wait_time, deadline - ros::MonotonicTime::now());
 
     if (wait_time <= ros::WallDuration(0.0))
       break; // The deadline has expired
@@ -280,7 +280,7 @@ void Bond::onHeartbeatTimeout()
              topic_.c_str(), id_.c_str());
     return;
   }
-  
+
   {
     boost::mutex::scoped_lock lock(mutex_);
     sm_.HeartbeatTimeout();
@@ -330,7 +330,7 @@ void Bond::bondStatusCB(const bond::Status::ConstPtr &msg)
   }
 }
 
-void Bond::doPublishing(const ros::WallTimerEvent &e)
+void Bond::doPublishing(const ros::MonotonicTimerEvent &e)
 {
   boost::mutex::scoped_lock lock(mutex_);
   if (sm_.getState().getId() == SM::WaitingForSister.getId() ||

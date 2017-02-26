@@ -62,8 +62,8 @@ void Timeout::setDuration(const ros::WallDuration &d)
 void Timeout::reset()
 {
   timer_.stop();
-  timer_ = nh_.createWallTimer(duration_, &Timeout::timerCallback, this, true);
-  deadline_ = ros::WallTime::now() + duration_;
+  timer_ = nh_.createMonotonicTimer(duration_, &Timeout::timerCallback, this, true);
+  deadline_ = ros::MonotonicTime::now() + duration_;
 }
 
 void Timeout::cancel()
@@ -73,10 +73,10 @@ void Timeout::cancel()
 
 ros::WallDuration Timeout::left()
 {
-  return std::max(ros::WallDuration(0.0), deadline_ - ros::WallTime::now());
+  return std::max(ros::WallDuration(0.0), deadline_ - ros::MonotonicTime::now());
 }
 
-void Timeout::timerCallback(const ros::WallTimerEvent &e)
+void Timeout::timerCallback(const ros::MonotonicTimerEvent &e)
 {
   if (on_timeout_)
     on_timeout_();

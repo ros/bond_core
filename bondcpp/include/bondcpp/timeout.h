@@ -51,12 +51,12 @@ public:
 
 private:
   ros::NodeHandle nh_;
-  ros::WallTimer timer_;
-  ros::WallTime deadline_;
+  ros::MonotonicTimer timer_;
+  ros::MonotonicTime deadline_;
   ros::WallDuration duration_;
   boost::function<void(void)> on_timeout_;
 
-  void timerCallback(const ros::WallTimerEvent &e);
+  void timerCallback(const ros::MonotonicTimerEvent &e);
 };
 
 
