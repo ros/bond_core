@@ -330,7 +330,7 @@ void Bond::bondStatusCB(const bond::Status::ConstPtr &msg)
   }
 }
 
-void Bond::doPublishing(const ros::WallTimerEvent &e)
+void Bond::doPublishing(const ros::WallTimerEvent &)
 {
   boost::mutex::scoped_lock lock(mutex_);
   if (sm_.getState().getId() == SM::WaitingForSister.getId() ||
