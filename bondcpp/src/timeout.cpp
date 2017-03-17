@@ -76,7 +76,7 @@ ros::WallDuration Timeout::left()
   return std::max(ros::WallDuration(0.0), deadline_ - ros::WallTime::now());
 }
 
-void Timeout::timerCallback(const ros::WallTimerEvent &e)
+void Timeout::timerCallback(const ros::WallTimerEvent &)
 {
   if (on_timeout_)
     on_timeout_();
