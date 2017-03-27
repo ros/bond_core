@@ -2,8 +2,8 @@
 Changelog for package bondcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.7.19 (2017-03-27)
+-------------------
 * fix unused var warning
 * Contributors: Mikael Arguedas
 
