@@ -2,6 +2,11 @@
 Changelog for package bondcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix unused var warning
+* Contributors: Mikael Arguedas
+
 1.7.18 (2016-10-24)
 -------------------
 * fix -isystem /usr/include build breakage in gcc6
