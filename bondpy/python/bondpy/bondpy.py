@@ -52,12 +52,14 @@ class Timeout:
     def __init__(self, duration, on_timeout=None):
         self.duration = duration
         self.timer = threading.Timer(0, self._on_timer)
+        self.timer.daemon = True
         self.deadline = time.time()
         self.on_timeout = on_timeout
 
     def reset(self):
         self.timer.cancel()
         self.timer = threading.Timer(self.duration.to_sec(), self._on_timer)
+        self.timer.daemon = True
         self.timer.start()
         self.deadline = time.time() + self.duration.to_sec()
         return self
