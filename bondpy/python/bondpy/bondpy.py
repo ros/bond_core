@@ -209,9 +209,9 @@ class Bond(object):
                     self.sister_instance_id = msg.instance_id
 
                 if msg.instance_id != self.sister_instance_id:
-                    rospy.logerr("More than two locations are trying to use a single bond (topic: %s, id: %s).  " + \
-                                 "You should only instantiate at most two bond instances for each (topic, id) pair." % \
-                                     (self.topic, self.id))
+                    rospy.logerr("More than two locations are trying to use a single bond (topic: %s, id: %s).  " % \
+                                 (self.topic, self.id) + \
+                                 "You should only instantiate at most two bond instances for each (topic, id) pair.")
                     return
 
                 if msg.active:
