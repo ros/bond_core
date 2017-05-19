@@ -27,20 +27,20 @@
 
 ## \author Stuart Glaser
 
-import sys
 import threading
 import time
 import uuid
-
+import BondSM_sm
 import rospy
 from bond.msg import *
 
-import BondSM_sm
 
 def as_ros_duration(d):
     if not isinstance(d, rospy.Duration):
         return rospy.Duration.from_sec(d)
     return d
+
+
 def as_float_duration(d):
     if isinstance(d, rospy.Duration):
         return d.to_sec()
@@ -74,6 +74,7 @@ class Timeout:
         if self.on_timeout:
             self.on_timeout()
 
+
 ## \brief Forms a bond to monitor another process.
 #
 # The Bond class implements a bond, allowing you to monitor another
@@ -87,10 +88,17 @@ class Bond(object):
     #           the sister's end
     # \param on_broken callback that will be called when the bond is broken.
     # \param on_formed callback that will be called when the bond is formed.
-    def __init__(self, topic, id, on_broken=None, on_formed=None):
+    def __init__(self, topic, internal_id, on_broken=None, on_formed=None):
         self.__started = False
+        self.__connect_timeout = None
+        self.connect_timer = None
+        self.__disconnect_timeout = None
+        self.disconnect_timer = None
+        self.__heartbeat_timeout = None
+        self.heartbeat_timer = None
+        self.__heartbeat_period = None
         self.topic = topic
-        self.id = id
+        self.id = internal_id
         self.instance_id = str(uuid.uuid4())
         self.sister_instance_id = None
         self.on_broken = on_broken
@@ -105,7 +113,7 @@ class Bond(object):
         self.pending_callbacks = []
 
         self.sm = BondSM_sm.BondSM_sm(self)
-        #self.sm.setDebugFlag(True)
+        # self.sm.setDebugFlag(True)
         self.lock = threading.RLock()
         self.condition = threading.Condition(self.lock)
 
@@ -117,10 +125,13 @@ class Bond(object):
 
         # queue_size 1 : avoid having a client receive backed up, potentially
         # late heartbearts, discussion@https://github.com/ros/bond_core/pull/10
+        self.sub = None
+        self.thread = None
         self.pub = rospy.Publisher(self.topic, Status, queue_size=1)
 
     def get_connect_timeout(self):
         return self.__connect_timeout
+
     def set_connect_timeout(self, dur):
         assert not self.__started
         self.__connect_timeout = dur
@@ -129,6 +140,7 @@ class Bond(object):
 
     def get_heartbeat_timeout(self):
         return self.__heartbeat_timeout
+
     def set_heartbeat_timeout(self, dur):
         assert not self.__started
         self.__heartbeat_timeout = dur
@@ -137,6 +149,7 @@ class Bond(object):
 
     def get_disconnect_timeout(self):
         return self.__disconnect_timeout
+
     def set_disconnect_timeout(self, dur):
         assert not self.__started
         self.__disconnect_timeout = dur
@@ -145,11 +158,11 @@ class Bond(object):
 
     def get_heartbeat_period(self):
         return self.__heartbeat_period
+
     def set_heartbeat_period(self, per):
         assert not self.__started
         self.__heartbeat_period = as_float_duration(per)
     heartbeat_period = property(get_heartbeat_period, set_heartbeat_period)
-
 
     ## \brief Starts the bond and connects to the sister process.
     def start(self):
@@ -162,7 +175,6 @@ class Bond(object):
             self.thread.start()
             self.__started = True
 
-
     def _on_connect_timeout(self):
         with self.lock:
             self.sm.ConnectTimeout()
@@ -172,8 +184,8 @@ class Bond(object):
         # Checks that heartbeat timeouts haven't been disabled globally
         disable_heartbeat_timeout = rospy.get_param(Constants.DISABLE_HEARTBEAT_TIMEOUT_PARAM, False)
         if disable_heartbeat_timeout:
-            rospy.logwarn("Heartbeat timeout is disabled.  Not breaking bond (topic: %s, id: %s)" % \
-                              (self.topic, self.id))
+            rospy.logwarn('Heartbeat timeout is disabled.  Not breaking bond (topic: {}, id: {})'.format(self.topic,
+                                                                                                         self.id))
             return
 
         with self.lock:
@@ -209,9 +221,9 @@ class Bond(object):
                     self.sister_instance_id = msg.instance_id
 
                 if msg.instance_id != self.sister_instance_id:
-                    rospy.logerr("More than two locations are trying to use a single bond (topic: %s, id: %s).  " % \
-                                 (self.topic, self.id) + \
-                                 "You should only instantiate at most two bond instances for each (topic, id) pair.")
+                    rospy.logerr('More than two locations are trying to use a single bond (topic: {}, id: {}).  '
+                                 'You should only instantiate at most two bond instances for each (topic, id) pair.'.
+                                 format(self.topic, self.id))
                     return
 
                 if msg.active:
@@ -223,8 +235,6 @@ class Bond(object):
                     if self.sister_died_first:
                         self._publish(False)
             self._flush_pending_callbacks()
-
-
 
     def _publish(self, active):
         msg = Status()
@@ -249,7 +259,6 @@ class Bond(object):
                 self.condition.wait(Constants.DEAD_PUBLISH_PERIOD)
 
     def _flush_pending_callbacks(self):
-        callbacks = []
         with self.lock:
             callbacks = self.pending_callbacks
             self.pending_callbacks = []
@@ -298,7 +307,7 @@ class Bond(object):
     #
     # \param timeout Maximum duration to wait.  If None then this call will not timeout.
     # \return true iff the bond has been formed.
-    def wait_until_formed(self, timeout = None):
+    def wait_until_formed(self, timeout=None):
         if self.deadline:
             self.deadline.cancel()
             self.deadline = None
@@ -320,7 +329,7 @@ class Bond(object):
     #
     # \param timeout Maximum duration to wait.  If None then this call will not timeout.
     # \return true iff the bond has been broken, even if it has never been formed.
-    def wait_until_broken(self, timeout = None):
+    def wait_until_broken(self, timeout=None):
         if self.deadline:
             self.deadline.cancel()
             self.deadline = None
@@ -350,7 +359,6 @@ class Bond(object):
             self.sm.Die()
             self._publish(False)
         self._flush_pending_callbacks()
-
 
     def __repr__(self):
         return "[Bond %s, Instance %s (%s)]" % (self.id, self.instance_id, self.sm.getState().getName())
