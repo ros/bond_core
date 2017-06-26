@@ -29,6 +29,7 @@
 # Author: Stuart Glaser
 
 # This is largely copied from bondpy, with hooks that "break" it for testing purposes.
+from __future__ import print_function
 
 import threading
 import time
@@ -124,12 +125,12 @@ class BondTester:
             with self.lock:
                 self.is_shutdown = True
                 if self.sm.getState().getName() != 'SM.Dead':
-                    print "I'm not dead yet:", self.id, " in ", self.sm.getState().getName()
+                    print("I'm not dead yet:%s in %s" % (self.id, self.sm.getState().getName()))
                     self.die()
                 self.sub.unregister()
                 self.pub.unregister()
                 self.condition.notify_all()
-                print "Unregistered"
+                print("Unregistered")
 
     def _on_bond_status(self, msg):
         # Filters out messages from other bonds and messages from ourselves
@@ -247,11 +248,11 @@ class Tester:
         self.service = rospy.Service('test_bond', TestBond, self._test_bond)
 
     def _test_bond(self, req):
-        print "TEST"
+        print("TEST")
         if self.bond_tester:
             self.bond_tester.shutdown()
         self.bond_tester = BondTester(req)
-        print "Test bond instance id: %s" % self.bond_tester.instance_id
+        print("Test bond instance id: %s" % self.bond_tester.instance_id)
         return TestBondResponse()
 
 def main():
