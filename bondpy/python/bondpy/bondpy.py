@@ -115,6 +115,7 @@ class Bond(object):
         self.sm = BondSM_sm.BondSM_sm(self)
         # self.sm.setDebugFlag(True)
         self.lock = threading.RLock()
+        self.sub_lock = threading.Lock()
         self.condition = threading.Condition(self.lock)
 
         # Sets the default timeout values
@@ -202,7 +203,10 @@ class Bond(object):
 
     def shutdown(self):
         if not self.is_shutdown:
-            self.sub.unregister()
+            with self.sub_lock:
+                if self.sub is not None:
+                    self.sub.unregister()
+                    self.sub = None
             with self.lock:
                 self.is_shutdown = True
                 if self.sm.getState().getName() != 'SM.Dead':
