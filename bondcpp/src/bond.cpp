@@ -89,7 +89,7 @@ Bond::~Bond()
 {
   if (!started_)
     return;
-  
+
   breakBond();
   if (!waitUntilBroken(ros::Duration(1.0)))
   {
@@ -107,7 +107,7 @@ Bond::~Bond()
   connect_timer_.cancel();
   heartbeat_timer_.cancel();
   disconnect_timer_.cancel();
-  
+
   boost::mutex::scoped_lock lock(mutex_);
   pub_.shutdown();
 }
@@ -224,7 +224,7 @@ bool Bond::waitUntilBroken(ros::WallDuration timeout)
 {
   boost::mutex::scoped_lock lock(mutex_);
   ros::WallTime deadline(ros::WallTime::now() + timeout);
-  
+
   while (sm_.getState().getId() != SM::Dead.getId())
   {
     if (!ros::ok())
@@ -280,7 +280,7 @@ void Bond::onHeartbeatTimeout()
              topic_.c_str(), id_.c_str());
     return;
   }
-  
+
   {
     boost::mutex::scoped_lock lock(mutex_);
     sm_.HeartbeatTimeout();
