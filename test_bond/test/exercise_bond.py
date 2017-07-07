@@ -29,7 +29,6 @@
 # Author: Stuart Glaser
 
 import sys
-import threading
 import time
 import uuid
 
@@ -37,7 +36,7 @@ PKG = 'test_bond'
 import roslib; roslib.load_manifest(PKG)
 import rospy
 from bondpy import bondpy
-from test_bond.srv import *
+from test_bond.srv import TestBond
 
 import unittest
 import rostest
@@ -45,11 +44,15 @@ import rostest
 import atexit
 atexit.register(rospy.signal_shutdown, 'exit')
 
+
 def gen_id():
     return "test_" + str(uuid.uuid4())
+
+
 TOPIC = "test_bond_topic"
 
 test_bond = rospy.ServiceProxy('test_bond', TestBond)
+
 
 class Exerciser(unittest.TestCase):
 
@@ -57,11 +60,11 @@ class Exerciser(unittest.TestCase):
     def test_normal(self):
         id = gen_id()
         test_bond.wait_for_service()
-        test_bond(id = id, topic = TOPIC, delay_death = rospy.Duration(2.0))
+        test_bond(id=id, topic=TOPIC, delay_death=rospy.Duration(2.0))
         rospy.logerr("test_normal: test_bond service call just returned")
         self.bond = bond = bondpy.Bond(TOPIC, id)
         bond.start()
-        
+
         bond_start_time = time.time()
 
         formed = bond.wait_until_formed(rospy.Duration(2.0))
@@ -76,12 +79,13 @@ class Exerciser(unittest.TestCase):
             s += "  num connections = %d\n" % bond.pub.get_num_connections()
 
             formed_later = bond.wait_until_formed(rospy.Duration(20.0))
-            s += "Formed later: %s after %.3f seconds\n" % (formed_later, time.time() - bond_start_time)
+            s += "Formed later: %s after %.3f seconds\n" % (
+                formed_later, time.time() - bond_start_time)
 
             rospy.logerr(s)
             self.fail(s)
 
-        #self.assertTrue(bond.wait_until_formed(rospy.Duration(2.0)))
+        # self.assertTrue(bond.wait_until_formed(rospy.Duration(2.0)))
         self.assertTrue(bond.wait_until_broken(rospy.Duration(5.0)))
 
     # Remote never connects
@@ -108,7 +112,7 @@ class Exerciser(unittest.TestCase):
     def test_i_die(self):
         id = gen_id()
         test_bond.wait_for_service()
-        test_bond(id = id, topic = TOPIC, delay_death = rospy.Duration(-1))
+        test_bond(id=id, topic=TOPIC, delay_death=rospy.Duration(-1))
         self.bond = bond = bondpy.Bond(TOPIC, id)
         bond.start()
 
@@ -146,6 +150,7 @@ class Exerciser(unittest.TestCase):
 
     def setUp(self):
         self.bond = None
+
     def tearDown(self):
         if self.bond:
             self.bond.shutdown()
@@ -156,4 +161,6 @@ def main():
     rospy.init_node('exercise_bondpy', anonymous=True, disable_signals=True)
     rostest.run(PKG, 'exercise_bondpy', Exerciser, sys.argv)
 
-if __name__ == '__main__': main()
+
+if __name__ == '__main__':
+    main()
