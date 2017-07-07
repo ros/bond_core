@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<package>
+<?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="2">
   <name>bond_core</name>
   <version>1.7.19</version>
   <description>
@@ -18,10 +19,10 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <run_depend>bond</run_depend>
-  <run_depend>bondcpp</run_depend>
-  <run_depend>bondpy</run_depend>
-  <run_depend>smclib</run_depend>
+  <exec_depend>bond</exec_depend>
+  <exec_depend>bondcpp</exec_depend>
+  <exec_depend>bondpy</exec_depend>
+  <exec_depend>smclib</exec_depend>
 
   <export>
     <metapackage/>
