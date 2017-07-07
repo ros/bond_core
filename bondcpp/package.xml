@@ -1,4 +1,6 @@
-<package>
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="2">
   <name>bondcpp</name>
   <version>1.7.19</version>
   <description>
@@ -14,16 +16,11 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <build_depend>bond</build_depend>
-  <build_depend>boost</build_depend>
   <build_depend version_gte="0.3.2">cmake_modules</build_depend>
-  <build_depend>roscpp</build_depend>
-  <build_depend>smclib</build_depend>
-  <build_depend>uuid</build_depend>
 
-  <run_depend>bond</run_depend>
-  <run_depend>boost</run_depend>
-  <run_depend>roscpp</run_depend>
-  <run_depend>smclib</run_depend>
-  <run_depend>uuid</run_depend>
+  <depend>bond</depend>
+  <depend>boost</depend>
+  <depend>roscpp</depend>
+  <depend>smclib</depend>
+  <depend>uuid</depend>
 </package>

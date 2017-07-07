@@ -1,4 +1,6 @@
-<package>
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="2">
   <name>bond</name>
   <version>1.7.19</version>
   <description>
@@ -19,8 +21,8 @@
   <build_depend>message_generation</build_depend>
   <build_depend>std_msgs</build_depend>
 
-  <run_depend>message_runtime</run_depend>
-  <run_depend>std_msgs</run_depend>
+  <exec_depend>message_runtime</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
 
   <export>
     <architecture_independent/>

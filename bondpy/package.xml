@@ -1,4 +1,6 @@
-<package>
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="2">
   <name>bondpy</name>
   <version>1.7.19</version>
   <description>
@@ -18,9 +20,9 @@
   <build_depend>rospy</build_depend>
   <build_depend>smclib</build_depend>
 
-  <run_depend>rospy</run_depend>
-  <run_depend>smclib</run_depend>
-  <run_depend>uuid</run_depend>
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>smclib</exec_depend>
+  <exec_depend>uuid</exec_depend>
 
   <export>
     <architecture_independent/>
