@@ -37,8 +37,10 @@ class BondSMState(statemap.State):
             fsm.getState().getName(), fsm.getTransition())
         raise statemap.TransitionUndefinedException(msg)
 
+
 class SM_Default(BondSMState):
     pass
+
 
 class SM_WaitingForSister(SM_Default):
 
@@ -71,6 +73,7 @@ class SM_WaitingForSister(SM_Default):
         finally:
             fsm.setState(SM.Alive)
             fsm.getState().Entry(fsm)
+
 
 class SM_Alive(SM_Default):
 
@@ -115,6 +118,7 @@ class SM_Alive(SM_Default):
             fsm.setState(SM.Dead)
             fsm.getState().Entry(fsm)
 
+
 class SM_AwaitSisterDeath(SM_Default):
 
     def DisconnectTimeout(self, fsm):
@@ -147,6 +151,7 @@ class SM_AwaitSisterDeath(SM_Default):
             fsm.setState(SM.Dead)
             fsm.getState().Entry(fsm)
 
+
 class SM_Dead(SM_Default):
 
     def ConnectTimeout(self, fsm):
@@ -174,6 +179,7 @@ class SM_Dead(SM_Default):
         fsm.setState(SM.Dead)
         fsm.getState().Entry(fsm)
 
+
 class SM(object):
 
     WaitingForSister = SM_WaitingForSister('SM.WaitingForSister', 0)
@@ -181,6 +187,7 @@ class SM(object):
     AwaitSisterDeath = SM_AwaitSisterDeath('SM.AwaitSisterDeath', 2)
     Dead = SM_Dead('SM.Dead', 3)
     Default = SM_Default('SM.Default', -1)
+
 
 class BondSM_sm(statemap.FSMContext):
 

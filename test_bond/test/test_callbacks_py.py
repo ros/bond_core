@@ -29,15 +29,12 @@
 # Author: Stuart Glaser
 
 import sys
-import threading
-import time
 import uuid
 
 PKG = 'test_bond'
 import roslib; roslib.load_manifest(PKG)
 import rospy
 from bondpy import bondpy
-from test_bond.srv import *
 
 import unittest
 import rostest
@@ -46,8 +43,11 @@ import atexit
 atexit.register(rospy.signal_shutdown, 'exit')
 
 TOPIC = "test_bond_topic"
+
+
 def gen_id():
     return "test_" + str(uuid.uuid4())
+
 
 class CallbackTests(unittest.TestCase):
 
@@ -65,8 +65,11 @@ class CallbackTests(unittest.TestCase):
         self.assertTrue(b.wait_until_broken(rospy.Duration(3.0)))
         del a, b
 
+
 def main():
     rospy.init_node('test_callbacks_python', anonymous=True, disable_signals=True)
     rostest.run(PKG, 'test_callbacks_python', CallbackTests, sys.argv)
 
-if __name__ == '__main__': main()
+
+if __name__ == '__main__':
+    main()
