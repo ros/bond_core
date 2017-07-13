@@ -68,6 +68,8 @@
 #include <cstring>
 #endif
 
+#include <string>
+
 // Limit names to 100 ASCII characters.
 // Why 100? Because it is a round number.
 #define MAX_NAME_LEN 100

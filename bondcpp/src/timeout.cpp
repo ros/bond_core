@@ -27,7 +27,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <bondcpp/timeout.h>
+#include "bondcpp/timeout.h"
+
+#include <algorithm>
 
 namespace bond {
 

@@ -43,6 +43,9 @@
 #include <bond/Status.h>
 #include "BondSM_sm.h"
 
+#include <string>
+#include <vector>
+
 namespace bond {
 
 /** \brief Forms a bond to monitor another process.

@@ -39,6 +39,10 @@
 #include <uuid/uuid.h>
 #endif
 
+#include <algorithm>
+#include <string>
+#include <vector>
+
 namespace bond {
 
 static std::string makeUUID()
