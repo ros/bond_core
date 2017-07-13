@@ -531,7 +531,7 @@ public:
 
     // Starts the finite state machine running by executing
     // the initial state's entry actions.
-    virtual void enterStartState()=0;
+    virtual void enterStartState() = 0;
 
     // Exact same object (is it me?)
     int same(const FSMContext& fsm) const
