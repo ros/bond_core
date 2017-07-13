@@ -786,7 +786,7 @@ namespace statemap
 #endif // SMC_USES_IOSTREAMS
 
     }; // end of class FSMContext
-}
+}  // namespace statemap
 
 //
 // CHANGE LOG

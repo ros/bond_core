@@ -179,7 +179,7 @@ private:
   void flushPendingCallbacks();
 };
 
-}// namespace
+}  // namespace bond
 
 
 // Internal use only

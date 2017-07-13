@@ -60,6 +60,6 @@ private:
 };
 
 
-} // namespace
+}  // namespace bond
 
 #endif  // BONDCPP__TIMEOUT_H_

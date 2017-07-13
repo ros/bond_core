@@ -82,4 +82,4 @@ void Timeout::timerCallback(const ros::WallTimerEvent &)
     on_timeout_();
 }
 
-}
+}  // namespace bond

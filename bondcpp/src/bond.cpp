@@ -375,7 +375,7 @@ void Bond::flushPendingCallbacks()
     callbacks[i]();
 }
 
-} // namespace
+}  // namespace bond
 
 
 void BondSM::Connected()
