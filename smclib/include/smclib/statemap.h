@@ -63,7 +63,7 @@
 #endif  // SMC_NO_EXCEPTIONS
 #include <stdio.h>
 #endif
-#if ! defined(SMC_NO_EXCEPTIONS)
+#if !defined(SMC_NO_EXCEPTIONS)
 #include <stdexcept>
 #include <cstring>
 #endif
@@ -421,8 +421,8 @@ protected:
 private:
     // Make the default and copy constructors private to
     // prevent their use.
-    State() {};
-    State(const State&) {};
+    State() {}
+    State(const State&) {}
 
 //-----------------------------------------------------------
 // Member data.

@@ -32,8 +32,8 @@ public:
     : statemap::State(name, stateId)
     {};
 
-    virtual void Entry(BondSMContext&) {};
-    virtual void Exit(BondSMContext&) {};
+    virtual void Entry(BondSMContext&) {}
+    virtual void Exit(BondSMContext&) {}
 
     virtual void ConnectTimeout(BondSMContext& context);
     virtual void Die(BondSMContext& context);
