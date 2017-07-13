@@ -28,7 +28,6 @@ class BondSMState :
     public statemap::State
 {
 public:
-
     BondSMState(const char *name, int stateId)
     : statemap::State(name, stateId)
     {};
@@ -44,14 +43,12 @@ public:
     virtual void SisterDead(BondSMContext& context);
 
 protected:
-
     virtual void Default(BondSMContext& context);
 };
 
 class SM
 {
 public:
-
     static SM_WaitingForSister WaitingForSister;
     static SM_Alive Alive;
     static SM_AwaitSisterDeath AwaitSisterDeath;
@@ -62,7 +59,6 @@ class SM_Default :
     public BondSMState
 {
 public:
-
     SM_Default(const char *name, int stateId)
     : BondSMState(name, stateId)
     {};
@@ -132,7 +128,6 @@ class BondSMContext :
     public statemap::FSMContext
 {
 public:
-
     BondSMContext(BondSM& owner)
     : FSMContext(SM::WaitingForSister),
       _owner(owner)
@@ -195,7 +190,6 @@ public:
     };
 
 private:
-
     BondSM& _owner;
 };
 

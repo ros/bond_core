@@ -105,20 +105,17 @@ namespace statemap
     // Member methods
     //
     public:
-
         // Destructor.
         virtual ~SmcException() throw()
         {};
 
     protected:
-
         // Constructor.
         SmcException(const std::string& reason)
         : std::runtime_error(reason)
         {};
 
     private:
-
         // Default construction not allowed.
         SmcException();
 
@@ -139,7 +136,6 @@ namespace statemap
     // Member methods.
     //
     public:
-
         // Default constructor.
         PopOnEmptyStateStackException()
         : SmcException("no state to pop from state stack")
@@ -151,7 +147,6 @@ namespace statemap
 
     protected:
     private:
-
     //-----------------------------------------------------------
     // Member data.
     //
@@ -171,7 +166,6 @@ namespace statemap
     // Member methods.
     //
     public:
-
         // Default constructor.
         StateUndefinedException()
         : SmcException("transition invoked while in transition")
@@ -183,7 +177,6 @@ namespace statemap
 
     protected:
     private:
-
     //-----------------------------------------------------------
     // Member data.
     //
@@ -201,7 +194,6 @@ namespace statemap
     // Member methods.
     //
     public:
-
         // Default constructor.
         TransitionUndefinedException()
         : SmcException("no such transition in current state"),
@@ -282,16 +274,14 @@ namespace statemap
 
     protected:
     private:
-
     //-----------------------------------------------------------
     // Member data.
     //
     public:
     protected:
     private:
-
-    char *_state;
-    char *_transition;
+        char *_state;
+        char *_transition;
     };
 
     // This class is thrown when a state ID is either less than
@@ -303,7 +293,6 @@ namespace statemap
     // Member methods.
     //
     public:
-
         // Default constructor.
         IndexOutOfBoundsException()
         : SmcException("index out of bounds"),
@@ -371,16 +360,14 @@ namespace statemap
 
     protected:
     private:
-
     //-----------------------------------------------------------
     // Member data.
     //
     public:
     protected:
     private:
-
-    int _index;
-    int _minIndex;
+        int _index;
+        int _minIndex;
         int _maxIndex;
     };
 #endif // !SMC_NO_EXCEPTIONS
@@ -395,7 +382,6 @@ namespace statemap
     // Member functions.
     //
     public:
-
         const char* getName() const
         {
             return (_name);
@@ -407,7 +393,6 @@ namespace statemap
         }
 
     protected:
-
         State(const char *name, int stateId)
         : _name(NULL),
           _stateId(stateId)
@@ -432,7 +417,6 @@ namespace statemap
         };
 
     private:
-
         // Make the default and copy constructors private to
         // prevent their use.
         State() {};
@@ -443,7 +427,6 @@ namespace statemap
     //
     public:
     protected:
-
         // This state's printable name.
         char *_name;
 
@@ -461,7 +444,6 @@ namespace statemap
     public:
     protected:
     private:
-
         // Implements the state stack.
         class StateEntry
         {
@@ -492,7 +474,6 @@ namespace statemap
 
         protected:
         private:
-
         //-------------------------------------------------------
         // Member data.
         //
@@ -512,7 +493,6 @@ namespace statemap
     // Member functions
     //
     public:
-
         // Destructor.
         virtual ~FSMContext()
         {
@@ -749,7 +729,6 @@ namespace statemap
         };
 
     protected:
-
         // Default constructor.
         FSMContext(const State& state)
         : _state(const_cast<State *>(&state)),
@@ -765,7 +744,6 @@ namespace statemap
         {};
 
     private:
-
         // I don't believe that it makes sense to copy a
         // context. It may make sense to copy the application
         // class but the new object is *not* in the same
@@ -781,7 +759,6 @@ namespace statemap
     //
     public:
     protected:
-
         // The current state of the finite state machine.
         State *_state;
 
@@ -796,7 +773,6 @@ namespace statemap
         char *_transition;
 
     private:
-
         // When this flag is set to true, this class will print
         // out debug messages.
         bool _debug_flag;
