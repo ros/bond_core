@@ -235,7 +235,6 @@ void SM_Alive::SisterDead(BondSMContext& context)
 
 void SM_AwaitSisterDeath::Die(BondSMContext& context)
 {
-
     (context.getState()).Exit(context);
     context.setState(SM::AwaitSisterDeath);
     (context.getState()).Entry(context);
@@ -266,7 +265,6 @@ void SM_AwaitSisterDeath::DisconnectTimeout(BondSMContext& context)
 
 void SM_AwaitSisterDeath::HeartbeatTimeout(BondSMContext& context)
 {
-
     (context.getState()).Exit(context);
     context.setState(SM::AwaitSisterDeath);
     (context.getState()).Entry(context);
@@ -276,7 +274,6 @@ void SM_AwaitSisterDeath::HeartbeatTimeout(BondSMContext& context)
 
 void SM_AwaitSisterDeath::SisterAlive(BondSMContext& context)
 {
-
     (context.getState()).Exit(context);
     context.setState(SM::AwaitSisterDeath);
     (context.getState()).Entry(context);
@@ -307,7 +304,6 @@ void SM_AwaitSisterDeath::SisterDead(BondSMContext& context)
 
 void SM_Dead::ConnectTimeout(BondSMContext& context)
 {
-
     (context.getState()).Exit(context);
     context.setState(SM::Dead);
     (context.getState()).Entry(context);
@@ -317,7 +313,6 @@ void SM_Dead::ConnectTimeout(BondSMContext& context)
 
 void SM_Dead::Die(BondSMContext& context)
 {
-
     (context.getState()).Exit(context);
     context.setState(SM::Dead);
     (context.getState()).Entry(context);
@@ -327,7 +322,6 @@ void SM_Dead::Die(BondSMContext& context)
 
 void SM_Dead::DisconnectTimeout(BondSMContext& context)
 {
-
     (context.getState()).Exit(context);
     context.setState(SM::Dead);
     (context.getState()).Entry(context);
@@ -337,7 +331,6 @@ void SM_Dead::DisconnectTimeout(BondSMContext& context)
 
 void SM_Dead::HeartbeatTimeout(BondSMContext& context)
 {
-
     (context.getState()).Exit(context);
     context.setState(SM::Dead);
     (context.getState()).Entry(context);
@@ -347,7 +340,6 @@ void SM_Dead::HeartbeatTimeout(BondSMContext& context)
 
 void SM_Dead::SisterAlive(BondSMContext& context)
 {
-
     (context.getState()).Exit(context);
     context.setState(SM::Dead);
     (context.getState()).Entry(context);
@@ -357,7 +349,6 @@ void SM_Dead::SisterAlive(BondSMContext& context)
 
 void SM_Dead::SisterDead(BondSMContext& context)
 {
-
     (context.getState()).Exit(context);
     context.setState(SM::Dead);
     (context.getState()).Entry(context);

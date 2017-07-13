@@ -350,7 +350,6 @@ void Bond::doPublishing(const ros::WallTimerEvent &)
   {
     publishingTimer_.stop();
   }
-
 }
 
 void Bond::publishStatus(bool active)

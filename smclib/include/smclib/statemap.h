@@ -786,7 +786,6 @@ namespace statemap
         // standard error by default.
         std::ostream *_debug_stream;
 #endif // SMC_USES_IOSTREAMS
-
     }; // end of class FSMContext
 }  // namespace statemap
 

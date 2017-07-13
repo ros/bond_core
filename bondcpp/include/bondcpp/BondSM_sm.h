@@ -62,7 +62,6 @@ public:
     SM_Default(const char *name, int stateId)
     : BondSMState(name, stateId)
     {};
-
 };
 
 class SM_WaitingForSister :
