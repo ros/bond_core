@@ -91,12 +91,12 @@ Bond::Bond(const std::string &topic, const std::string &id,
 
 Bond::~Bond()
 {
-  if (!started_)
+  if (!started_) {
     return;
+  }
 
   breakBond();
-  if (!waitUntilBroken(ros::Duration(1.0)))
-  {
+  if (!waitUntilBroken(ros::Duration(1.0))) {
     ROS_DEBUG("Bond failed to break on destruction %s (%s)", id_.c_str(), instance_id_.c_str());
   }
 
@@ -203,17 +203,19 @@ bool Bond::waitUntilFormed(ros::WallDuration timeout)
   boost::mutex::scoped_lock lock(mutex_);
   ros::WallTime deadline(ros::WallTime::now() + timeout);
 
-  while (sm_.getState().getId() == SM::WaitingForSister.getId())
-  {
-    if (!ros::ok())
+  while (sm_.getState().getId() == SM::WaitingForSister.getId()) {
+    if (!ros::ok()) {
       break;
+    }
 
     ros::WallDuration wait_time = ros::WallDuration(0.1);
-    if (timeout >= ros::WallDuration(0.0))
+    if (timeout >= ros::WallDuration(0.0)) {
       wait_time = std::min(wait_time, deadline - ros::WallTime::now());
+    }
 
-    if (wait_time <= ros::WallDuration(0.0))
+    if (wait_time <= ros::WallDuration(0.0)) {
       break;  // The deadline has expired
+    }
 
     condition_.timed_wait(mutex_, boost::posix_time::milliseconds(wait_time.toSec() * 1000.0f));
   }
@@ -229,17 +231,19 @@ bool Bond::waitUntilBroken(ros::WallDuration timeout)
   boost::mutex::scoped_lock lock(mutex_);
   ros::WallTime deadline(ros::WallTime::now() + timeout);
 
-  while (sm_.getState().getId() != SM::Dead.getId())
-  {
-    if (!ros::ok())
+  while (sm_.getState().getId() != SM::Dead.getId()) {
+    if (!ros::ok()) {
       break;
+    }
 
     ros::WallDuration wait_time = ros::WallDuration(0.1);
-    if (timeout >= ros::WallDuration(0.0))
+    if (timeout >= ros::WallDuration(0.0)) {
       wait_time = std::min(wait_time, deadline - ros::WallTime::now());
+    }
 
-    if (wait_time <= ros::WallDuration(0.0))
+    if (wait_time <= ros::WallDuration(0.0)) {
       break;  // The deadline has expired
+    }
 
     condition_.timed_wait(mutex_, boost::posix_time::milliseconds(wait_time.toSec() * 1000.0f));
   }
@@ -256,8 +260,7 @@ void Bond::breakBond()
 {
   {
     boost::mutex::scoped_lock lock(mutex_);
-    if (sm_.getState().getId() != SM::Dead.getId())
-    {
+    if (sm_.getState().getId() != SM::Dead.getId()) {
       sm_.Die();
       publishStatus(false);
     }
@@ -303,13 +306,13 @@ void Bond::onDisconnectTimeout()
 void Bond::bondStatusCB(const bond::Status::ConstPtr &msg)
 {
   // Filters out messages from other bonds and messages from ourself
-  if (msg->id == id_ && msg->instance_id != instance_id_)
-  {
+  if (msg->id == id_ && msg->instance_id != instance_id_) {
     {
       boost::mutex::scoped_lock lock(mutex_);
 
-      if (sister_instance_id_.empty())
+      if (sister_instance_id_.empty()) {
         sister_instance_id_ = msg->instance_id;
+      }
       if (sister_instance_id_ != msg->instance_id) {
         ROS_ERROR("More than two locations are trying to use a single bond (topic: %s, id: %s).  "
                   "You should only instantiate at most two bond instances for each (topic, id) pair.",
@@ -317,17 +320,15 @@ void Bond::bondStatusCB(const bond::Status::ConstPtr &msg)
         return;
       }
 
-      if (msg->active)
-      {
+      if (msg->active) {
         sm_.SisterAlive();
-      }
-      else
-      {
+      } else {
         sm_.SisterDead();
 
         // Immediate ack for sister's death notification
-        if (sisterDiedFirst_)
+        if (sisterDiedFirst_) {
           publishStatus(false);
+        }
       }
     }
     flushPendingCallbacks();
@@ -338,16 +339,11 @@ void Bond::doPublishing(const ros::WallTimerEvent &)
 {
   boost::mutex::scoped_lock lock(mutex_);
   if (sm_.getState().getId() == SM::WaitingForSister.getId() ||
-      sm_.getState().getId() == SM::Alive.getId())
-  {
+      sm_.getState().getId() == SM::Alive.getId()) {
     publishStatus(true);
-  }
-  else if (sm_.getState().getId() == SM::AwaitSisterDeath.getId())
-  {
+  } else if (sm_.getState().getId() == SM::AwaitSisterDeath.getId()) {
     publishStatus(false);
-  }
-  else
-  {
+  } else {
     publishingTimer_.stop();
   }
 }
@@ -374,8 +370,9 @@ void Bond::flushPendingCallbacks()
     pending_callbacks_.clear();
   }
 
-  for (size_t i = 0; i < callbacks.size(); ++i)
+  for (size_t i = 0; i < callbacks.size(); ++i) {
     callbacks[i]();
+  }
 }
 
 }  // namespace bond
@@ -385,8 +382,9 @@ void BondSM::Connected()
 {
   b->connect_timer_.cancel();
   b->condition_.notify_all();
-  if (b->on_formed_)
+  if (b->on_formed_) {
     b->pending_callbacks_.push_back(b->on_formed_);
+  }
 }
 
 void BondSM::SisterDied()
@@ -399,8 +397,9 @@ void BondSM::Death()
   b->condition_.notify_all();
   b->heartbeat_timer_.cancel();
   b->disconnect_timer_.cancel();
-  if (b->on_broken_)
+  if (b->on_broken_) {
     b->pending_callbacks_.push_back(b->on_broken_);
+  }
 }
 
 void BondSM::Heartbeat()
