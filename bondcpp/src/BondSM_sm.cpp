@@ -8,8 +8,6 @@
 #include "bondcpp/bond.h"
 #include "bondcpp/BondSM_sm.h"
 
-using namespace statemap;
-
 // Static class declarations.
 SM_WaitingForSister SM::WaitingForSister("SM::WaitingForSister", 0);
 SM_Alive SM::Alive("SM::Alive", 1);
@@ -55,7 +53,7 @@ void BondSMState::SisterDead(BondSMContext& context)
 void BondSMState::Default(BondSMContext& context)
 {
     throw (
-        TransitionUndefinedException(
+        statemap::TransitionUndefinedException(
             context.getState().getName(),
             context.getTransition()));
 
