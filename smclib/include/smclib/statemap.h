@@ -48,19 +48,19 @@
 #include <iostream>
 #if defined(SMC_NO_EXCEPTIONS)
 #include <cassert>
-#endif // SMC_NO_EXCEPTIONS
+#endif  // SMC_NO_EXCEPTIONS
 #include <cstdio>
 #elif defined(WIN32)
 #include <iostream>
 #include <windows.h>
 #if defined(SMC_NO_EXCEPTIONS)
 #include <cassert>
-#endif // SMC_NO_EXCEPTIONS
+#endif  // SMC_NO_EXCEPTIONS
 #else
 #include <iostream.h>
 #if defined(SMC_NO_EXCEPTIONS)
 #include <assert.h>
-#endif // SMC_NO_EXCEPTIONS
+#endif  // SMC_NO_EXCEPTIONS
 #include <stdio.h>
 #endif
 #if ! defined(SMC_NO_EXCEPTIONS)
@@ -372,7 +372,7 @@ namespace statemap
         int _minIndex;
         int _maxIndex;
     };
-#endif // !SMC_NO_EXCEPTIONS
+#endif  // !SMC_NO_EXCEPTIONS
 
 //
 // end of Exception Classes.
@@ -489,7 +489,7 @@ namespace statemap
         // Friends
         //
             friend class FSMContext;
-        }; // end of class StateEntry
+        };  // end of class StateEntry
 
     //-----------------------------------------------------------
     // Member functions
@@ -566,7 +566,7 @@ namespace statemap
             _debug_stream = &debug_stream;
             return;
         }
-#endif // SMC_USES_IOSTREAMS
+#endif  // SMC_USES_IOSTREAMS
 
         // Is this state machine already inside a transition?
         // Yes if state is null.
@@ -625,7 +625,7 @@ namespace statemap
 #else
                 TRACE("ENTER STATE     : %s\n\r",
                       _state->getName());
-#endif // SMC_USES_IOSTREAMS
+#endif  // SMC_USES_IOSTREAMS
             }
         };
 
@@ -675,7 +675,7 @@ namespace statemap
 #else
                 TRACE("PUSH TO STATE   : %s\n\r",
                       _state->getName());
-#endif // SMC_USES_IOSTREAMS
+#endif  // SMC_USES_IOSTREAMS
             }
         };
 
@@ -693,7 +693,7 @@ namespace statemap
             {
                 throw PopOnEmptyStateStackException();
             }
-#endif // SMC_NO_EXCEPTIONS
+#endif  // SMC_NO_EXCEPTIONS
 
             _state = _state_stack->getState();
             entry = _state_stack;
@@ -709,7 +709,7 @@ namespace statemap
 #else
                 TRACE("POP TO STATE    : %s\n\r",
                       _state->getName());
-#endif // SMC_USES_IOSTREAMS
+#endif  // SMC_USES_IOSTREAMS
             }
         };
 
@@ -742,7 +742,7 @@ namespace statemap
           _debug_stream(&std::cerr)
 #else
           _debug_flag(false)
-#endif // SMC_USES_IOSTREAMS
+#endif  // SMC_USES_IOSTREAMS
         {};
 
     private:
@@ -785,8 +785,8 @@ namespace statemap
         // written to this output stream. This stream is set to
         // standard error by default.
         std::ostream *_debug_stream;
-#endif // SMC_USES_IOSTREAMS
-    }; // end of class FSMContext
+#endif  // SMC_USES_IOSTREAMS
+    };  // end of class FSMContext
 }  // namespace statemap
 
 //

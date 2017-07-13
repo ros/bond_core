@@ -239,7 +239,7 @@ bool Bond::waitUntilBroken(ros::WallDuration timeout)
       wait_time = std::min(wait_time, deadline - ros::WallTime::now());
 
     if (wait_time <= ros::WallDuration(0.0))
-      break; // The deadline has expired
+      break;  // The deadline has expired
 
     condition_.timed_wait(mutex_, boost::posix_time::milliseconds(wait_time.toSec() * 1000.0f));
   }
