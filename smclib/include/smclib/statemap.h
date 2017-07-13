@@ -19,7 +19,7 @@
 // Contributor(s):
 //
 // Namespace
-//	statemap
+//  statemap
 //
 // Description
 //  This namespace contains the finite state machine context
@@ -32,7 +32,7 @@
 //  the constructor of the derived class.
 //
 // Author
-//	C. W. Rapp
+//  C. W. Rapp
 //
 // RCS ID
 // $Id: statemap.h,v 1.15 2009/11/24 20:42:39 cwrapp Exp $
@@ -290,8 +290,8 @@ namespace statemap
     protected:
     private:
 
-		char *_state;
-		char *_transition;
+    char *_state;
+    char *_transition;
     };
 
     // This class is thrown when a state ID is either less than
@@ -379,8 +379,8 @@ namespace statemap
     protected:
     private:
 
-		int _index;
-		int _minIndex;
+    int _index;
+    int _minIndex;
         int _maxIndex;
     };
 #endif // !SMC_NO_EXCEPTIONS
@@ -827,18 +827,18 @@ namespace statemap
 // Committing release 5.1.0.
 //
 // Modified Files:
-// 	Makefile README.txt smc.mk tar_list.txt bin/Smc.jar
-// 	examples/Ant/EX1/build.xml examples/Ant/EX2/build.xml
-// 	examples/Ant/EX3/build.xml examples/Ant/EX4/build.xml
-// 	examples/Ant/EX5/build.xml examples/Ant/EX6/build.xml
-// 	examples/Ant/EX7/build.xml examples/Ant/EX7/src/Telephone.java
-// 	examples/Java/EX1/Makefile examples/Java/EX4/Makefile
-// 	examples/Java/EX5/Makefile examples/Java/EX6/Makefile
-// 	examples/Java/EX7/Makefile examples/Ruby/EX1/Makefile
-// 	lib/statemap.jar lib/C++/statemap.h lib/Java/Makefile
-// 	lib/Php/statemap.php lib/Scala/Makefile
-// 	lib/Scala/statemap.scala net/sf/smc/CODE_README.txt
-// 	net/sf/smc/README.txt net/sf/smc/Smc.java
+//  Makefile README.txt smc.mk tar_list.txt bin/Smc.jar
+//  examples/Ant/EX1/build.xml examples/Ant/EX2/build.xml
+//  examples/Ant/EX3/build.xml examples/Ant/EX4/build.xml
+//  examples/Ant/EX5/build.xml examples/Ant/EX6/build.xml
+//  examples/Ant/EX7/build.xml examples/Ant/EX7/src/Telephone.java
+//  examples/Java/EX1/Makefile examples/Java/EX4/Makefile
+//  examples/Java/EX5/Makefile examples/Java/EX6/Makefile
+//  examples/Java/EX7/Makefile examples/Ruby/EX1/Makefile
+//  lib/statemap.jar lib/C++/statemap.h lib/Java/Makefile
+//  lib/Php/statemap.php lib/Scala/Makefile
+//  lib/Scala/statemap.scala net/sf/smc/CODE_README.txt
+//  net/sf/smc/README.txt net/sf/smc/Smc.java
 // ----------------------------------------------------------------------
 //
 // Revision 1.12  2007/12/28 12:34:40  cwrapp
