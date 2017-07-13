@@ -37,7 +37,7 @@
 
 #include <string>
 
-const std::string TOPIC = "test_bond_topic";
+const char TOPIC[] = "test_bond_topic";
 std::string genId()
 {
   uuid_t uuid;
