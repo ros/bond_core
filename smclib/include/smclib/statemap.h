@@ -1,6 +1,3 @@
-#ifndef _H_STATEMAP
-#define _H_STATEMAP
-
 //
 // The contents of this file are subject to the Mozilla Public
 // License Version 1.1 (the "License"); you may not use this file
@@ -43,6 +40,9 @@
 // CHANGE LOG
 // (See bottom of file)
 //
+
+#ifndef SMCLIB__STATEMAP_H_
+#define SMCLIB__STATEMAP_H_
 
 #if (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1))
 #include <iostream>
@@ -876,4 +876,4 @@ namespace statemap
 // Revision 1.0  2003/12/14 20:37:49  charlesr
 // Initial revision
 
-#endif
+#endif  // SMCLIB__STATEMAP_H_

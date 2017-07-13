@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BONDCPP_TIMEOUT_H
-#define BONDCPP_TIMEOUT_H
+#ifndef BONDCPP__TIMEOUT_H_
+#define BONDCPP__TIMEOUT_H_
 
 #include <ros/ros.h>
 
@@ -62,4 +62,4 @@ private:
 
 } // namespace
 
-#endif
+#endif  // BONDCPP__TIMEOUT_H_

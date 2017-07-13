@@ -29,8 +29,8 @@
 
 /** \author Stuart Glaser */
 
-#ifndef BONDCPP_BOND_H
-#define BONDCPP_BOND_H
+#ifndef BONDCPP__BOND_H_
+#define BONDCPP__BOND_H_
 
 #include <boost/scoped_ptr.hpp>
 #include <boost/thread/mutex.hpp>
@@ -196,4 +196,4 @@ private:
   bond::Bond *b;
 };
 
-#endif
+#endif  // BONDCPP__BOND_H_

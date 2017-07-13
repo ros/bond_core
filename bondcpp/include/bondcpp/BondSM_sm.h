@@ -1,5 +1,5 @@
-#ifndef _H_BONDSM_SM
-#define _H_BONDSM_SM
+#ifndef BONDCPP__BONDSM_SM_H_
+#define BONDCPP__BONDSM_SM_H_
 
 /*
  * ex: set ro:
@@ -206,4 +206,4 @@ private:
  * End:
  */
 
-#endif // _H_BONDSM_SM
+#endif  // BONDCPP__BONDSM_SM_H_
