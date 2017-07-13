@@ -27,7 +27,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <bondcpp/timeout.h>
+#include "bondcpp/timeout.h"
+
+#include <algorithm>
 
 namespace bond {
 
@@ -78,8 +80,9 @@ ros::WallDuration Timeout::left()
 
 void Timeout::timerCallback(const ros::WallTimerEvent &)
 {
-  if (on_timeout_)
+  if (on_timeout_) {
     on_timeout_();
+  }
 }
 
-}
+}  // namespace bond

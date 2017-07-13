@@ -1,5 +1,5 @@
-#ifndef _H_BONDSM_SM
-#define _H_BONDSM_SM
+#ifndef BONDCPP__BONDSM_SM_H_
+#define BONDCPP__BONDSM_SM_H_
 
 /*
  * ex: set ro:
@@ -28,13 +28,12 @@ class BondSMState :
     public statemap::State
 {
 public:
-
     BondSMState(const char *name, int stateId)
     : statemap::State(name, stateId)
     {};
 
-    virtual void Entry(BondSMContext&) {};
-    virtual void Exit(BondSMContext&) {};
+    virtual void Entry(BondSMContext&) {}
+    virtual void Exit(BondSMContext&) {}
 
     virtual void ConnectTimeout(BondSMContext& context);
     virtual void Die(BondSMContext& context);
@@ -44,14 +43,12 @@ public:
     virtual void SisterDead(BondSMContext& context);
 
 protected:
-
     virtual void Default(BondSMContext& context);
 };
 
 class SM
 {
 public:
-
     static SM_WaitingForSister WaitingForSister;
     static SM_Alive Alive;
     static SM_AwaitSisterDeath AwaitSisterDeath;
@@ -62,11 +59,9 @@ class SM_Default :
     public BondSMState
 {
 public:
-
     SM_Default(const char *name, int stateId)
     : BondSMState(name, stateId)
     {};
-
 };
 
 class SM_WaitingForSister :
@@ -132,7 +127,6 @@ class BondSMContext :
     public statemap::FSMContext
 {
 public:
-
     BondSMContext(BondSM& owner)
     : FSMContext(SM::WaitingForSister),
       _owner(owner)
@@ -195,7 +189,6 @@ public:
     };
 
 private:
-
     BondSM& _owner;
 };
 
@@ -206,4 +199,4 @@ private:
  * End:
  */
 
-#endif // _H_BONDSM_SM
+#endif  // BONDCPP__BONDSM_SM_H_

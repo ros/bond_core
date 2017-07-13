@@ -35,7 +35,9 @@
 
 #include <test_bond/TestBond.h>
 
-const std::string TOPIC = "test_bond_topic";
+#include <string>
+
+const char TOPIC[] = "test_bond_topic";
 std::string genId()
 {
   uuid_t uuid;
