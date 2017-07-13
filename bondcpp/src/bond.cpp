@@ -232,13 +232,12 @@ bool Bond::waitUntilBroken(ros::WallDuration timeout)
   boost::mutex::scoped_lock lock(mutex_);
   ros::SteadyTime deadline(ros::SteadyTime::now() + timeout);
 
-  while (sm_.getState().getId() != SM::Dead.getId())
-  {
-    if (!ros::ok())
+  while (sm_.getState().getId() != SM::Dead.getId()) {
+    if (!ros::ok()) {
       break;
     }
 
-    ros::SteadyTime deadline(ros::SteadyTime::now() + timeout);
+    ros::WallDuration wait_time = ros::WallDuration(0.1);
     if (timeout >= ros::WallDuration(0.0)) {
       wait_time = std::min(wait_time, deadline - ros::SteadyTime::now());
     }
