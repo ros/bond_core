@@ -178,7 +178,8 @@ void Bond::start()
   pub_ = nh_.advertise<bond::Status>(topic_, 5);
   sub_ = nh_.subscribe<bond::Status>(topic_, 30, boost::bind(&Bond::bondStatusCB, this, _1));
 
-  publishingTimer_ = nh_.createWallTimer(ros::WallDuration(heartbeat_period_), &Bond::doPublishing, this);
+  publishingTimer_ = nh_.createWallTimer(
+    ros::WallDuration(heartbeat_period_), &Bond::doPublishing, this);
   started_ = true;
 }
 
@@ -314,9 +315,10 @@ void Bond::bondStatusCB(const bond::Status::ConstPtr &msg)
         sister_instance_id_ = msg->instance_id;
       }
       if (sister_instance_id_ != msg->instance_id) {
-        ROS_ERROR("More than two locations are trying to use a single bond (topic: %s, id: %s).  "
-                  "You should only instantiate at most two bond instances for each (topic, id) pair.",
-                  topic_.c_str(), id_.c_str());
+        ROS_ERROR(
+          "More than two locations are trying to use a single bond (topic: %s, id: %s).  "
+          "You should only instantiate at most two bond instances for each (topic, id) pair.",
+          topic_.c_str(), id_.c_str());
         return;
       }
 

@@ -37,8 +37,12 @@ namespace bond {
 class Timeout
 {
 public:
-  Timeout(const ros::Duration &d, boost::function<void(void)> on_timeout = boost::function<void(void)>());
-  Timeout(const ros::WallDuration &d, boost::function<void(void)> on_timeout = boost::function<void(void)>());
+  Timeout(
+    const ros::Duration &d,
+    boost::function<void(void)> on_timeout = boost::function<void(void)>());
+  Timeout(
+    const ros::WallDuration &d,
+    boost::function<void(void)> on_timeout = boost::function<void(void)>());
   ~Timeout();
 
   // Undefined what these do to a running timeout
