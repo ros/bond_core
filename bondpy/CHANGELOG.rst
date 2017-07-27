@@ -2,8 +2,8 @@
 Changelog for package bondpy
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.8.0 (2017-07-27)
+------------------
 * switch to package format 2 (`#27 <https://github.com/ros/bond_core/issues/27>`_)
 * Closer to pep8 compliance (`#25 <https://github.com/ros/bond_core/issues/25>`_)
 * Python3 compatibility (`#24 <https://github.com/ros/bond_core/issues/24>`_)

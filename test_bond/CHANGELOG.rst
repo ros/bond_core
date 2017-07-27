@@ -2,8 +2,8 @@
 Changelog for package test_bond
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.8.0 (2017-07-27)
+------------------
 * C++ style (`#28 <https://github.com/ros/bond_core/issues/28>`_)
 * switch to package format 2 (`#27 <https://github.com/ros/bond_core/issues/27>`_)
 * Closer to pep8 compliance (`#25 <https://github.com/ros/bond_core/issues/25>`_)

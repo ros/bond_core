@@ -2,8 +2,8 @@
 Changelog for package bondcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.8.0 (2017-07-27)
+------------------
 * Use SteadyTime and SteadyTimer for bond timeouts (`#18 <https://github.com/ros/bond_core/issues/18>`_)
 * C++ style (`#28 <https://github.com/ros/bond_core/issues/28>`_)
 * switch to package format 2 (`#27 <https://github.com/ros/bond_core/issues/27>`_)
