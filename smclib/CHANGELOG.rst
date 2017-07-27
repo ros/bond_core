@@ -2,6 +2,14 @@
 Changelog for package smclib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* C++ style (`#28 <https://github.com/ros/bond_core/issues/28>`_)
+* switch to package format 2 (`#27 <https://github.com/ros/bond_core/issues/27>`_)
+* remove trailing whitespaces (`#26 <https://github.com/ros/bond_core/issues/26>`_)
+* Closer to pep8 compliance (`#25 <https://github.com/ros/bond_core/issues/25>`_)
+* Contributors: Mikael Arguedas
+
 1.7.19 (2017-03-27)
 -------------------
 

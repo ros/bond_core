@@ -2,6 +2,14 @@
 Changelog for package test_bond
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* C++ style (`#28 <https://github.com/ros/bond_core/issues/28>`_)
+* switch to package format 2 (`#27 <https://github.com/ros/bond_core/issues/27>`_)
+* Closer to pep8 compliance (`#25 <https://github.com/ros/bond_core/issues/25>`_)
+* Python3 compatibility (`#24 <https://github.com/ros/bond_core/issues/24>`_)
+* Contributors: Mikael Arguedas
+
 1.7.19 (2017-03-27)
 -------------------
 
