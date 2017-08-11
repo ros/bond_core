@@ -76,3 +76,8 @@ catkin clean -b --yes
 catkin config --install
 catkin build -p1 -j1
 travis_time_end
+
+travis_time_start setup.after_script
+source ~/catkin_ws/devel/setup.bash
+rospack find bond_core
+travis_time_end
