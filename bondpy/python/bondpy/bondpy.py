@@ -321,7 +321,8 @@ class Bond(object):
                 if self.deadline:
                     wait_duration = min(wait_duration, self.deadline.left().to_sec())
                 self.condition.wait(wait_duration)
-            return self.sm.getState().getName() != 'SM.WaitingForSister'
+            return self.sm.getState().getName() != 'SM.WaitingForSister' and \
+                self.sm.getState().getName() != 'SM.Dead'
 
     ## \brief Blocks until the bond is broken for at most 'duration'.
     #
