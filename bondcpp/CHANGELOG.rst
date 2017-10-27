@@ -2,6 +2,11 @@
 Changelog for package bondcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix package.xml to comply with schema (`#30 <https://github.com/ros/bond_core/issues/30>`_)
+* Contributors: Mikael Arguedas
+
 1.8.0 (2017-07-27)
 ------------------
 * Use SteadyTime and SteadyTimer for bond timeouts (`#18 <https://github.com/ros/bond_core/issues/18>`_)

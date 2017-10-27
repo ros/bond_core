@@ -2,6 +2,11 @@
 Changelog for package bondpy
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix package.xml to comply with schema (`#30 <https://github.com/ros/bond_core/issues/30>`_)
+* Contributors: Mikael Arguedas
+
 1.8.0 (2017-07-27)
 ------------------
 * switch to package format 2 (`#27 <https://github.com/ros/bond_core/issues/27>`_)
