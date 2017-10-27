@@ -2,8 +2,8 @@
 Changelog for package test_bond
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.8.1 (2017-10-27)
+------------------
 * fix package.xml to comply with schema (`#30 <https://github.com/ros/bond_core/issues/30>`_)
 * Contributors: Mikael Arguedas
 
