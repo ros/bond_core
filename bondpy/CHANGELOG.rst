@@ -2,8 +2,8 @@
 Changelog for package bondpy
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.7.20 (2017-12-18)
+-------------------
 * fix package.xml to comply with schema (`#31 <https://github.com/ros/bond_core/issues/31>`_)
 * switch to package format 2 (`#27 <https://github.com/ros/bond_core/issues/27>`_)
 * Closer to pep8 compliance (`#25 <https://github.com/ros/bond_core/issues/25>`_)
