@@ -2,6 +2,12 @@
 Changelog for package bond
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix package.xml to comply with schema (`#31 <https://github.com/ros/bond_core/issues/31>`_)
+* switch to package format 2 (`#27 <https://github.com/ros/bond_core/issues/27>`_)
+* Contributors: Mikael Arguedas
+
 1.7.19 (2017-03-27)
 -------------------
 

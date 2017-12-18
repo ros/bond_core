@@ -2,6 +2,14 @@
 Changelog for package bondcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix package.xml to comply with schema (`#31 <https://github.com/ros/bond_core/issues/31>`_)
+* C++ style (`#28 <https://github.com/ros/bond_core/issues/28>`_)
+* switch to package format 2 (`#27 <https://github.com/ros/bond_core/issues/27>`_)
+* remove trailing whitespaces (`#26 <https://github.com/ros/bond_core/issues/26>`_)
+* Contributors: Mikael Arguedas
+
 1.7.19 (2017-03-27)
 -------------------
 * fix unused var warning
