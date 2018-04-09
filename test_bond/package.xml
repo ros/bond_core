@@ -17,8 +17,10 @@
   <buildtool_depend version_gte="0.5.68">catkin</buildtool_depend>
 
   <build_depend>bondcpp</build_depend>
-  <build_depend>genmsg</build_depend>
+  <build_depend>cmake_modules</build_depend>
+  <build_depend>message_generation</build_depend>
   <build_depend>rostest</build_depend>
 
   <test_depend>bondpy</test_depend>
+  <test_depend>uuid</test_depend>
 </package>
