@@ -5,11 +5,16 @@ find_package(Boost REQUIRED)
 find_package(catkin REQUIRED bond cmake_modules roscpp smclib)
 find_package(UUID REQUIRED)
 
-include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
+include_directories(
+  include
+  ${catkin_INCLUDE_DIRS}
+  ${Boost_INCLUDE_DIRS}
+  ${UUID_INCLUDE_DIRS}
+)
 
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES ${PROJECT_NAME} ${UUID_LIBRARIES}
+  LIBRARIES ${PROJECT_NAME}
   CATKIN_DEPENDS bond roscpp smclib
   DEPENDS Boost
 )

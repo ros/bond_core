@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 
 project(test_bond)
 
-find_package(catkin REQUIRED COMPONENTS bondcpp genmsg rostest)
+find_package(catkin REQUIRED COMPONENTS cmake_modules bondcpp message_generation rostest)
 
 if(CATKIN_ENABLE_TESTING)
   include_directories(${GTEST_INCLUDE_DIRS})
@@ -17,8 +17,10 @@ catkin_package()
 
 if(CATKIN_ENABLE_TESTING)
   # add more tests
+  find_package(UUID REQUIRED)
+  include_directories(${UUID_INCLUDE_DIRS})
   add_executable(exercise_bond EXCLUDE_FROM_ALL test/exercise_bond.cpp)
-  target_link_libraries(exercise_bond ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
+  target_link_libraries(exercise_bond ${catkin_LIBRARIES} ${GTEST_LIBRARIES} ${UUID_LIBRARIES})
   if(test_bond_EXPORTED_TARGETS)
     add_dependencies(exercise_bond ${test_bond_EXPORTED_TARGETS})
   endif()
@@ -28,7 +30,7 @@ if(CATKIN_ENABLE_TESTING)
   add_rostest(test/test_python.launch)
 
   add_executable(test_callbacks_cpp EXCLUDE_FROM_ALL test/test_callbacks_cpp.cpp)
-  target_link_libraries(test_callbacks_cpp ${catkin_LIBRARIES} ${GTEST_LIBRARIES})
+  target_link_libraries(test_callbacks_cpp ${catkin_LIBRARIES} ${GTEST_LIBRARIES} ${UUID_LIBRARIES})
   if(test_bond_EXPORTED_TARGETS)
     add_dependencies(test_callbacks_cpp ${test_bond_EXPORTED_TARGETS})
   endif()
