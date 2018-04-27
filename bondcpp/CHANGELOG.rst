@@ -2,6 +2,13 @@
 Changelog for package bondcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* uuid dependency fixup (`#36 <https://github.com/ros/bond_core/issues/36>`_)
+  * dont export uuid dependency as this isnt anywhere in the public api
+  * fixx uuid dependency in test_bond as well
+* Contributors: Mikael Arguedas
+
 1.8.1 (2017-10-27)
 ------------------
 * fix package.xml to comply with schema (`#30 <https://github.com/ros/bond_core/issues/30>`_)
