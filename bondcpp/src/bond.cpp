@@ -218,7 +218,8 @@ bool Bond::waitUntilFormed(ros::WallDuration timeout)
       break;  // The deadline has expired
     }
 
-    condition_.timed_wait(mutex_, boost::posix_time::milliseconds(wait_time.toSec() * 1000.0f));
+    condition_.timed_wait(mutex_, boost::posix_time::milliseconds(
+      static_cast<int64_t>(wait_time.toSec() * 1000.0f)));
   }
   return sm_.getState().getId() != SM::WaitingForSister.getId();
 }
@@ -246,7 +247,8 @@ bool Bond::waitUntilBroken(ros::WallDuration timeout)
       break;  // The deadline has expired
     }
 
-    condition_.timed_wait(mutex_, boost::posix_time::milliseconds(wait_time.toSec() * 1000.0f));
+    condition_.timed_wait(mutex_, boost::posix_time::milliseconds(
+      static_cast<int64_t>(wait_time.toSec() * 1000.0f)));
   }
   return sm_.getState().getId() == SM::Dead.getId();
 }
