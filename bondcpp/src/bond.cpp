@@ -219,7 +219,7 @@ bool Bond::waitUntilFormed(ros::WallDuration timeout)
     }
 
     condition_.timed_wait(mutex_, boost::posix_time::milliseconds(
-      static_cast<int64_t>(wait_time.toSec() * 1000.0f)));
+      static_cast<int64_t>(wait_time.toSec() * 1000)));
   }
   return sm_.getState().getId() != SM::WaitingForSister.getId();
 }
