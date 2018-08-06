@@ -30,7 +30,13 @@
 
 #include <bondcpp/bond.h>
 #include <gtest/gtest.h>
-#include <uuid/uuid.h>
+
+#ifndef _WIN32
+# include <uuid/uuid.h>
+#else
+# include <rpc.h>
+#endif
+
 #include <ros/spinner.h>
 
 #include <test_bond/TestBond.h>
@@ -41,11 +47,21 @@ const char TOPIC[] = "test_bond_topic";
 
 std::string genId()
 {
+#ifndef _WIN32
   uuid_t uuid;
   uuid_generate_random(uuid);
   char uuid_str[40];
   uuid_unparse(uuid, uuid_str);
   return std::string(uuid_str);
+#else
+  UUID uuid;
+  UuidCreate(&uuid);
+  RPC_CSTR str;
+  UuidToStringA(&uuid, &str);
+  std::string return_string(reinterpret_cast<char *>(str));
+  RpcStringFreeA(&str);
+  return return_string;
+#endif
 }
 
 ros::ServiceClient getService()
