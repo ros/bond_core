@@ -30,11 +30,13 @@
 
 #include <bondcpp/bond.h>
 #include <gtest/gtest.h>
+
 #ifndef _WIN32
-#include <uuid/uuid.h>
+# include <uuid/uuid.h>
 #else
-#include <rpc.h>
+# include <rpc.h>
 #endif
+
 #include <ros/spinner.h>
 
 #include <test_bond/TestBond.h>
