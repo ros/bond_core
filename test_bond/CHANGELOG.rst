@@ -2,8 +2,8 @@
 Changelog for package test_bond
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.8.3 (2018-08-17)
+------------------
 * Fix build issue on Windows (`#38 <https://github.com/ros/bond_core/issues/38>`_)
   * Fix build issue on Windows
   * indent for better readability
