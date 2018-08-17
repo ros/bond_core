@@ -2,6 +2,14 @@
 Changelog for package bondcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Argument to Boost Milliseconds must be integral in Boost >= 1.67 (`#37 <https://github.com/ros/bond_core/issues/37>`_)
+  * Argument to Boost milliseconds  must be integral
+  * Fix style
+  * More consistent type
+* Contributors: Paul-Edouard Sarlin
+
 1.8.2 (2018-04-27)
 ------------------
 * uuid dependency fixup (`#36 <https://github.com/ros/bond_core/issues/36>`_)

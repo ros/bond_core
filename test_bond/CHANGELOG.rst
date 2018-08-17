@@ -2,6 +2,13 @@
 Changelog for package test_bond
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fix build issue on Windows (`#38 <https://github.com/ros/bond_core/issues/38>`_)
+  * Fix build issue on Windows
+  * indent for better readability
+* Contributors: Johnson Shih
+
 1.8.2 (2018-04-27)
 ------------------
 * uuid dependency fixup (`#36 <https://github.com/ros/bond_core/issues/36>`_)
