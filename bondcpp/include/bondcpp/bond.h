@@ -37,6 +37,7 @@
 #include <boost/thread/condition.hpp>
 
 #include <ros/ros.h>
+#include <ros/macros.h>
 
 #include <bondcpp/timeout.h>
 #include <bond/Constants.h>
@@ -46,6 +47,16 @@
 #include <string>
 #include <vector>
 
+#ifdef ROS_BUILD_SHARED_LIBS // ros is being built around shared libraries
+  #ifdef bondcpp_EXPORTS // we are building a shared lib/dll
+    #define BONDCPP_DECL ROS_HELPER_EXPORT
+  #else // we are using shared lib/dll
+    #define BONDCPP_DECL ROS_HELPER_IMPORT
+  #endif
+#else // ros is being built around static libraries
+  #define BONDCPP_DECL
+#endif
+
 namespace bond {
 
 /** \brief Forms a bond to monitor another process.
@@ -54,7 +65,7 @@ namespace bond {
  * another process and be notified when it dies.  In turn, it will be
  * notified when you die.
  */
-class Bond
+class BONDCPP_DECL Bond
 {
 public:
   /** \brief Constructs a bond, but does not connect
