@@ -11,7 +11,7 @@
 
 #define SMC_USES_IOSTREAMS
 
-#include <smclib/statemap.h>
+#include "smclibcpp/statemap.h"
 
 // Forward declarations.
 class SM;

@@ -41,8 +41,14 @@
 
 #include <string>
 #include <iostream>
+#include <chrono>
+#include <thread>
+#include <unistd.h>
+   using namespace std::this_thread; // sleep_for, sleep_until
+   using namespace std::chrono; // nanoseconds, system_clock, seconds
 
-const char TOPIC[] = "test_bond_topic";
+using namespace bond;
+const char TOPIC[] = "test_bond_topic_exc";
 std::string genId()
 {
 #ifndef _WIN32
@@ -61,38 +67,44 @@ std::string genId()
   return return_string;
 #endif
 }
-
-class TestCallbacksCpp : public ::testing::Test
+std::string id ;
+rclcpp::Node::SharedPtr  nh;
+void test_callback_exc()	
 {
-protected:
-  static void SetUpTestCase()
-  {
-    rclcpp::init(0, nullptr);
-  }
-};
+   bond::Bond a(TOPIC,id, nh);
+   bond::Bond b(TOPIC, id, nh);
 
-TEST_F(TestCallbacksCpp, dieInLifeCallback)
-{
-  auto nh1 = rclcpp::Node::make_shared("test_callbacks_cpp");
-  std::string id1 = genId();
-  bond::Bond a(TOPIC, id1, nh1);
-  bond::Bond b(TOPIC, id1, nh1);
-
-  a.setFormedCallback(std::bind(&bond::Bond::breakBond, &a));
+  a.setFormedCallback(std::bind(&Bond::breakBond, &a));
   a.start();
   b.start();
 
-  EXPECT_TRUE(a.waitUntilFormed(rclcpp::Duration(5.0)));
-  EXPECT_TRUE(b.waitUntilBroken(rclcpp::Duration(3.0)));
+   if (a.waitUntilFormed(rclcpp::Duration(5)) == true)
+  {
+  std::cout <<" Test of waitUntilFormed succsessful... "<<std::endl;
+  }
+  else
+  {
+   std::cout <<" Test of waitUntilFormed faild..."<<std::endl;
+  }
+     if (b.waitUntilBroken(rclcpp::Duration(3)) == true)
+  {
+  std::cout <<" Test of waitUntilBroken succsessful... "<<std::endl;
+  }
+  else
+  {
+   std::cout <<" Test of waitUntilBroken faild..."<<std::endl;
+  }  
+ return;
 }
+	
 
-TEST_F(TestCallbacksCpp, remoteNeverConnects)
+int main(int argc, char ** argv)
 {
-  auto nh2 = rclcpp::Node::make_shared("test_callbacks_cpp_2");
-  std::string id2 = genId();
-  bond::Bond a1(TOPIC, id2, nh2);
-
-  a1.start();
-  EXPECT_FALSE(a1.waitUntilFormed(rclcpp::Duration(5.0)));
-  EXPECT_TRUE(a1.waitUntilBroken(rclcpp::Duration(10.0)));
+  rclcpp::init(argc, argv);
+  nh = rclcpp::Node::make_shared("tets_bond");
+  id = genId();
+ test_callback_exc();  
+  rclcpp::shutdown();
+  return 0;
+  //return ret;
 }

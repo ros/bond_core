@@ -1,41 +1,53 @@
-cmake_minimum_required(VERSION 2.8.3)
-
+cmake_minimum_required(VERSION 3.5)
 project(test_bond)
 
-find_package(catkin REQUIRED COMPONENTS cmake_modules bondcpp message_generation rostest)
+# Support C++14
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 
-if(CATKIN_ENABLE_TESTING)
-  include_directories(${GTEST_INCLUDE_DIRS})
-  include_directories(include ${bondcpp_INCLUDE_DIRS})
-
-  # create the service
-  add_service_files(DIRECTORY srv FILES TestBond.srv)
-  generate_messages()
+if(NOT WIN32)
+  set_directory_properties(PROPERTIES COMPILE_OPTIONS "-Wall;-Wextra")
 endif()
 
-catkin_package()
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(test_bond_srv_gen REQUIRED)
+find_package(bondcpp REQUIRED)
+find_package(PkgConfig REQUIRED)
+find_package(Threads REQUIRED)
 
-if(CATKIN_ENABLE_TESTING)
-  # add more tests
-  find_package(UUID REQUIRED)
-  include_directories(${UUID_INCLUDE_DIRS})
-  add_executable(exercise_bond EXCLUDE_FROM_ALL test/exercise_bond.cpp)
-  target_link_libraries(exercise_bond ${catkin_LIBRARIES} ${GTEST_LIBRARIES} ${UUID_LIBRARIES})
-  if(test_bond_EXPORTED_TARGETS)
-    add_dependencies(exercise_bond ${test_bond_EXPORTED_TARGETS})
-  endif()
-  add_dependencies(tests exercise_bond)
+pkg_search_module(UUID REQUIRED uuid)
 
-  add_rostest(test/test_cpp.launch)
-  add_rostest(test/test_python.launch)
+set(INCLUDE_DIRS
+  ${rclcpp_INCLUDE_DIRS}
+  ${test_bond_srv_gen_INCLUDE_DIRS}
+  ${bondcpp_INCLUDE_DIRS}
+)
+set(LIBS
+  ${rclcpp_LIBRARIES}
+  ${bondcpp_LIBRARIES}
+  ${test_bond_srv_gen_LIBRARIES}
+  ${UUID_LIBRARIES}
+  )
+include_directories(${INCLUDE_DIRS})
+if(BUILD_TESTING)
+  find_package(ament_cmake_gtest REQUIRED)
+  find_package(ament_lint_auto REQUIRED)
+  ament_lint_auto_find_test_dependencies()
 
-  add_executable(test_callbacks_cpp EXCLUDE_FROM_ALL test/test_callbacks_cpp.cpp)
-  target_link_libraries(test_callbacks_cpp ${catkin_LIBRARIES} ${GTEST_LIBRARIES} ${UUID_LIBRARIES})
-  if(test_bond_EXPORTED_TARGETS)
-    add_dependencies(test_callbacks_cpp ${test_bond_EXPORTED_TARGETS})
-  endif()
-  add_dependencies(tests test_callbacks_cpp)
+  ament_add_gtest(test_callbacks_cpp test/test_callbacks_cpp.cpp)
+   if(TARGET test_callbacks_cpp)
+	  target_link_libraries(test_callbacks_cpp ${LIBS} ${GTEST_LIBRARIES})
+    endif()
+    add_executable(test_callbacks_cpp_exc test/test_callbacks_cpp_exc.cpp)
+    target_link_libraries(test_callbacks_cpp_exc ${LIBS} )
+    add_executable(exercise_bond_cpp_exc test/exercise_bond_cpp_exc.cpp)
+    target_link_libraries(exercise_bond_cpp_exc ${LIBS} )
+    install(
+    	  TARGETS
+    	  test_callbacks_cpp_exc
+	  exercise_bond_cpp_exc
+    	  DESTINATION lib/${PROJECT_NAME})
 
-  add_rostest(test/test_callbacks_cpp.launch)
-  add_rostest(test/test_callbacks_py.launch)
 endif()
+ament_package()

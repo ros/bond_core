@@ -1,41 +1,74 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.5)
 project(bondcpp)
 
-find_package(Boost REQUIRED)
-find_package(catkin REQUIRED bond cmake_modules roscpp smclib)
-find_package(UUID REQUIRED)
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 14)
+endif()
 
-include_directories(
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
+find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_ros REQUIRED)
+find_package(Boost REQUIRED)
+find_package(ament_cmake_auto REQUIRED)
+find_package(builtin_interfaces REQUIRED)
+find_package(rcl REQUIRED)
+find_package(rcl_interfaces REQUIRED)
+find_package(rmw REQUIRED)
+find_package(rmw_implementation REQUIRED)
+find_package(PkgConfig REQUIRED)
+find_package(Threads REQUIRED)
+
+pkg_search_module(UUID REQUIRED uuid)
+
+find_package(rcutils REQUIRED)
+find_package(smclibcpp REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(bond REQUIRED)
+
+set(INCLUDE_DIRS	
   include
-  ${catkin_INCLUDE_DIRS}
+  ${smclibcpp_INCLUDE_DIRS}
+  ${rclcpp_INCLUDE_DIRS}
+  ${bond_INCLUDE_DIRS}
   ${Boost_INCLUDE_DIRS}
   ${UUID_INCLUDE_DIRS}
+  ${rcl_INCLUDE_DIRS}
 )
+set(LIBS
+  ${rclcpp_LIBRARIES}
+  ${smclibcpp_LIBRARIES}
+  ${bond_LIBRARIES}
+  ${rcl_LIBRARIES}
+  )
 
-catkin_package(
-  INCLUDE_DIRS include
-  LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS bond roscpp smclib
-  DEPENDS Boost
-)
+include_directories(${INCLUDE_DIRS}) 
 
 add_library(${PROJECT_NAME}
-  src/timeout.cpp
   src/bond.cpp
   src/BondSM_sm.cpp
 )
-target_link_libraries(${PROJECT_NAME} ${UUID_LIBRARIES} ${catkin_LIBRARIES} ${BOOST_LIBRARIES})
+ament_target_dependencies(${PROJECT_NAME} rclcpp)
+target_link_libraries(${PROJECT_NAME} ${LIBS} ${UUID_LIBRARIES} ${Boost_LIBRARIES})
 
-if(catkin_EXPORTED_TARGETS)
-  add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
-endif()
+install(
+  TARGETS ${PROJECT_NAME}
+  DESTINATION lib/${PROJECT_NAME}
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
+  INCLUDES DESTINATION include
+  )
 
-# install stuff
-install(DIRECTORY include/${PROJECT_NAME}/
-  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-)
-install(TARGETS ${PROJECT_NAME}
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
-)
+ament_export_dependencies(ament_cmake)
+ament_export_dependencies(rclcpp)
+ament_export_include_directories(${INCLUDE_DIRS})
+ament_export_libraries(${PROJECT_NAME})
+
+install(
+  DIRECTORY include/${PROJECT_NAME}/
+  DESTINATION include/${PROJECT_NAME})
+ament_package()
+

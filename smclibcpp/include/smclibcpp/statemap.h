@@ -69,11 +69,12 @@
 #endif
 
 #include <string>
-
+#include <iostream>
 // Limit names to 100 ASCII characters.
 // Why 100? Because it is a round number.
 #define MAX_NAME_LEN 100
 
+using namespace std;
 namespace statemap
 {
 //---------------------------------------------------------------
@@ -402,6 +403,7 @@ protected:
         if (name != NULL)
         {
             _name = copyString(name);
+	    cout<< "name of state is " << _name << "and" <<" stateId is " << stateId << endl;
         }
         else
         {

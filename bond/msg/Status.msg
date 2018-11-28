@@ -1,4 +1,4 @@
-Header header
+std_msgs/Header header
 string id  # ID of the bond
 string instance_id  # Unique ID for an individual in a bond
 bool active
