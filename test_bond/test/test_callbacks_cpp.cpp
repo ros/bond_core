@@ -1,3 +1,17 @@
+// Copyright 2017 Open Source Robotics Foundation, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 /*
  * Copyright (c) 2009, Willow Garage, Inc.
  * All rights reserved.
@@ -28,19 +42,16 @@
  */
 
 
-#include <bondcpp/bond.h>
-#include <gtest/gtest.h>
-#include "rclcpp/rclcpp.hpp"
 #ifndef _WIN32
 # include <uuid/uuid.h>
 #else
 # include <rpc.h>
 #endif
-
-#include "test_bond_srv_gen/srv/test_bond.hpp"
-
+#include <gtest/gtest.h>
 #include <string>
-#include <iostream>
+#include "rclcpp/rclcpp.hpp"
+#include "bondcpp/bond.hpp"
+#include "test_bond_srv_gen/srv/test_bond.hpp"
 
 const char TOPIC[] = "test_bond_topic";
 std::string genId()
@@ -71,7 +82,7 @@ protected:
   }
 };
 
-TEST_F(TestCallbacksCpp, dieInLifeCallback)
+/*TEST_F(TestCallbacksCpp, dieInLifeCallback)
 {
   auto nh1 = rclcpp::Node::make_shared("test_callbacks_cpp");
   std::string id1 = genId();
@@ -84,7 +95,7 @@ TEST_F(TestCallbacksCpp, dieInLifeCallback)
 
   EXPECT_TRUE(a.waitUntilFormed(rclcpp::Duration(5.0)));
   EXPECT_TRUE(b.waitUntilBroken(rclcpp::Duration(3.0)));
-}
+}*/
 
 TEST_F(TestCallbacksCpp, remoteNeverConnects)
 {

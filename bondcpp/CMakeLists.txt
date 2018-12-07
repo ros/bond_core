@@ -28,28 +28,27 @@ find_package(smclibcpp REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(bond REQUIRED)
 
-set(INCLUDE_DIRS	
+set(INCLUDE_DIRS
   include
   ${smclibcpp_INCLUDE_DIRS}
   ${rclcpp_INCLUDE_DIRS}
   ${bond_INCLUDE_DIRS}
   ${Boost_INCLUDE_DIRS}
   ${UUID_INCLUDE_DIRS}
-  ${rcl_INCLUDE_DIRS}
-)
+  ${rcl_INCLUDE_DIRS})
+
 set(LIBS
   ${rclcpp_LIBRARIES}
   ${smclibcpp_LIBRARIES}
   ${bond_LIBRARIES}
-  ${rcl_LIBRARIES}
-  )
+  ${rcl_LIBRARIES})
 
-include_directories(${INCLUDE_DIRS}) 
+include_directories(${INCLUDE_DIRS})
 
 add_library(${PROJECT_NAME}
   src/bond.cpp
-  src/BondSM_sm.cpp
-)
+  src/BondSM_sm.cpp)
+
 ament_target_dependencies(${PROJECT_NAME} rclcpp)
 target_link_libraries(${PROJECT_NAME} ${LIBS} ${UUID_LIBRARIES} ${Boost_LIBRARIES})
 
@@ -59,8 +58,7 @@ install(
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
-  INCLUDES DESTINATION include
-  )
+  INCLUDES DESTINATION include)
 
 ament_export_dependencies(ament_cmake)
 ament_export_dependencies(rclcpp)
@@ -70,5 +68,10 @@ ament_export_libraries(${PROJECT_NAME})
 install(
   DIRECTORY include/${PROJECT_NAME}/
   DESTINATION include/${PROJECT_NAME})
+
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  ament_lint_auto_find_test_dependencies()
+endif()
 ament_package()
 

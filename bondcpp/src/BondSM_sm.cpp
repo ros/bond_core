@@ -1,3 +1,17 @@
+// Copyright 2015 Open Source Robotics Foundation, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 /*
  * ex: set ro:
  * DO NOT EDIT.
@@ -5,8 +19,8 @@
  * from file : BondSM_sm.sm
  */
 
-#include "bondcpp/bond.h"
-#include "bondcpp/BondSM_sm.h"
+#include "bondcpp/bond.hpp"
+#include "bondcpp/BondSM_sm.hpp"
 
 // Static class declarations.
 SM_WaitingForSister SM::WaitingForSister("SM::WaitingForSister", 0);
@@ -14,344 +28,268 @@ SM_Alive SM::Alive("SM::Alive", 1);
 SM_AwaitSisterDeath SM::AwaitSisterDeath("SM::AwaitSisterDeath", 2);
 SM_Dead SM::Dead("SM::Dead", 3);
 
-void BondSMState::ConnectTimeout(BondSMContext& context)
+void BondSMState::ConnectTimeout(BondSMContext & context)
 {
-    Default(context);
-    return;
+  Default(context);
 }
 
-void BondSMState::Die(BondSMContext& context)
+void BondSMState::Die(BondSMContext & context)
 {
-    Default(context);
-    return;
+  Default(context);
 }
 
-void BondSMState::DisconnectTimeout(BondSMContext& context)
+void BondSMState::DisconnectTimeout(BondSMContext & context)
 {
-    Default(context);
-    return;
+  Default(context);
 }
 
-void BondSMState::HeartbeatTimeout(BondSMContext& context)
+void BondSMState::HeartbeatTimeout(BondSMContext & context)
 {
-    Default(context);
-    return;
+  Default(context);
 }
 
-void BondSMState::SisterAlive(BondSMContext& context)
+void BondSMState::SisterAlive(BondSMContext & context)
 {
-    Default(context);
-    return;
+  Default(context);
 }
 
-void BondSMState::SisterDead(BondSMContext& context)
+void BondSMState::SisterDead(BondSMContext & context)
 {
-    Default(context);
-    return;
+  Default(context);
 }
 
-void BondSMState::Default(BondSMContext& context)
+void BondSMState::Default(BondSMContext & context)
 {
-    throw (
-        statemap::TransitionUndefinedException(
+  throw (
+          statemap::TransitionUndefinedException(
             context.getState().getName(),
             context.getTransition()));
-
-    return;
 }
 
-void SM_WaitingForSister::ConnectTimeout(BondSMContext& context)
+void SM_WaitingForSister::ConnectTimeout(BondSMContext & context)
 {
-    BondSM& ctxt(context.getOwner());
+  BondSM & ctxt(context.getOwner());
 
-    (context.getState()).Exit(context);
-    context.clearState();
-    try
-    {
-        ctxt.Death();
-        context.setState(SM::Dead);
-    }
-    catch (...)
-    {
-        context.setState(SM::Dead);
-        throw;
-    }
-    (context.getState()).Entry(context);
-
-    return;
+  (context.getState()).Exit(context);
+  context.clearState();
+  try {
+    ctxt.Death();
+    context.setState(SM::Dead);
+  } catch (...) {
+    context.setState(SM::Dead);
+    throw;
+  }
+  (context.getState()).Entry(context);
 }
 
-void SM_WaitingForSister::Die(BondSMContext& context)
+void SM_WaitingForSister::Die(BondSMContext & context)
 {
-    BondSM& ctxt(context.getOwner());
+  BondSM & ctxt(context.getOwner());
 
-    (context.getState()).Exit(context);
-    context.clearState();
-    try
-    {
-        ctxt.Death();
-        context.setState(SM::Dead);
-    }
-    catch (...)
-    {
-        context.setState(SM::Dead);
-        throw;
-    }
-    (context.getState()).Entry(context);
-
-    return;
+  (context.getState()).Exit(context);
+  context.clearState();
+  try {
+    ctxt.Death();
+    context.setState(SM::Dead);
+  } catch (...) {
+    context.setState(SM::Dead);
+    throw;
+  }
+  (context.getState()).Entry(context);
 }
 
-void SM_WaitingForSister::SisterAlive(BondSMContext& context)
+void SM_WaitingForSister::SisterAlive(BondSMContext & context)
 {
-    BondSM& ctxt(context.getOwner());
+  BondSM & ctxt(context.getOwner());
 
-    (context.getState()).Exit(context);
-    context.clearState();
-    try
-    {
-        ctxt.Connected();
-        context.setState(SM::Alive);
-    }
-    catch (...)
-    {
-        context.setState(SM::Alive);
-        throw;
-    }
-    (context.getState()).Entry(context);
-
-    return;
+  (context.getState()).Exit(context);
+  context.clearState();
+  try {
+    ctxt.Connected();
+    context.setState(SM::Alive);
+  } catch (...) {
+    context.setState(SM::Alive);
+    throw;
+  }
+  (context.getState()).Entry(context);
 }
 
-void SM_WaitingForSister::SisterDead(BondSMContext& context)
+void SM_WaitingForSister::SisterDead(BondSMContext & context)
 {
-    BondSM& ctxt(context.getOwner());
+  BondSM & ctxt(context.getOwner());
 
-    (context.getState()).Exit(context);
-    context.clearState();
-    try
-    {
-        ctxt.Connected();
-        ctxt.SisterDied();
-        ctxt.Death();
-        context.setState(SM::Dead);
-    }
-    catch (...)
-    {
-        context.setState(SM::Dead);
-        throw;
-    }
-    (context.getState()).Entry(context);
-
-    return;
+  (context.getState()).Exit(context);
+  context.clearState();
+  try {
+    ctxt.Connected();
+    ctxt.SisterDied();
+    ctxt.Death();
+    context.setState(SM::Dead);
+  } catch (...) {
+    context.setState(SM::Dead);
+    throw;
+  }
+  (context.getState()).Entry(context);
 }
 
-void SM_Alive::Die(BondSMContext& context)
+void SM_Alive::Die(BondSMContext & context)
 {
-    BondSM& ctxt(context.getOwner());
+  BondSM & ctxt(context.getOwner());
 
-    (context.getState()).Exit(context);
-    context.clearState();
-    try
-    {
-        ctxt.StartDying();
-        context.setState(SM::AwaitSisterDeath);
-    }
-    catch (...)
-    {
-        context.setState(SM::AwaitSisterDeath);
-        throw;
-    }
-    (context.getState()).Entry(context);
-
-    return;
-}
-
-void SM_Alive::HeartbeatTimeout(BondSMContext& context)
-{
-    BondSM& ctxt(context.getOwner());
-
-    (context.getState()).Exit(context);
-    context.clearState();
-    try
-    {
-        ctxt.Death();
-        context.setState(SM::Dead);
-    }
-    catch (...)
-    {
-        context.setState(SM::Dead);
-        throw;
-    }
-    (context.getState()).Entry(context);
-
-    return;
-}
-
-void SM_Alive::SisterAlive(BondSMContext& context)
-{
-    BondSM& ctxt(context.getOwner());
-
-    (context.getState()).Exit(context);
-    context.clearState();
-    try
-    {
-        ctxt.Heartbeat();
-        context.setState(SM::Alive);
-    }
-    catch (...)
-    {
-        context.setState(SM::Alive);
-        throw;
-    }
-    (context.getState()).Entry(context);
-
-    return;
-}
-
-void SM_Alive::SisterDead(BondSMContext& context)
-{
-    BondSM& ctxt(context.getOwner());
-
-    (context.getState()).Exit(context);
-    context.clearState();
-    try
-    {
-        ctxt.SisterDied();
-        ctxt.Death();
-        context.setState(SM::Dead);
-    }
-    catch (...)
-    {
-        context.setState(SM::Dead);
-        throw;
-    }
-    (context.getState()).Entry(context);
-
-    return;
-}
-
-void SM_AwaitSisterDeath::Die(BondSMContext& context)
-{
-    (context.getState()).Exit(context);
+  (context.getState()).Exit(context);
+  context.clearState();
+  try {
+    ctxt.StartDying();
     context.setState(SM::AwaitSisterDeath);
-    (context.getState()).Entry(context);
-
-    return;
-}
-
-void SM_AwaitSisterDeath::DisconnectTimeout(BondSMContext& context)
-{
-    BondSM& ctxt(context.getOwner());
-
-    (context.getState()).Exit(context);
-    context.clearState();
-    try
-    {
-        ctxt.Death();
-        context.setState(SM::Dead);
-    }
-    catch (...)
-    {
-        context.setState(SM::Dead);
-        throw;
-    }
-    (context.getState()).Entry(context);
-
-    return;
-}
-
-void SM_AwaitSisterDeath::HeartbeatTimeout(BondSMContext& context)
-{
-    (context.getState()).Exit(context);
+  } catch (...) {
     context.setState(SM::AwaitSisterDeath);
-    (context.getState()).Entry(context);
-
-    return;
+    throw;
+  }
+  (context.getState()).Entry(context);
 }
 
-void SM_AwaitSisterDeath::SisterAlive(BondSMContext& context)
+void SM_Alive::HeartbeatTimeout(BondSMContext & context)
 {
-    (context.getState()).Exit(context);
-    context.setState(SM::AwaitSisterDeath);
-    (context.getState()).Entry(context);
+  BondSM & ctxt(context.getOwner());
 
-    return;
-}
-
-void SM_AwaitSisterDeath::SisterDead(BondSMContext& context)
-{
-    BondSM& ctxt(context.getOwner());
-
-    (context.getState()).Exit(context);
-    context.clearState();
-    try
-    {
-        ctxt.Death();
-        context.setState(SM::Dead);
-    }
-    catch (...)
-    {
-        context.setState(SM::Dead);
-        throw;
-    }
-    (context.getState()).Entry(context);
-
-    return;
-}
-
-void SM_Dead::ConnectTimeout(BondSMContext& context)
-{
-    (context.getState()).Exit(context);
+  (context.getState()).Exit(context);
+  context.clearState();
+  try {
+    ctxt.Death();
     context.setState(SM::Dead);
-    (context.getState()).Entry(context);
-
-    return;
+  } catch (...) {
+    context.setState(SM::Dead);
+    throw;
+  }
+  (context.getState()).Entry(context);
 }
 
-void SM_Dead::Die(BondSMContext& context)
+void SM_Alive::SisterAlive(BondSMContext & context)
 {
-    (context.getState()).Exit(context);
-    context.setState(SM::Dead);
-    (context.getState()).Entry(context);
+  BondSM & ctxt(context.getOwner());
 
-    return;
+  (context.getState()).Exit(context);
+  context.clearState();
+  try {
+    ctxt.Heartbeat();
+    context.setState(SM::Alive);
+  } catch (...) {
+    context.setState(SM::Alive);
+    throw;
+  }
+  (context.getState()).Entry(context);
 }
 
-void SM_Dead::DisconnectTimeout(BondSMContext& context)
+void SM_Alive::SisterDead(BondSMContext & context)
 {
-    (context.getState()).Exit(context);
-    context.setState(SM::Dead);
-    (context.getState()).Entry(context);
+  BondSM & ctxt(context.getOwner());
 
-    return;
+  (context.getState()).Exit(context);
+  context.clearState();
+  try {
+    ctxt.SisterDied();
+    ctxt.Death();
+    context.setState(SM::Dead);
+  } catch (...) {
+    context.setState(SM::Dead);
+    throw;
+  }
+  (context.getState()).Entry(context);
 }
 
-void SM_Dead::HeartbeatTimeout(BondSMContext& context)
+void SM_AwaitSisterDeath::Die(BondSMContext & context)
 {
-    (context.getState()).Exit(context);
-    context.setState(SM::Dead);
-    (context.getState()).Entry(context);
-
-    return;
+  (context.getState()).Exit(context);
+  context.setState(SM::AwaitSisterDeath);
+  (context.getState()).Entry(context);
 }
 
-void SM_Dead::SisterAlive(BondSMContext& context)
+void SM_AwaitSisterDeath::DisconnectTimeout(BondSMContext & context)
 {
-    (context.getState()).Exit(context);
-    context.setState(SM::Dead);
-    (context.getState()).Entry(context);
+  BondSM & ctxt(context.getOwner());
 
-    return;
+  (context.getState()).Exit(context);
+  context.clearState();
+  try {
+    ctxt.Death();
+    context.setState(SM::Dead);
+  } catch (...) {
+    context.setState(SM::Dead);
+    throw;
+  }
+  (context.getState()).Entry(context);
 }
 
-void SM_Dead::SisterDead(BondSMContext& context)
+void SM_AwaitSisterDeath::HeartbeatTimeout(BondSMContext & context)
 {
-    (context.getState()).Exit(context);
-    context.setState(SM::Dead);
-    (context.getState()).Entry(context);
+  (context.getState()).Exit(context);
+  context.setState(SM::AwaitSisterDeath);
+  (context.getState()).Entry(context);
+}
 
-    return;
+void SM_AwaitSisterDeath::SisterAlive(BondSMContext & context)
+{
+  (context.getState()).Exit(context);
+  context.setState(SM::AwaitSisterDeath);
+  (context.getState()).Entry(context);
+}
+
+void SM_AwaitSisterDeath::SisterDead(BondSMContext & context)
+{
+  BondSM & ctxt(context.getOwner());
+
+  (context.getState()).Exit(context);
+  context.clearState();
+  try {
+    ctxt.Death();
+    context.setState(SM::Dead);
+  } catch (...) {
+    context.setState(SM::Dead);
+    throw;
+  }
+  (context.getState()).Entry(context);
+}
+
+void SM_Dead::ConnectTimeout(BondSMContext & context)
+{
+  (context.getState()).Exit(context);
+  context.setState(SM::Dead);
+  (context.getState()).Entry(context);
+}
+
+void SM_Dead::Die(BondSMContext & context)
+{
+  (context.getState()).Exit(context);
+  context.setState(SM::Dead);
+  (context.getState()).Entry(context);
+}
+
+void SM_Dead::DisconnectTimeout(BondSMContext & context)
+{
+  (context.getState()).Exit(context);
+  context.setState(SM::Dead);
+  (context.getState()).Entry(context);
+}
+
+void SM_Dead::HeartbeatTimeout(BondSMContext & context)
+{
+  (context.getState()).Exit(context);
+  context.setState(SM::Dead);
+  (context.getState()).Entry(context);
+}
+
+void SM_Dead::SisterAlive(BondSMContext & context)
+{
+  (context.getState()).Exit(context);
+  context.setState(SM::Dead);
+  (context.getState()).Entry(context);
+}
+
+void SM_Dead::SisterDead(BondSMContext & context)
+{
+  (context.getState()).Exit(context);
+  context.setState(SM::Dead);
+  (context.getState()).Entry(context);
 }
 
 /*

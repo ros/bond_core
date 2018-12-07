@@ -1,3 +1,17 @@
+// Copyright 2017 Open Source Robotics Foundation, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 /*
  * Copyright (c) 2009, Willow Garage, Inc.
  * All rights reserved.
@@ -28,26 +42,22 @@
  */
 
 
-#include <bondcpp/bond.h>
-#include <gtest/gtest.h>
-#include "rclcpp/rclcpp.hpp"
 #ifndef _WIN32
 # include <uuid/uuid.h>
 #else
 # include <rpc.h>
 #endif
-
-#include "test_bond_srv_gen/srv/test_bond.hpp"
-
+#include <unistd.h>
+#include <gtest/gtest.h>
 #include <string>
 #include <iostream>
 #include <chrono>
 #include <thread>
-#include <unistd.h>
-   using namespace std::this_thread; // sleep_for, sleep_until
-   using namespace std::chrono; // nanoseconds, system_clock, seconds
 
-using namespace bond;
+#include "rclcpp/rclcpp.hpp"
+#include "bondcpp/bond.hpp"
+#include "test_bond_srv_gen/srv/test_bond.hpp"
+
 const char TOPIC[] = "test_bond_topic_exc";
 std::string genId()
 {
@@ -67,41 +77,32 @@ std::string genId()
   return return_string;
 #endif
 }
-std::string id ;
-rclcpp::Node::SharedPtr  nh;
-void exercise_bond_cpp_exc()	
-{
-   bond::Bond a(TOPIC,id, nh);
 
+void exercise_bond_cpp_exc()
+{
+  std::string id;
+  rclcpp::Node::SharedPtr nh;
+  nh = rclcpp::Node::make_shared("tets_bond");
+  id = genId();
+  bond::Bond a(TOPIC, id, nh);
   a.start();
 
-   if (a.waitUntilFormed(rclcpp::Duration(5)) == false)
-  {
-  std::cout <<" Test of waitUntilFormed succsessful... "<<std::endl;
+  if (a.waitUntilFormed(rclcpp::Duration(5)) == false) {
+    std::cout << " Test of waitUntilFormed succsessful... " << std::endl;
+  } else {
+    std::cout << " Test of waitUntilFormed faild..." << std::endl;
   }
-  else
-  {
-   std::cout <<" Test of waitUntilFormed faild..."<<std::endl;
+  if (a.waitUntilBroken(rclcpp::Duration(10)) == true) {
+    std::cout << " Test of waitUntilBroken succsessful... " << std::endl;
+  } else {
+    std::cout << " Test of waitUntilBroken faild..." << std::endl;
   }
-     if (a.waitUntilBroken(rclcpp::Duration(10)) == true)
-   {
-  std::cout <<" Test of waitUntilBroken succsessful... "<<std::endl;
-  }
-  else
-  {
-   std::cout <<" Test of waitUntilBroken faild..."<<std::endl;
-  }
-  return;
 }
-	
 
 int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
-  nh = rclcpp::Node::make_shared("tets_bond");
-  id = genId();
   exercise_bond_cpp_exc();
   rclcpp::shutdown();
   return 0;
-  //return ret;
 }

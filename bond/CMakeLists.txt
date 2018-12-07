@@ -24,14 +24,10 @@ rosidl_generate_interfaces(${PROJECT_NAME}
 
 ament_export_dependencies(rosidl_default_runtime)
 
-#add_message_files(DIRECTORY msg
-#  FILES
-#  Constants.msg
-#  Status.msg
-#)
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  ament_lint_auto_find_test_dependencies()
+endif()
 
-#generate_messages(DEPENDENCIES std_msgs)
-
-#catkin_package(CATKIN_DEPENDS message_runtime std_msgs)
 ament_package()
 
