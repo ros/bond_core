@@ -29,7 +29,7 @@ install:
   - sudo pip3 install argcomplete setuptools pytest pep257 flake8
   - sudo -H python3 -m pip install -U setuptools
 
-# command to run tests
+# command to run tests for bond
 script:
   - mkdir -p $ROS2_WS_BOND
   - mkdir -p $ROS2_WS_BOND_SRC
