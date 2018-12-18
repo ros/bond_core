@@ -1,6 +1,6 @@
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Changelog for package smclib
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+Changelog for package bond
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 1.8.3 (2018-08-17)
 ------------------
@@ -15,10 +15,7 @@ Changelog for package smclib
 
 1.8.0 (2017-07-27)
 ------------------
-* C++ style (`#28 <https://github.com/ros/bond_core/issues/28>`_)
 * switch to package format 2 (`#27 <https://github.com/ros/bond_core/issues/27>`_)
-* remove trailing whitespaces (`#26 <https://github.com/ros/bond_core/issues/26>`_)
-* Closer to pep8 compliance (`#25 <https://github.com/ros/bond_core/issues/25>`_)
 * Contributors: Mikael Arguedas
 
 1.7.19 (2017-03-27)
@@ -63,14 +60,14 @@ Changelog for package smclib
 
 1.7.8 (2012-12-13)
 ------------------
-* update setup() to use generate_distutils_setup
+* add missing downstream depend
+* switched from langs to message\_* packages
 * Contributors: Dirk Thomas
 
 1.7.7 (2012-12-06)
 ------------------
-* Updated url tags in package.xml's `#1 <https://github.com/ros/bond_core/pull/1>`_
-* removed executable bit from header file
-* Contributors: Dirk Thomas, William Woodall
+* Updated url tags in package.xml's  `#1 <https://github.com/ros/bond_core/pull/1>`_
+* Contributors: William Woodall
 
 1.7.6 (2012-10-30)
 ------------------
@@ -80,7 +77,6 @@ Changelog for package smclib
 1.7.5 (2012-10-27)
 ------------------
 * clean up package.xml files
-* updated setup.py files
 * Contributors: Dirk Thomas
 
 1.7.4 (2012-10-06)
@@ -99,11 +95,17 @@ Changelog for package smclib
 
 1.7.0 (2012-10-01 16:51)
 ------------------------
-* catkinize bond
-* Downloading smclib from code.ros.org
+* catkinize the package and bump to 1.7.0 even though it is not tagged yet
+* Modified bond's state machine to handle "alive" messages from the sibling when already dead.
   --HG--
-  extra : rebase_source : d17dff0350b44646e6a952fc2cc883156ba9f4a4
+  extra : convert_revision : svn%3Aeb33c2ac-9c88-4c90-87e0-44a10359b0c3/stacks/common/trunk%4036189
+* Added global "bond_disable_heartbeat_timeout" parameter
+  --HG--
+  extra : convert_revision : svn%3Aeb33c2ac-9c88-4c90-87e0-44a10359b0c3/stacks/common/trunk%4036106
+* The bond state machine more gracefully handles excessive requests to die.
+  --HG--
+  extra : convert_revision : svn%3Aeb33c2ac-9c88-4c90-87e0-44a10359b0c3/stacks/common/trunk%4032653
 * Moving bond into common
   --HG--
   extra : convert_revision : svn%3Aeb33c2ac-9c88-4c90-87e0-44a10359b0c3/stacks/common/trunk%4032634
-* Contributors: Stuart Glaser, Vincent Rabaud, sglaser
+* Contributors: Vincent Rabaud, sglaser

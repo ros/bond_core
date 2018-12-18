@@ -33,7 +33,6 @@ set(INCLUDE_DIRS
   ${smclibcpp_INCLUDE_DIRS}
   ${rclcpp_INCLUDE_DIRS}
   ${bond_INCLUDE_DIRS}
-  ${Boost_INCLUDE_DIRS}
   ${UUID_INCLUDE_DIRS}
   ${rcl_INCLUDE_DIRS})
 
@@ -41,7 +40,8 @@ set(LIBS
   ${rclcpp_LIBRARIES}
   ${smclibcpp_LIBRARIES}
   ${bond_LIBRARIES}
-  ${rcl_LIBRARIES})
+  ${rcl_LIBRARIES}
+  ${rcutils_LIBRARIES})
 
 include_directories(${INCLUDE_DIRS})
 

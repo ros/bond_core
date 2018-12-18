@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(bond_core)
+project(bond_core NONE)
 # Default to C++14
 if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 14)
@@ -12,8 +12,5 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_python REQUIRED)
 find_package(ament_cmake_ros REQUIRED)
-if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)
-  ament_lint_auto_find_test_dependencies()
-endif()
+
 ament_package()

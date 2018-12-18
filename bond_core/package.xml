@@ -19,13 +19,12 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
   <exec_depend>bond</exec_depend>
   <exec_depend>bondcpp</exec_depend>
-  <exec_depend>bondpy</exec_depend>
-  <exec_depend>smclib</exec_depend>
-
-  <test_depend>ament_lint_auto</test_depend>
-  <test_depend>ament_lint_common</test_depend>
+  <!-- <exec_depend>bondpy</exec_depend>-->
+  <exec_depend>smclibcpp</exec_depend>
+  <exec_depend>smclibpy</exec_depend>
+  <exec_depend>test_bond_srv_gen</exec_depend>
+  <exec_depend>test_bond</exec_depend>
   <export>
     <build_type>ament_cmake</build_type>
-    <!-- <metapackage/> -->
   </export>
 </package>

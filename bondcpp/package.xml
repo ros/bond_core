@@ -33,6 +33,8 @@
   <build_depend>uuid</build_depend>
   
   <exec_depend>rclcpp</exec_depend>
+  <exec_depend>rcutils</exec_depend>
+  <exec_depend>rmw</exec_depend>
   <exec_depend>bond</exec_depend>
   <exec_depend>smclibcpp</exec_depend>
   <exec_depend>uuid</exec_depend>
