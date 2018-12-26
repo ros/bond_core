@@ -69,8 +69,8 @@ Build proccedure and testing
                  # source install/local_setup.sh
 
                 4.2 run the executables.
-		./install/test_bond/lib/test_bond/exercise_bond_cpp_exc
-		./install/test_bond/lib/test_bond/test_callbacks_cpp_exc
+			./install/test_bond/lib/test_bond/exercise_bond_cpp_exc
+			./install/test_bond/lib/test_bond/test_callbacks_cpp_exc
 
 	
 ROS2 Migration changes
@@ -84,6 +84,7 @@ ROS2 Migration changes
 	4. waitUntilFormed  and  waitUntilBroken functions modified, locking system removed to handle callback of node as Callback Queue is not available in ROS2.
 	
 Limitations
+
 	1. Work around done for timer.
 	2. CallbackQueue is not available hence function related to Callback Queue commented out.
 	3. Dead publising period and timer is not used.
