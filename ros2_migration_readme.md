@@ -63,7 +63,7 @@ Build proccedure and testing
 
                  3.1 # colcon test
 
-        4. The executable are generated follow the below steps to run tests.
+        4. The executables are generated follow the below steps to run tests.
 
                 4.1 source local setup
 
@@ -76,8 +76,8 @@ Build proccedure and testing
 	
 ROS2 Migration changes
 
-	The basic concept and design is same as ROS.
-	Most of changes for migration has been done as per Migration guide.
+	The basic concept and design are same as ROS.
+	All changes for migration have been done as per Migration guide.
 	1. Node is passed to bond constructor.
 	2. The timeout class is removed and steady timer is replaced by wall timer.
 	3. a) For each timer, timeout time is set.
@@ -86,7 +86,7 @@ ROS2 Migration changes
 	
 Limitations
 
-	1. Work around done for timer.
+	1. Work around is done for timer.
 	2. CallbackQueue is not available hence function related to Callback Queue commented out.
 	3. Dead publising period and timer is not used.
 	4. bondpy needs to be migrate.
