@@ -47,10 +47,11 @@ Build proccedure and testing
 
                 1.2 # cd ros2_ws_bond/src
 
-                1.3 # git clone https://github.com/kishornaik10/bond_core.git (checkout for ros2-devel branch)
+                1.3 # git clone git@github.com:kishornaik10/bond_core.git
+		    or git clone https://github.com/kishornaik10/bond_core.git 
+		    (checkout for ros2-devel branch)
 
-                1.4 # source source /opt/ros/crystal/setup.sh
-
+                1.4 # source /opt/ros/crystal/setup.sh
 
 
         2. Build the package
