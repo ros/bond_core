@@ -16,7 +16,7 @@ catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
   CATKIN_DEPENDS bond roscpp smclib
-  DEPENDS Boost
+  DEPENDS Boost UUID
 )
 
 add_library(${PROJECT_NAME}
