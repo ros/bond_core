@@ -78,7 +78,7 @@ ROS2 Migration changes
 
 	The basic concept and design are same as ROS.
 	All changes for migration have been done as per Migration guide.
-	1. Node is passed to bond constructor.
+	1. Node is passed to a constructor of bond class.
 	2. The timeout class is removed and steady timer is replaced by wall timer.
 	3. a) For each timer, timeout time is set.
 	   b) Callback function is written in such a way that it will be called on valid request, so flag is used.
