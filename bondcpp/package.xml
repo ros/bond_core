@@ -8,8 +8,8 @@
     another process has terminated.
   </description>
   <maintainer email="michael@openrobotics.org">Michael Carroll</maintainer>
-  <license>Apache License 2.0</license>
-
+  <license>BSD</license>
+  <!-- <license>Apache License 2.0</license> -->
   <url type="website">http://www.ros.org/wiki/bondcpp</url>
   <url type="bugtracker">https://github.com/ros/bond_core/issues</url>
   <url type="repository">https://github.com/ros/bond_core</url>
