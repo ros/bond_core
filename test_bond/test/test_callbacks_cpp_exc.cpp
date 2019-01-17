@@ -57,7 +57,7 @@
 
 #include "bondcpp/bond.hpp"
 #include "rclcpp/rclcpp.hpp"
-#include "test_bond_srv_gen/srv/test_bond.hpp"
+#include "test_bond/srv/test_bond.hpp"
 
 const char TOPIC[] = "test_bond_topic_exc";
 std::string genId()

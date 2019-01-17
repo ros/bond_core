@@ -15,20 +15,25 @@
   <author>Stuart Glaser</author>
 
   <build_depend>ament_cmake</build_depend>
-  <build_depend>test_bond_srv_gen</build_depend>
+  <buildtool_depend>std_msgs</buildtool_depend>
+  <buildtool_depend>builtin_interfaces</buildtool_depend>
+  <buildtool_depend>rosidl_default_generators</buildtool_depend>
   <build_depend>bondcpp</build_depend>
 
   <exec_depend>rclcpp</exec_depend>
   <exec_depend>bondcpp</exec_depend>
-  <exec_depend>test_bond_srv_gen</exec_depend>
+  <exec_depend>rosidl_default_runtime</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
  
-  <test_depend>test_bond_srv_gen</test_depend>
   <test_depend>rclcpp</test_depend>
   <test_depend>bondcpp</test_depend>
   <test_depend>uuid</test_depend>
+  <test_depend>builtin_interfaces</test_depend>
   <test_depend>ament_cmake_gtest</test_depend>
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
+
+  <member_of_group>rosidl_interface_packages</member_of_group>
 
   <export>
     <build_type>ament_cmake</build_type>

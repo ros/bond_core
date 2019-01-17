@@ -11,22 +11,27 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
-find_package(test_bond_srv_gen REQUIRED)
+find_package(rosidl_cmake REQUIRED)
+find_package(builtin_interfaces REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
 find_package(bondcpp REQUIRED)
 find_package(PkgConfig REQUIRED)
 find_package(Threads REQUIRED)
 
 pkg_search_module(UUID REQUIRED uuid)
 
+rosidl_generate_interfaces(${PROJECT_NAME}
+  "srv/TestBond.srv"
+  DEPENDENCIES std_msgs builtin_interfaces
+)
+
 set(INCLUDE_DIRS
   ${rclcpp_INCLUDE_DIRS}
-  ${test_bond_srv_gen_INCLUDE_DIRS}
   ${bondcpp_INCLUDE_DIRS}
 )
 set(LIBS
   ${rclcpp_LIBRARIES}
   ${bondcpp_LIBRARIES}
-  ${test_bond_srv_gen_LIBRARIES}
   ${UUID_LIBRARIES}
 )
 include_directories(${INCLUDE_DIRS})
@@ -38,11 +43,17 @@ if(BUILD_TESTING)
   ament_add_gtest(test_callbacks_cpp test/test_callbacks_cpp.cpp)
   if(TARGET test_callbacks_cpp)
     target_link_libraries(test_callbacks_cpp ${LIBS} ${GTEST_LIBRARIES})
+    rosidl_target_interfaces(test_callbacks_cpp
+      ${PROJECT_NAME} "rosidl_typesupport_cpp")
   endif()
   add_executable(test_callbacks_cpp_exc test/test_callbacks_cpp_exc.cpp)
   target_link_libraries(test_callbacks_cpp_exc ${LIBS})
+  rosidl_target_interfaces(test_callbacks_cpp_exc
+    ${PROJECT_NAME} "rosidl_typesupport_cpp")
   add_executable(exercise_bond_cpp_exc test/exercise_bond_cpp_exc.cpp)
   target_link_libraries(exercise_bond_cpp_exc ${LIBS})
+  rosidl_target_interfaces(exercise_bond_cpp_exc
+    ${PROJECT_NAME} "rosidl_typesupport_cpp")
   install(
           TARGETS
           test_callbacks_cpp_exc
