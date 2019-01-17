@@ -11,7 +11,6 @@ endif()
 
 find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_ros REQUIRED)
-find_package(Boost REQUIRED)
 find_package(ament_cmake_auto REQUIRED)
 find_package(builtin_interfaces REQUIRED)
 find_package(rcl REQUIRED)
@@ -50,7 +49,7 @@ add_library(${PROJECT_NAME}
   src/BondSM_sm.cpp)
 
 ament_target_dependencies(${PROJECT_NAME} rclcpp)
-target_link_libraries(${PROJECT_NAME} ${LIBS} ${UUID_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${LIBS} ${UUID_LIBRARIES})
 
 install(
   TARGETS ${PROJECT_NAME}
