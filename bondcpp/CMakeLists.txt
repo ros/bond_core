@@ -23,13 +23,13 @@ find_package(Threads REQUIRED)
 pkg_search_module(UUID REQUIRED uuid)
 
 find_package(rcutils REQUIRED)
-find_package(smclibcpp REQUIRED)
+find_package(smclib REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(bond REQUIRED)
 
 set(INCLUDE_DIRS
   include
-  ${smclibcpp_INCLUDE_DIRS}
+  ${smclib_INCLUDE_DIRS}
   ${rclcpp_INCLUDE_DIRS}
   ${bond_INCLUDE_DIRS}
   ${UUID_INCLUDE_DIRS}
@@ -37,7 +37,7 @@ set(INCLUDE_DIRS
 
 set(LIBS
   ${rclcpp_LIBRARIES}
-  ${smclibcpp_LIBRARIES}
+  ${smclib_LIBRARIES}
   ${bond_LIBRARIES}
   ${rcl_LIBRARIES}
   ${rcutils_LIBRARIES})

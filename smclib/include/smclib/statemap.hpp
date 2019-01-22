@@ -55,8 +55,8 @@
 // (See bottom of file)
 //
 
-#ifndef SMCLIBCPP__STATEMAP_HPP_
-#define SMCLIBCPP__STATEMAP_HPP_
+#ifndef SMCLIB__STATEMAP_HPP_
+#define SMCLIB__STATEMAP_HPP_
 
 #if (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1))
 #if defined(SMC_NO_EXCEPTIONS)
@@ -859,4 +859,4 @@ private:
 // Revision 1.0  2003/12/14 20:37:49  charlesr
 // Initial revision
 
-#endif  // SMCLIBCPP__STATEMAP_HPP_
+#endif  // SMCLIB__STATEMAP_HPP_
