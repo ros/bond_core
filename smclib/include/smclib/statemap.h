@@ -52,7 +52,6 @@
 #include <cstdio>
 #elif defined(WIN32)
 #include <iostream>
-#include <windows.h>
 #if defined(SMC_NO_EXCEPTIONS)
 #include <cassert>
 #endif  // SMC_NO_EXCEPTIONS
