@@ -190,7 +190,7 @@ private:
   void doPublishing(const ros::SteadyTimerEvent& e);
   void publishStatus(bool active);
 
-  std::vector<boost::function<void(void)>> pending_callbacks_;
+  std::vector<boost::function<void(void)> > pending_callbacks_;
   void flushPendingCallbacks();
 };
 

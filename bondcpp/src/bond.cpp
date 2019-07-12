@@ -398,7 +398,7 @@ void Bond::publishStatus(bool active)
 
 void Bond::flushPendingCallbacks()
 {
-    std::vector<boost::function<void(void)>> callbacks;
+    std::vector<boost::function<void(void)> > callbacks;
     {
         boost::mutex::scoped_lock lock(mutex_);
         callbacks = pending_callbacks_;
