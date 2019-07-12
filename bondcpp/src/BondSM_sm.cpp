@@ -52,7 +52,7 @@ void BondSMState::SisterDead(BondSMContext& context)
 
 void BondSMState::Default(BondSMContext& context)
 {
-    throw (
+    throw(
         statemap::TransitionUndefinedException(
             context.getState().getName(),
             context.getTransition()));
@@ -353,9 +353,3 @@ void SM_Dead::SisterDead(BondSMContext& context)
 
     return;
 }
-
-/*
- * Local variables:
- *  buffer-read-only: t
- * End:
- */

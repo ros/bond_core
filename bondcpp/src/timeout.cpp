@@ -33,15 +33,15 @@
 
 namespace bond {
 
-Timeout::Timeout(const ros::Duration &d,
+Timeout::Timeout(const ros::Duration& d,
                  boost::function<void(void)> on_timeout)
-  : duration_(d.sec, d.nsec), on_timeout_(on_timeout)
+    : duration_(d.sec, d.nsec), on_timeout_(on_timeout)
 {
 }
 
-Timeout::Timeout(const ros::WallDuration &d,
+Timeout::Timeout(const ros::WallDuration& d,
                  boost::function<void(void)> on_timeout)
-  : duration_(d), on_timeout_(on_timeout)
+    : duration_(d), on_timeout_(on_timeout)
 {
 }
 
@@ -50,16 +50,15 @@ Timeout::~Timeout()
   timer_.stop();
 }
 
-void Timeout::setDuration(const ros::Duration &d)
+void Timeout::setDuration(const ros::Duration& d)
 {
   duration_ = ros::WallDuration(d.sec, d.nsec);
 }
 
-void Timeout::setDuration(const ros::WallDuration &d)
+void Timeout::setDuration(const ros::WallDuration& d)
 {
   duration_ = d;
 }
-
 
 void Timeout::reset()
 {
@@ -78,11 +77,12 @@ ros::WallDuration Timeout::left()
   return std::max(ros::WallDuration(0.0), deadline_ - ros::SteadyTime::now());
 }
 
-void Timeout::timerCallback(const ros::SteadyTimerEvent &)
+void Timeout::timerCallback(const ros::SteadyTimerEvent&)
 {
-  if (on_timeout_) {
+  if (on_timeout_)
+  {
     on_timeout_();
   }
 }
 
-}  // namespace bond
+} // namespace bond
