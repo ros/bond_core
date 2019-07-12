@@ -40,6 +40,7 @@
 #endif
 
 #include <algorithm>
+#include <funcional>
 #include <string>
 #include <vector>
 
@@ -79,9 +80,9 @@ Bond::Bond(const std::string &topic, const std::string &id,
   sisterDiedFirst_(false),
   started_(false),
 
-  connect_timer_(ros::WallDuration(), boost::bind(&Bond::onConnectTimeout, this)),
-  heartbeat_timer_(ros::WallDuration(), boost::bind(&Bond::onHeartbeatTimeout, this)),
-  disconnect_timer_(ros::WallDuration(), boost::bind(&Bond::onDisconnectTimeout, this))
+  connect_timer_(ros::WallDuration(), std::bind(&Bond::onConnectTimeout, this)),
+  heartbeat_timer_(ros::WallDuration(), std::bind(&Bond::onHeartbeatTimeout, this)),
+  disconnect_timer_(ros::WallDuration(), std::bind(&Bond::onDisconnectTimeout, this))
 {
   setConnectTimeout(bond::Constants::DEFAULT_CONNECT_TIMEOUT);
   setDisconnectTimeout(bond::Constants::DEFAULT_DISCONNECT_TIMEOUT);
@@ -176,7 +177,7 @@ void Bond::start()
   boost::mutex::scoped_lock lock(mutex_);
   connect_timer_.reset();
   pub_ = nh_.advertise<bond::Status>(topic_, 5);
-  sub_ = nh_.subscribe<bond::Status>(topic_, 30, boost::bind(&Bond::bondStatusCB, this, _1));
+  sub_ = nh_.subscribe<bond::Status>(topic_, 30, std::bind(&Bond::bondStatusCB, this, std::placeholders::_1));
 
   publishingTimer_ = nh_.createSteadyTimer(
     ros::WallDuration(heartbeat_period_), &Bond::doPublishing, this);
