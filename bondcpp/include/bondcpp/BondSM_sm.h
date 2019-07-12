@@ -8,6 +8,7 @@
  * from file : BondSM_sm.sm
  */
 
+
 #define SMC_USES_IOSTREAMS
 
 #include <smclib/statemap.h>
@@ -23,13 +24,13 @@ class BondSMState;
 class BondSMContext;
 class BondSM;
 
-class BondSMState : public statemap::State
+class BondSMState :
+    public statemap::State
 {
 public:
     BondSMState(const char *name, int stateId)
-        : statemap::State(name, stateId)
-    {
-    };
+    : statemap::State(name, stateId)
+    {};
 
     virtual void Entry(BondSMContext&) {}
     virtual void Exit(BondSMContext&) {}
@@ -54,22 +55,22 @@ public:
     static SM_Dead Dead;
 };
 
-class SM_Default : public BondSMState
+class SM_Default :
+    public BondSMState
 {
 public:
     SM_Default(const char *name, int stateId)
-        : BondSMState(name, stateId)
-    {
-    };
+    : BondSMState(name, stateId)
+    {};
 };
 
-class SM_WaitingForSister : public SM_Default
+class SM_WaitingForSister :
+    public SM_Default
 {
 public:
     SM_WaitingForSister(const char *name, int stateId)
-        : SM_Default(name, stateId)
-    {
-    };
+    : SM_Default(name, stateId)
+    {};
 
     void ConnectTimeout(BondSMContext& context);
     void Die(BondSMContext& context);
@@ -77,13 +78,13 @@ public:
     void SisterDead(BondSMContext& context);
 };
 
-class SM_Alive : public SM_Default
+class SM_Alive :
+    public SM_Default
 {
 public:
     SM_Alive(const char *name, int stateId)
-        : SM_Default(name, stateId)
-    {
-    };
+    : SM_Default(name, stateId)
+    {};
 
     void Die(BondSMContext& context);
     void HeartbeatTimeout(BondSMContext& context);
@@ -91,13 +92,13 @@ public:
     void SisterDead(BondSMContext& context);
 };
 
-class SM_AwaitSisterDeath : public SM_Default
+class SM_AwaitSisterDeath :
+    public SM_Default
 {
 public:
     SM_AwaitSisterDeath(const char *name, int stateId)
-        : SM_Default(name, stateId)
-    {
-    };
+    : SM_Default(name, stateId)
+    {};
 
     void Die(BondSMContext& context);
     void DisconnectTimeout(BondSMContext& context);
@@ -106,13 +107,13 @@ public:
     void SisterDead(BondSMContext& context);
 };
 
-class SM_Dead : public SM_Default
+class SM_Dead :
+    public SM_Default
 {
 public:
     SM_Dead(const char *name, int stateId)
-        : SM_Default(name, stateId)
-    {
-    };
+    : SM_Default(name, stateId)
+    {};
 
     void ConnectTimeout(BondSMContext& context);
     void Die(BondSMContext& context);
@@ -122,18 +123,19 @@ public:
     void SisterDead(BondSMContext& context);
 };
 
-class BondSMContext : public statemap::FSMContext
+class BondSMContext :
+    public statemap::FSMContext
 {
 public:
     BondSMContext(BondSM& owner)
-        : FSMContext(SM::WaitingForSister), _owner(owner)
-    {
-    };
+    : FSMContext(SM::WaitingForSister),
+      _owner(owner)
+    {};
 
     BondSMContext(BondSM& owner, const statemap::State& state)
-        : FSMContext(state), _owner(owner)
-    {
-    };
+    : FSMContext(state),
+      _owner(owner)
+    {};
 
     virtual void enterStartState()
     {
@@ -153,7 +155,7 @@ public:
             throw statemap::StateUndefinedException();
         }
 
-        return dynamic_cast<BondSMState&>(*_state);
+        return (dynamic_cast<BondSMState&>(*_state));
     };
 
     void ConnectTimeout()
@@ -190,4 +192,11 @@ private:
     BondSM& _owner;
 };
 
-#endif // BONDCPP__BONDSM_SM_H_
+
+/*
+ * Local variables:
+ *  buffer-read-only: t
+ * End:
+ */
+
+#endif  // BONDCPP__BONDSM_SM_H_
