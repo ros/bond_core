@@ -47,42 +47,42 @@ Timeout::Timeout(const ros::WallDuration& d,
 
 Timeout::~Timeout()
 {
-  timer_.stop();
+    timer_.stop();
 }
 
 void Timeout::setDuration(const ros::Duration& d)
 {
-  duration_ = ros::WallDuration(d.sec, d.nsec);
+    duration_ = ros::WallDuration(d.sec, d.nsec);
 }
 
 void Timeout::setDuration(const ros::WallDuration& d)
 {
-  duration_ = d;
+    duration_ = d;
 }
 
 void Timeout::reset()
 {
-  timer_.stop();
-  timer_ = nh_.createSteadyTimer(duration_, &Timeout::timerCallback, this, true);
-  deadline_ = ros::SteadyTime::now() + duration_;
+    timer_.stop();
+    timer_ = nh_.createSteadyTimer(duration_, &Timeout::timerCallback, this, true);
+    deadline_ = ros::SteadyTime::now() + duration_;
 }
 
 void Timeout::cancel()
 {
-  timer_.stop();
+    timer_.stop();
 }
 
 ros::WallDuration Timeout::left()
 {
-  return std::max(ros::WallDuration(0.0), deadline_ - ros::SteadyTime::now());
+    return std::max(ros::WallDuration(0.0), deadline_ - ros::SteadyTime::now());
 }
 
 void Timeout::timerCallback(const ros::SteadyTimerEvent&)
 {
-  if (on_timeout_)
-  {
-    on_timeout_();
-  }
+    if (on_timeout_)
+    {
+        on_timeout_();
+    }
 }
 
 } // namespace bond

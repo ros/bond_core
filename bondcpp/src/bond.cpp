@@ -50,9 +50,9 @@ static std::string makeUUID()
 #ifdef _WIN32
     UUID uuid;
     UuidCreate(&uuid);
-    unsigned char *str;
+    unsigned char* str;
     UuidToStringA(&uuid, &str);
-    std::string return_string(reinterpret_cast<char *>(str));
+    std::string return_string(reinterpret_cast<char*>(str));
     RpcStringFreeA(&str);
     return return_string;
 #else
@@ -165,7 +165,7 @@ void Bond::setHeartbeatPeriod(double dur)
     heartbeat_period_ = dur;
 }
 
-void Bond::setCallbackQueue(ros::CallbackQueueInterface *queue)
+void Bond::setCallbackQueue(ros::CallbackQueueInterface* queue)
 {
     if (started_)
     {
