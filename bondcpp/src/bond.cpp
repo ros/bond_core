@@ -40,7 +40,8 @@
 #endif
 
 #include <algorithm>
-#include <funcional>
+#include <functional>
+#include <mutex>
 #include <string>
 #include <vector>
 
@@ -66,11 +67,11 @@ static std::string makeUUID()
 }
 
 Bond::Bond(const std::string &topic, const std::string &id,
-           boost::function<void(void)> on_broken,
-           boost::function<void(void)> on_formed)
+           std::function<void(void)> on_broken,
+           std::function<void(void)> on_formed)
   :
 
-  bondsm_(new BondSM(this)),
+  bondsm_(std::make_unique<BondSM>(this)),
   sm_(*bondsm_),
   topic_(topic),
   id_(id),
@@ -113,7 +114,7 @@ Bond::~Bond()
   heartbeat_timer_.cancel();
   disconnect_timer_.cancel();
 
-  boost::mutex::scoped_lock lock(mutex_);
+  std::lock_guard<std::mutex> lock(mutex_);
   pub_.shutdown();
 }
 
@@ -174,7 +175,7 @@ void Bond::setCallbackQueue(ros::CallbackQueueInterface *queue)
 
 void Bond::start()
 {
-  boost::mutex::scoped_lock lock(mutex_);
+  std::lock_guard<std::mutex> lock(mutex_);
   connect_timer_.reset();
   pub_ = nh_.advertise<bond::Status>(topic_, 5);
   sub_ = nh_.subscribe<bond::Status>(topic_, 30, std::bind(&Bond::bondStatusCB, this, std::placeholders::_1));
@@ -184,15 +185,15 @@ void Bond::start()
   started_ = true;
 }
 
-void Bond::setFormedCallback(boost::function<void(void)> on_formed)
+void Bond::setFormedCallback(const std::function<void(void)>& on_formed)
 {
-  boost::mutex::scoped_lock lock(mutex_);
+  std::lock_guard<std::mutex> lock(mutex_);
   on_formed_ = on_formed;
 }
 
-void Bond::setBrokenCallback(boost::function<void(void)> on_broken)
+void Bond::setBrokenCallback(const std::function<void(void)>& on_broken)
 {
-  boost::mutex::scoped_lock lock(mutex_);
+  std::lock_guard<std::mutex> lock(mutex_);
   on_broken_ = on_broken;
 }
 
@@ -202,7 +203,7 @@ bool Bond::waitUntilFormed(ros::Duration timeout)
 }
 bool Bond::waitUntilFormed(ros::WallDuration timeout)
 {
-  boost::mutex::scoped_lock lock(mutex_);
+  std::lock_guard<std::mutex> lock(mutex_);
   ros::SteadyTime deadline(ros::SteadyTime::now() + timeout);
 
   while (sm_.getState().getId() == SM::WaitingForSister.getId()) {
@@ -231,7 +232,7 @@ bool Bond::waitUntilBroken(ros::Duration timeout)
 }
 bool Bond::waitUntilBroken(ros::WallDuration timeout)
 {
-  boost::mutex::scoped_lock lock(mutex_);
+  std::lock_guard<std::mutex> lock(mutex_);
   ros::SteadyTime deadline(ros::SteadyTime::now() + timeout);
 
   while (sm_.getState().getId() != SM::Dead.getId()) {
@@ -256,14 +257,14 @@ bool Bond::waitUntilBroken(ros::WallDuration timeout)
 
 bool Bond::isBroken()
 {
-  boost::mutex::scoped_lock lock(mutex_);
+  std::lock_guard<std::mutex> lock(mutex_);
   return sm_.getState().getId() == SM::Dead.getId();
 }
 
 void Bond::breakBond()
 {
   {
-    boost::mutex::scoped_lock lock(mutex_);
+    std::lock_guard<std::mutex> lock(mutex_);
     if (sm_.getState().getId() != SM::Dead.getId()) {
       sm_.Die();
       publishStatus(false);
@@ -276,7 +277,7 @@ void Bond::breakBond()
 void Bond::onConnectTimeout()
 {
   {
-    boost::mutex::scoped_lock lock(mutex_);
+    std::lock_guard<std::mutex> lock(mutex_);
     sm_.ConnectTimeout();
   }
   flushPendingCallbacks();
@@ -293,7 +294,7 @@ void Bond::onHeartbeatTimeout()
   }
 
   {
-    boost::mutex::scoped_lock lock(mutex_);
+    std::lock_guard<std::mutex> lock(mutex_);
     sm_.HeartbeatTimeout();
   }
   flushPendingCallbacks();
@@ -301,7 +302,7 @@ void Bond::onHeartbeatTimeout()
 void Bond::onDisconnectTimeout()
 {
   {
-    boost::mutex::scoped_lock lock(mutex_);
+    std::lock_guard<std::mutex> lock(mutex_);
     sm_.DisconnectTimeout();
   }
   flushPendingCallbacks();
@@ -312,7 +313,7 @@ void Bond::bondStatusCB(const bond::Status::ConstPtr &msg)
   // Filters out messages from other bonds and messages from ourself
   if (msg->id == id_ && msg->instance_id != instance_id_) {
     {
-      boost::mutex::scoped_lock lock(mutex_);
+      std::lock_guard<std::mutex> lock(mutex_);
 
       if (sister_instance_id_.empty()) {
         sister_instance_id_ = msg->instance_id;
@@ -342,7 +343,7 @@ void Bond::bondStatusCB(const bond::Status::ConstPtr &msg)
 
 void Bond::doPublishing(const ros::SteadyTimerEvent &)
 {
-  boost::mutex::scoped_lock lock(mutex_);
+  std::lock_guard<std::mutex> lock(mutex_);
   if (sm_.getState().getId() == SM::WaitingForSister.getId() ||
       sm_.getState().getId() == SM::Alive.getId()) {
     publishStatus(true);
@@ -368,9 +369,9 @@ void Bond::publishStatus(bool active)
 
 void Bond::flushPendingCallbacks()
 {
-  std::vector<boost::function<void(void)> > callbacks;
+  std::vector<std::function<void(void)> > callbacks;
   {
-    boost::mutex::scoped_lock lock(mutex_);
+    std::lock_guard<std::mutex> lock(mutex_);
     callbacks = pending_callbacks_;
     pending_callbacks_.clear();
   }

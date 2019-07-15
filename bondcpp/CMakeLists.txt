@@ -19,10 +19,15 @@ catkin_package(
   DEPENDS Boost
 )
 
+# ROS Melodic: http://www.ros.org/reps/rep-0003.html
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 14)
+endif()
+
 add_library(${PROJECT_NAME}
-  src/timeout.cpp
   src/bond.cpp
   src/BondSM_sm.cpp
+  src/timeout.cpp
 )
 target_link_libraries(${PROJECT_NAME} ${UUID_LIBRARIES} ${catkin_LIBRARIES} ${BOOST_LIBRARIES})
 

@@ -45,6 +45,8 @@
 #include "BondSM_sm.h"
 
 #include <string>
+#include <functional>
+#include <mutex>
 #include <vector>
 
 #ifdef ROS_BUILD_SHARED_LIBS // ros is being built around shared libraries
@@ -77,8 +79,8 @@ public:
    * \param on_formed callback that will be called when the bond is formed.
    */
   Bond(const std::string &topic, const std::string &id,
-       boost::function<void(void)> on_broken = boost::function<void(void)>(),
-       boost::function<void(void)> on_formed = boost::function<void(void)>());
+       std::function<void(void)> on_broken = nullptr,
+       std::function<void(void)> on_formed = nullptr);
 
   /** \brief Destructs the object, breaking the bond if it is still formed.
    */
@@ -101,11 +103,11 @@ public:
 
   /** \brief Sets the formed callback.
    */
-  void setFormedCallback(boost::function<void(void)> on_formed);
+  void setFormedCallback(const std::function<void(void)>& on_formed);
 
   /** \brief Sets the broken callback
    */
-  void setBrokenCallback(boost::function<void(void)> on_broken);
+  void setBrokenCallback(const std::function<void(void)>& on_broken);
 
   /** \brief Blocks until the bond is formed for at most 'duration'.
    *
@@ -152,19 +154,19 @@ private:
   friend class ::BondSM;
 
   ros::NodeHandle nh_;
-  boost::scoped_ptr<BondSM> bondsm_;
+  std::unique_ptr<BondSM> bondsm_;
   BondSMContext sm_;
 
   std::string topic_;
   std::string id_;
   std::string instance_id_;
   std::string sister_instance_id_;
-  boost::function<void(void)> on_broken_;
-  boost::function<void(void)> on_formed_;
+  std::function<void(void)> on_broken_;
+  std::function<void(void)> on_formed_;
   bool sisterDiedFirst_;
   bool started_;
 
-  boost::mutex mutex_;
+  std::mutex mutex_;
   boost::condition condition_;
 
   double connect_timeout_;
@@ -189,7 +191,7 @@ private:
   void doPublishing(const ros::SteadyTimerEvent &e);
   void publishStatus(bool active);
 
-  std::vector<boost::function<void(void)> > pending_callbacks_;
+  std::vector<std::function<void(void)> > pending_callbacks_;
   void flushPendingCallbacks();
 };
 
