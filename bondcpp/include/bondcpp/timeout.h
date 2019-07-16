@@ -30,6 +30,8 @@
 #ifndef BONDCPP__TIMEOUT_H_
 #define BONDCPP__TIMEOUT_H_
 
+#include <functional>
+
 #include <ros/ros.h>
 
 namespace bond {
@@ -37,12 +39,8 @@ namespace bond {
 class Timeout
 {
 public:
-  Timeout(
-    const ros::Duration &d,
-    boost::function<void(void)> on_timeout = boost::function<void(void)>());
-  Timeout(
-    const ros::WallDuration &d,
-    boost::function<void(void)> on_timeout = boost::function<void(void)>());
+  Timeout(const ros::Duration &d, std::function<void(void)> on_timeout = nullptr);
+  Timeout(const ros::WallDuration &d, std::function<void(void)> on_timeout = nullptr);
   ~Timeout();
 
   // Undefined what these do to a running timeout
@@ -58,7 +56,7 @@ private:
   ros::SteadyTimer timer_;
   ros::SteadyTime deadline_;
   ros::WallDuration duration_;
-  boost::function<void(void)> on_timeout_;
+  std::function<void(void)> on_timeout_;
 
   void timerCallback(const ros::SteadyTimerEvent &e);
 };

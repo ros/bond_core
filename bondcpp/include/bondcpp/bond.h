@@ -167,7 +167,7 @@ private:
   bool started_;
 
   std::mutex mutex_;
-  boost::condition condition_;
+  std::condition_variable condition_;
 
   double connect_timeout_;
   double heartbeat_timeout_;

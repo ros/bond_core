@@ -30,17 +30,16 @@
 #include "bondcpp/timeout.h"
 
 #include <algorithm>
+#include <functional>
 
 namespace bond {
 
-Timeout::Timeout(const ros::Duration &d,
-                 boost::function<void(void)> on_timeout)
+Timeout::Timeout(const ros::Duration &d, std::function<void(void)> on_timeout)
   : duration_(d.sec, d.nsec), on_timeout_(on_timeout)
 {
 }
 
-Timeout::Timeout(const ros::WallDuration &d,
-                 boost::function<void(void)> on_timeout)
+Timeout::Timeout(const ros::WallDuration &d, std::function<void(void)> on_timeout)
   : duration_(d), on_timeout_(on_timeout)
 {
 }

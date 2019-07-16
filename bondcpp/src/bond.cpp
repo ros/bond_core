@@ -30,8 +30,6 @@
 // Author: Stuart Glaser
 
 #include <bondcpp/bond.h>
-#include <boost/thread/thread_time.hpp>
-#include <boost/date_time/posix_time/posix_time_types.hpp>
 
 #ifdef _WIN32
 #include <Rpc.h>
@@ -40,6 +38,7 @@
 #endif
 
 #include <algorithm>
+#include <chrono>
 #include <functional>
 #include <mutex>
 #include <string>
@@ -203,7 +202,7 @@ bool Bond::waitUntilFormed(ros::Duration timeout)
 }
 bool Bond::waitUntilFormed(ros::WallDuration timeout)
 {
-  std::lock_guard<std::mutex> lock(mutex_);
+  std::unique_lock<std::mutex> lock(mutex_);
   ros::SteadyTime deadline(ros::SteadyTime::now() + timeout);
 
   while (sm_.getState().getId() == SM::WaitingForSister.getId()) {
@@ -220,8 +219,7 @@ bool Bond::waitUntilFormed(ros::WallDuration timeout)
       break;  // The deadline has expired
     }
 
-    condition_.timed_wait(mutex_, boost::posix_time::milliseconds(
-      static_cast<int64_t>(wait_time.toSec() * 1000.0f)));
+    condition_.wait_for(lock, std::chrono::duration<double, std::ratio<1>>(wait_time.toSec()));
   }
   return sm_.getState().getId() != SM::WaitingForSister.getId();
 }
@@ -232,7 +230,7 @@ bool Bond::waitUntilBroken(ros::Duration timeout)
 }
 bool Bond::waitUntilBroken(ros::WallDuration timeout)
 {
-  std::lock_guard<std::mutex> lock(mutex_);
+  std::unique_lock<std::mutex> lock(mutex_);
   ros::SteadyTime deadline(ros::SteadyTime::now() + timeout);
 
   while (sm_.getState().getId() != SM::Dead.getId()) {
@@ -249,8 +247,7 @@ bool Bond::waitUntilBroken(ros::WallDuration timeout)
       break;  // The deadline has expired
     }
 
-    condition_.timed_wait(mutex_, boost::posix_time::milliseconds(
-      static_cast<int64_t>(wait_time.toSec() * 1000.0f)));
+    condition_.wait_for(lock, std::chrono::duration<double, std::ratio<1>>(wait_time.toSec()));
   }
   return sm_.getState().getId() == SM::Dead.getId();
 }
