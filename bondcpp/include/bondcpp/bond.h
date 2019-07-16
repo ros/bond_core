@@ -32,10 +32,6 @@
 #ifndef BONDCPP__BOND_H_
 #define BONDCPP__BOND_H_
 
-#include <boost/scoped_ptr.hpp>
-#include <boost/thread/mutex.hpp>
-#include <boost/thread/condition.hpp>
-
 #include <ros/ros.h>
 #include <ros/macros.h>
 
@@ -44,9 +40,10 @@
 #include <bond/Status.h>
 #include "BondSM_sm.h"
 
-#include <string>
+#include <condition_variable>
 #include <functional>
 #include <mutex>
+#include <string>
 #include <vector>
 
 #ifdef ROS_BUILD_SHARED_LIBS // ros is being built around shared libraries
