@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?> -->
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>bondcpp</name>
   <version>2.0.0</version>
@@ -9,35 +9,23 @@
   </description>
   <maintainer email="michael@openrobotics.org">Michael Carroll</maintainer>
   <license>BSD</license>
-  <!-- <license>Apache License 2.0</license> -->
   <url type="website">http://www.ros.org/wiki/bondcpp</url>
   <url type="bugtracker">https://github.com/ros/bond_core/issues</url>
   <url type="repository">https://github.com/ros/bond_core</url>
   <author>Stuart Glaser</author>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
-  <buildtool_depend>ament_cmake_ros</buildtool_depend>
-  <buildtool_depend>rosidl_default_generators</buildtool_depend>
-  
-  <build_export_depend>rmw</build_export_depend>
-  <build_export_depend>builtin_interfaces</build_export_depend>
-  <build_export_depend>rcl_interfaces</build_export_depend>
-  
-  <build_depend>builtin_interfaces</build_depend>
-  <build_depend>rcl_interfaces</build_depend>
-  <build_depend>rcl</build_depend>
+
   <build_depend>bond</build_depend>
   <build_depend>rclcpp</build_depend>
   <build_depend>smclib</build_depend>
   <build_depend>uuid</build_depend>
-  
-  <exec_depend>rclcpp</exec_depend>
-  <exec_depend>rcutils</exec_depend>
-  <exec_depend>rmw</exec_depend>
+
   <exec_depend>bond</exec_depend>
+  <exec_depend>rclcpp</exec_depend>
   <exec_depend>smclib</exec_depend>
   <exec_depend>uuid</exec_depend>
-  
+
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
 

@@ -46,16 +46,19 @@
 #ifndef BONDCPP__BOND_HPP_
 #define BONDCPP__BOND_HPP_
 
+#include <condition_variable>
+#include <functional>
 #include <memory>
 #include <mutex>
-#include <functional>
-#include <condition_variable>
 #include <string>
 #include <vector>
-#include "rclcpp/rclcpp.hpp"
+
 #include "bond/msg/constants.hpp"
 #include "bond/msg/status.hpp"
-#include "BondSM_sm.hpp"
+
+#include "bondcpp/BondSM_sm.hpp"
+
+#include "rclcpp/rclcpp.hpp"
 
 namespace bond
 {
@@ -106,9 +109,6 @@ public:
   void deadpublishingTimerReset();
   void deadpublishingTimerCancel();
 
-#if 0
-  void setCallbackQueue(ros::CallbackQueueInterface * queue);
-#endif
   /** \brief Starts the bond and connects to the sister process.
    */
   void start();
@@ -143,7 +143,7 @@ public:
   std::string getInstanceId() {return instance_id_;}
 
 private:
-  friend class ::BondSM;
+  friend struct ::BondSM;
   rclcpp::TimerBase::SharedPtr connect_timer_;
   rclcpp::TimerBase::SharedPtr disconnect_timer_;
   rclcpp::TimerBase::SharedPtr heartbeat_timer_;

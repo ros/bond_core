@@ -11,26 +11,32 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_python REQUIRED)
 
-include_directories(include)
-ament_python_install_package(${PROJECT_NAME})
+add_library(smclib_header INTERFACE)
+target_include_directories(smclib_header INTERFACE
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>)
 
-ament_export_dependencies(ament_cmake)
-ament_export_include_directories(include)
 install(
-  TARGETS
+  TARGETS smclib_header
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
+  INCLUDES DESTINATION include
 )
 
 install(
-  DIRECTORY include/${PROJECT_NAME}/
-  DESTINATION include/${PROJECT_NAME})
+  DIRECTORY include/
+  DESTINATION include)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
 endif()
+
+ament_python_install_package(${PROJECT_NAME})
+
+ament_export_dependencies(ament_cmake)
+ament_export_include_directories(include)
 
 ament_package()
 

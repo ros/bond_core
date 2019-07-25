@@ -1,5 +1,4 @@
 cmake_minimum_required(VERSION 3.5)
-
 project(bond)
 
 # Default to C++14
@@ -20,14 +19,14 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/Constants.msg"
   "msg/Status.msg"
   DEPENDENCIES std_msgs builtin_interfaces
+  ADD_LINTER_TESTS
 )
-
-ament_export_dependencies(rosidl_default_runtime)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
 endif()
 
+ament_export_dependencies(rosidl_default_runtime)
 ament_package()
 

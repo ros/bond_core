@@ -50,12 +50,14 @@
 #else
 #include <uuid/uuid.h>
 #endif
+
+#include <algorithm>
 #include <chrono>
 #include <iostream>
-#include <algorithm>
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
+
 using namespace std::chrono_literals;
 
 namespace bond
@@ -127,7 +129,6 @@ Bond::~Bond()
   heartbeatTimerCancel();
   disconnectTimerCancel();
   std::unique_lock<std::mutex> lock(mutex_);
-  rclcpp::shutdown();
 }
 
 void Bond::setConnectTimeout(double dur)
@@ -305,11 +306,11 @@ void Bond::start()
   std::unique_lock<std::mutex> lock(mutex_);
   connect_timer_reset_flag_ = true;
   connectTimerReset();
-  rmw_qos_profile_t custom_qos_profile = rmw_qos_profile_default;
-  //  set the depth to the QoS profile
-  custom_qos_profile.depth = 5;
-  pub_ = nh_->create_publisher<bond::msg::Status>(topic_, custom_qos_profile);
-  sub_ = nh_->create_subscription<bond::msg::Status>(topic_,
+  //rmw_qos_profile_t custom_qos_profile = rmw_qos_profile_default;
+  ////  set the depth to the QoS profile
+  //custom_qos_profile.depth = 5;
+  pub_ = nh_->create_publisher<bond::msg::Status>(topic_, rclcpp::QoS(rclcpp::KeepLast(5)));
+  sub_ = nh_->create_subscription<bond::msg::Status>(topic_, rclcpp::SystemDefaultsQoS(),
       std::bind(&Bond::bondStatusCB, this, std::placeholders::_1));
   publishingTimerReset();
   started_ = true;
@@ -480,16 +481,16 @@ void Bond::doPublishing()
 
 void Bond::publishStatus(bool active)
 {
-  auto msg_ = std::make_shared<bond::msg::Status>();
+  bond::msg::Status msg;
   rclcpp::Clock steady_clock(RCL_STEADY_TIME);
   rclcpp::Time now = steady_clock.now();
-  msg_->header.stamp = now;
-  msg_->id = id_;
-  msg_->instance_id = instance_id_;
-  msg_->active = active;
-  msg_->heartbeat_timeout = heartbeat_timeout_;
-  msg_->heartbeat_period = heartbeat_period_;
-  pub_->publish(msg_);
+  msg.header.stamp = now;
+  msg.id = id_;
+  msg.instance_id = instance_id_;
+  msg.active = active;
+  msg.heartbeat_timeout = heartbeat_timeout_;
+  msg.heartbeat_period = heartbeat_period_;
+  pub_->publish(msg);
 }
 
 void Bond::flushPendingCallbacks()

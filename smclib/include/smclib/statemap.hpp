@@ -418,7 +418,6 @@ protected:
   {
     if (name != NULL) {
       _name = copyString(name);
-      std::cout << "name of state is " << _name << "and" << " stateId is " << stateId << std::endl;
     } else {
       _name = copyString("NAME NOT SET");
     }

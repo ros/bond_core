@@ -75,14 +75,19 @@ std::string genId()
 
 class TestCallbacksCpp : public ::testing::Test
 {
-protected:
+public:
   static void SetUpTestCase()
   {
     rclcpp::init(0, nullptr);
   }
+
+  static void TearDownTestCase()
+  {
+    rclcpp::shutdown();
+  }
 };
 
-/*TEST_F(TestCallbacksCpp, dieInLifeCallback)
+TEST_F(TestCallbacksCpp, dieInLifeCallback)
 {
   auto nh1 = rclcpp::Node::make_shared("test_callbacks_cpp");
   std::string id1 = genId();
@@ -95,7 +100,7 @@ protected:
 
   EXPECT_TRUE(a.waitUntilFormed(rclcpp::Duration(5.0)));
   EXPECT_TRUE(b.waitUntilBroken(rclcpp::Duration(3.0)));
-}*/
+}
 
 TEST_F(TestCallbacksCpp, remoteNeverConnects)
 {

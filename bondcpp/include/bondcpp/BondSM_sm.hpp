@@ -67,7 +67,7 @@ class SM_Dead;
 class SM_Default;
 class BondSMState;
 class BondSMContext;
-class BondSM;
+struct BondSM;
 
 class BondSMState
   : public statemap::State
