@@ -21,6 +21,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
 
 if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
+  set(ament_cmake_copyright_FOUND TRUE)
   find_package(ament_lint_auto REQUIRED)
   find_package(bondcpp REQUIRED)
   find_package(rclcpp REQUIRED)

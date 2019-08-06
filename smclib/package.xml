@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?> -->
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
 <name>smclib</name>
 <version>2.0.0</version>
@@ -13,7 +13,6 @@
   </description>
   <maintainer email="michael@openrobotics.org">Michael Carroll</maintainer>
   <license>Mozilla Public License Version 1.1</license>
-  <!-- <license>Apache License 2.0</license> -->
 
   <url type="website">http://smc.sourceforge.net/</url>
   <url type="bugtracker">https://github.com/ros/bond_core/issues</url>

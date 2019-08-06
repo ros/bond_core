@@ -1,17 +1,3 @@
-// Copyright 2018 Open Source Robotics Foundation, Inc.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 /*
  * Copyright (c) 2009, Willow Garage, Inc.
  * All rights reserved.
@@ -306,9 +292,6 @@ void Bond::start()
   std::unique_lock<std::mutex> lock(mutex_);
   connect_timer_reset_flag_ = true;
   connectTimerReset();
-  //rmw_qos_profile_t custom_qos_profile = rmw_qos_profile_default;
-  ////  set the depth to the QoS profile
-  //custom_qos_profile.depth = 5;
   pub_ = nh_->create_publisher<bond::msg::Status>(topic_, rclcpp::QoS(rclcpp::KeepLast(5)));
   sub_ = nh_->create_subscription<bond::msg::Status>(topic_, rclcpp::SystemDefaultsQoS(),
       std::bind(&Bond::bondStatusCB, this, std::placeholders::_1));
