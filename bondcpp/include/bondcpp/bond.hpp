@@ -29,25 +29,25 @@
 
 /** \author Stuart Glaser */
 
-#ifndef BONDCPP__BOND_H_
-#define BONDCPP__BOND_H_
+#ifndef BONDCPP__BOND_HPP_
+#define BONDCPP__BOND_HPP_
 
-#include <boost/scoped_ptr.hpp>
-#include <boost/thread/mutex.hpp>
-#include <boost/thread/condition.hpp>
-
-#include <ros/ros.h>
-
-#include <bondcpp/timeout.h>
-#include <bond/Constants.h>
-#include <bond/Status.h>
-#include "BondSM_sm.h"
-
+#include <condition_variable>
+#include <functional>
+#include <memory>
+#include <mutex>
 #include <string>
 #include <vector>
 
-namespace bond {
+#include "bond/msg/constants.hpp"
+#include "bond/msg/status.hpp"
 
+#include "bondcpp/BondSM_sm.hpp"
+
+#include "rclcpp/rclcpp.hpp"
+
+namespace bond
+{
 /** \brief Forms a bond to monitor another process.
  *
  * The bond::Bond class implements a bond, allowing you to monitor
@@ -65,120 +65,114 @@ public:
    * \param on_broken callback that will be called when the bond is broken.
    * \param on_formed callback that will be called when the bond is formed.
    */
-  Bond(const std::string &topic, const std::string &id,
-       boost::function<void(void)> on_broken = boost::function<void(void)>(),
-       boost::function<void(void)> on_formed = boost::function<void(void)>());
+  Bond(
+    const std::string & topic, const std::string & id, rclcpp::Node::SharedPtr nh,
+    std::function<void(void)> on_broken = std::function<void(void)>(),
+    std::function<void(void)> on_formed = std::function<void(void)>());
 
   /** \brief Destructs the object, breaking the bond if it is still formed.
    */
   ~Bond();
 
-  double getConnectTimeout() const { return connect_timeout_; }
+  double getConnectTimeout() const {return connect_timeout_;}
   void setConnectTimeout(double dur);
-  double getDisconnectTimeout() const { return disconnect_timeout_; }
+  void connectTimerReset();
+  void connectTimerCancel();
+  double getDisconnectTimeout() const {return disconnect_timeout_;}
   void setDisconnectTimeout(double dur);
-  double getHeartbeatTimeout() const { return heartbeat_timeout_; }
+  void disconnectTimerReset();
+  void disconnectTimerCancel();
+  double getHeartbeatTimeout() const {return heartbeat_timeout_;}
   void setHeartbeatTimeout(double dur);
-  double getHeartbeatPeriod() const { return heartbeat_period_; }
+  void heartbeatTimerReset();
+  void heartbeatTimerCancel();
+  double getHeartbeatPeriod() const {return heartbeat_period_;}
   void setHeartbeatPeriod(double dur);
-
-  void setCallbackQueue(ros::CallbackQueueInterface *queue);
+  void publishingTimerReset();
+  void publishingTimerCancel();
+  double getDeadPublishPeriod() const {return dead_publish_period_;}
+  void setDeadPublishPeriod(double dur);
+  void deadpublishingTimerReset();
+  void deadpublishingTimerCancel();
 
   /** \brief Starts the bond and connects to the sister process.
    */
   void start();
-
   /** \brief Sets the formed callback.
    */
-  void setFormedCallback(boost::function<void(void)> on_formed);
+  void setFormedCallback(std::function<void(void)> on_formed);
 
   /** \brief Sets the broken callback
    */
-  void setBrokenCallback(boost::function<void(void)> on_broken);
+  void setBrokenCallback(std::function<void(void)> on_broken);
 
   /** \brief Blocks until the bond is formed for at most 'duration'.
    *
    * \param timeout Maximum duration to wait.  If -1 then this call will not timeout.
    * \return true iff the bond has been formed.
    */
-  bool waitUntilFormed(ros::Duration timeout = ros::Duration(-1));
-
-  /** \brief Blocks until the bond is formed for at most 'duration'.
-   *
-   * \param timeout Maximum duration to wait.  If -1 then this call will not timeout.
-   * \return true iff the bond has been formed.
-   */
-  bool waitUntilFormed(ros::WallDuration timeout = ros::WallDuration(-1));
-
+  bool waitUntilFormed(rclcpp::Duration timeout = rclcpp::Duration(-1 * 1e9));
   /** \brief Blocks until the bond is broken for at most 'duration'.
    *
    * \param timeout Maximum duration to wait.  If -1 then this call will not timeout.
    * \return true iff the bond has been broken, even if it has never been formed.
    */
-  bool waitUntilBroken(ros::Duration timeout = ros::Duration(-1));
-
-  /** \brief Blocks until the bond is broken for at most 'duration'.
-   *
-   * \param timeout Maximum duration to wait.  If -1 then this call will not timeout.
-   * \return true iff the bond has been broken, even if it has never been formed.
-   */
-  bool waitUntilBroken(ros::WallDuration timeout = ros::WallDuration(-1));
-
-  /** \brief Indicates if the bond is broken
-   * \return true iff the bond has been broken.
+  bool waitUntilBroken(rclcpp::Duration timeout = rclcpp::Duration(-1 * 1e9));
+  /** \brief Indicates if the bond is broken.
    */
   bool isBroken();
-
   /** \brief Breaks the bond, notifying the other process.
    */
   void breakBond();
-
-  std::string getTopic() { return topic_; }
-  std::string getId() { return id_; }
-  std::string getInstanceId() { return instance_id_; }
+  std::string getTopic() {return topic_;}
+  std::string getId() {return id_;}
+  std::string getInstanceId() {return instance_id_;}
 
 private:
-  friend class ::BondSM;
-
-  ros::NodeHandle nh_;
-  boost::scoped_ptr<BondSM> bondsm_;
+  friend struct ::BondSM;
+  rclcpp::TimerBase::SharedPtr connect_timer_;
+  rclcpp::TimerBase::SharedPtr disconnect_timer_;
+  rclcpp::TimerBase::SharedPtr heartbeat_timer_;
+  rclcpp::TimerBase::SharedPtr publishing_timer_;
+  rclcpp::TimerBase::SharedPtr deadpublishing_timer_;
+  rclcpp::Node::SharedPtr nh_;
+  std::unique_ptr<BondSM> bondsm_;
   BondSMContext sm_;
 
   std::string topic_;
   std::string id_;
   std::string instance_id_;
   std::string sister_instance_id_;
-  boost::function<void(void)> on_broken_;
-  boost::function<void(void)> on_formed_;
+  std::function<void(void)> on_broken_;
+  std::function<void(void)> on_formed_;
   bool sisterDiedFirst_;
   bool started_;
-
-  boost::mutex mutex_;
-  boost::condition condition_;
+  bool connect_timer_reset_flag_;
+  bool disconnect_timer_reset_flag_;
+  bool heartbeat_timer_reset_flag_;
+  bool deadpublishing_timer_reset_flag_;
+  std::mutex mutex_;
+  std::condition_variable condition_;
 
   double connect_timeout_;
   double heartbeat_timeout_;
   double disconnect_timeout_;
   double heartbeat_period_;
+  double dead_publish_period_;
 
-  Timeout connect_timer_;
-  Timeout heartbeat_timer_;
-  Timeout disconnect_timer_;
-
-  ros::Subscriber sub_;
-  ros::Publisher pub_;
-  ros::SteadyTimer publishingTimer_;
+  rclcpp::Subscription<bond::msg::Status>::SharedPtr sub_;
+  rclcpp::Publisher<bond::msg::Status>::SharedPtr pub_;
 
   void onConnectTimeout();
   void onHeartbeatTimeout();
   void onDisconnectTimeout();
 
-  void bondStatusCB(const bond::Status::ConstPtr &msg);
+  void bondStatusCB(const bond::msg::Status::ConstSharedPtr msg);
 
-  void doPublishing(const ros::SteadyTimerEvent &e);
+  void doPublishing();
   void publishStatus(bool active);
 
-  std::vector<boost::function<void(void)> > pending_callbacks_;
+  std::vector<std::function<void(void)>> pending_callbacks_;
   void flushPendingCallbacks();
 };
 
@@ -188,7 +182,8 @@ private:
 // Internal use only
 struct BondSM
 {
-  BondSM(bond::Bond *b_) : b(b_) {}
+  explicit BondSM(bond::Bond * b_)
+  : b(b_) {}
   void Connected();
   void SisterDied();
   void Death();
@@ -196,7 +191,7 @@ struct BondSM
   void StartDying();
 
 private:
-  bond::Bond *b;
+  bond::Bond * b;
 };
 
-#endif  // BONDCPP__BOND_H_
+#endif  // BONDCPP__BOND_HPP_

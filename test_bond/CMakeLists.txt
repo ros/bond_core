@@ -1,41 +1,63 @@
-cmake_minimum_required(VERSION 2.8.3)
-
+cmake_minimum_required(VERSION 3.5)
 project(test_bond)
 
-find_package(catkin REQUIRED COMPONENTS cmake_modules bondcpp message_generation rostest)
-
-if(CATKIN_ENABLE_TESTING)
-  include_directories(${GTEST_INCLUDE_DIRS})
-  include_directories(include ${bondcpp_INCLUDE_DIRS})
-
-  # create the service
-  add_service_files(DIRECTORY srv FILES TestBond.srv)
-  generate_messages()
+# Default to C++14
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 14)
+endif()
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
-catkin_package()
+find_package(ament_cmake REQUIRED)
+find_package(builtin_interfaces REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
+find_package(std_msgs REQUIRED)
 
-if(CATKIN_ENABLE_TESTING)
-  # add more tests
-  find_package(UUID REQUIRED)
-  include_directories(${UUID_INCLUDE_DIRS})
-  add_executable(exercise_bond EXCLUDE_FROM_ALL test/exercise_bond.cpp)
-  target_link_libraries(exercise_bond ${catkin_LIBRARIES} ${GTEST_LIBRARIES} ${UUID_LIBRARIES})
-  if(test_bond_EXPORTED_TARGETS)
-    add_dependencies(exercise_bond ${test_bond_EXPORTED_TARGETS})
+rosidl_generate_interfaces(${PROJECT_NAME}
+  "srv/TestBond.srv"
+  DEPENDENCIES std_msgs builtin_interfaces
+)
+
+if(BUILD_TESTING)
+  find_package(ament_cmake_gtest REQUIRED)
+  set(ament_cmake_copyright_FOUND TRUE)
+  find_package(ament_lint_auto REQUIRED)
+  find_package(bondcpp REQUIRED)
+  find_package(rclcpp REQUIRED)
+  find_package(rosidl_cmake REQUIRED)
+  find_package(Threads REQUIRED)
+
+  find_package(PkgConfig REQUIRED)
+  pkg_search_module(UUID REQUIRED uuid)
+
+  ament_lint_auto_find_test_dependencies()
+
+  ament_add_gtest(test_callbacks_cpp test/test_callbacks_cpp.cpp)
+  if(TARGET test_callbacks_cpp)
+    target_include_directories(test_callbacks_cpp PRIVATE include)
+    target_link_libraries(test_callbacks_cpp ${UUID_LIBS})
+    ament_target_dependencies(test_callbacks_cpp bondcpp rclcpp)
+    rosidl_target_interfaces(test_callbacks_cpp
+      ${PROJECT_NAME} "rosidl_typesupport_cpp")
   endif()
-  add_dependencies(tests exercise_bond)
 
-  add_rostest(test/test_cpp.launch)
-  add_rostest(test/test_python.launch)
-
-  add_executable(test_callbacks_cpp EXCLUDE_FROM_ALL test/test_callbacks_cpp.cpp)
-  target_link_libraries(test_callbacks_cpp ${catkin_LIBRARIES} ${GTEST_LIBRARIES} ${UUID_LIBRARIES})
-  if(test_bond_EXPORTED_TARGETS)
-    add_dependencies(test_callbacks_cpp ${test_bond_EXPORTED_TARGETS})
-  endif()
-  add_dependencies(tests test_callbacks_cpp)
-
-  add_rostest(test/test_callbacks_cpp.launch)
-  add_rostest(test/test_callbacks_py.launch)
+  #  ament_add_gtest(test_callbacks_cpp_exc test/test_callbacks_cpp_exc.cpp)
+  #  if(TARGET test_callbacks_cpp_exc)
+  #    target_include_directories(test_callbacks_cpp_exc PRIVATE include)
+  #    target_link_libraries(test_callbacks_cpp_exc ${UUID_LIBS})
+  #    ament_target_dependencies(test_callbacks_cpp_exc bondcpp rclcpp)
+  #    rosidl_target_interfaces(test_callbacks_cpp_exc
+  #      ${PROJECT_NAME} "rosidl_typesupport_cpp")
+  #  endif()
+  #
+  #  ament_add_gtest(exercise_bond_cpp_exc test/exercise_bond_cpp_exc.cpp)
+  #  if(TARGET exercise_bond_cpp_exc)
+  #    target_include_directories(exercise_bond_cpp_exc PRIVATE include)
+  #    target_link_libraries(exercise_bond_cpp_exc ${UUID_LIBS})
+  #    ament_target_dependencies(exercise_bond_cpp_exc bondcpp rclcpp)
+  #    rosidl_target_interfaces(exercise_bond_cpp_exc
+  #      ${PROJECT_NAME} "rosidl_typesupport_cpp")
+  #  endif()
 endif()
+ament_package()

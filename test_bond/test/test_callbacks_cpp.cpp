@@ -28,20 +28,16 @@
  */
 
 
-#include <bondcpp/bond.h>
-#include <gtest/gtest.h>
-
 #ifndef _WIN32
 # include <uuid/uuid.h>
 #else
 # include <rpc.h>
 #endif
-
-#include <ros/spinner.h>
-
-#include <test_bond/TestBond.h>
-
+#include <gtest/gtest.h>
 #include <string>
+#include "rclcpp/rclcpp.hpp"
+#include "bondcpp/bond.hpp"
+#include "test_bond/srv/test_bond.hpp"
 
 const char TOPIC[] = "test_bond_topic";
 std::string genId()
@@ -63,29 +59,42 @@ std::string genId()
 #endif
 }
 
-TEST(TestCallbacksCpp, dieInLifeCallback)
+class TestCallbacksCpp : public ::testing::Test
 {
-  std::string id = genId();
-  bond::Bond a(TOPIC, id);
-  bond::Bond b(TOPIC, id);
+public:
+  static void SetUpTestCase()
+  {
+    rclcpp::init(0, nullptr);
+  }
 
-  a.setFormedCallback(boost::bind(&bond::Bond::breakBond, &a));
+  static void TearDownTestCase()
+  {
+    rclcpp::shutdown();
+  }
+};
 
+TEST_F(TestCallbacksCpp, dieInLifeCallback)
+{
+  auto nh1 = rclcpp::Node::make_shared("test_callbacks_cpp");
+  std::string id1 = genId();
+  bond::Bond a(TOPIC, id1, nh1);
+  bond::Bond b(TOPIC, id1, nh1);
+
+  a.setFormedCallback(std::bind(&bond::Bond::breakBond, &a));
   a.start();
   b.start();
 
-  EXPECT_TRUE(a.waitUntilFormed(ros::Duration(5.0)));
-  EXPECT_TRUE(b.waitUntilBroken(ros::Duration(3.0)));
+  EXPECT_TRUE(a.waitUntilFormed(rclcpp::Duration(5.0)));
+  EXPECT_TRUE(b.waitUntilBroken(rclcpp::Duration(3.0)));
 }
 
-int main(int argc, char ** argv)
+TEST_F(TestCallbacksCpp, remoteNeverConnects)
 {
-  testing::InitGoogleTest(&argc, argv);
-  ros::init(argc, argv, "test_callbacks_cpp", true);
-  ros::AsyncSpinner spinner(1);
-  spinner.start();
-  ros::NodeHandle nh;
-  int ret = RUN_ALL_TESTS();
-  spinner.stop();
-  return ret;
-};
+  auto nh2 = rclcpp::Node::make_shared("test_callbacks_cpp_2");
+  std::string id2 = genId();
+  bond::Bond a1(TOPIC, id2, nh2);
+
+  a1.start();
+  EXPECT_FALSE(a1.waitUntilFormed(rclcpp::Duration(5.0)));
+  EXPECT_TRUE(a1.waitUntilBroken(rclcpp::Duration(10.0)));
+}

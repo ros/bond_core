@@ -1,12 +1,43 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.5)
 project(smclib)
 
-find_package(catkin REQUIRED)
-catkin_package(INCLUDE_DIRS include)
+# Support C++14
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 
-catkin_python_setup()
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
 
-# install the include folder
-install(DIRECTORY include/${PROJECT_NAME}/
-        DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_python REQUIRED)
+
+add_library(smclib_header INTERFACE)
+target_include_directories(smclib_header INTERFACE
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>)
+
+install(
+  TARGETS smclib_header
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
+  INCLUDES DESTINATION include
 )
+
+install(
+  DIRECTORY include/
+  DESTINATION include)
+
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  set(ament_cmake_copyright_FOUND TRUE)
+  ament_lint_auto_find_test_dependencies()
+endif()
+
+ament_python_install_package(${PROJECT_NAME})
+
+ament_export_dependencies(ament_cmake)
+ament_export_include_directories(include)
+
+ament_package()
+

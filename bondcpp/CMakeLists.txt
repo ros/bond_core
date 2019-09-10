@@ -1,41 +1,55 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.5)
 project(bondcpp)
 
-find_package(Boost REQUIRED)
-find_package(catkin REQUIRED bond cmake_modules roscpp smclib)
-find_package(UUID REQUIRED)
-
-include_directories(
-  include
-  ${catkin_INCLUDE_DIRS}
-  ${Boost_INCLUDE_DIRS}
-  ${UUID_INCLUDE_DIRS}
-)
-
-catkin_package(
-  INCLUDE_DIRS include
-  LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS bond roscpp smclib
-  DEPENDS Boost
-)
-
-add_library(${PROJECT_NAME}
-  src/timeout.cpp
-  src/bond.cpp
-  src/BondSM_sm.cpp
-)
-target_link_libraries(${PROJECT_NAME} ${UUID_LIBRARIES} ${catkin_LIBRARIES} ${BOOST_LIBRARIES})
-
-if(catkin_EXPORTED_TARGETS)
-  add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 14)
 endif()
 
-# install stuff
-install(DIRECTORY include/${PROJECT_NAME}/
-  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-)
-install(TARGETS ${PROJECT_NAME}
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
-)
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
+find_package(ament_cmake REQUIRED)
+find_package(bond REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(smclib REQUIRED)
+find_package(Threads REQUIRED)
+
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(UUID REQUIRED uuid)
+
+add_library(${PROJECT_NAME}
+  src/bond.cpp
+  src/BondSM_sm.cpp)
+target_include_directories(${PROJECT_NAME} PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+  ${UUID_INCLUDE_DIRS})
+ament_target_dependencies(${PROJECT_NAME}
+  bond
+  rclcpp
+  smclib)
+target_link_libraries(${PROJECT_NAME} ${UUID_LIBRARIES})
+
+install(
+  TARGETS ${PROJECT_NAME}
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin)
+
+install(
+  DIRECTORY include/
+  DESTINATION include)
+
+ament_export_dependencies(ament_cmake)
+ament_export_dependencies(bond rclcpp smclib)
+ament_export_include_directories(include)
+ament_export_libraries(${PROJECT_NAME})
+
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  set(ament_cmake_copyright_FOUND TRUE)
+  ament_lint_auto_find_test_dependencies()
+endif()
+ament_package()
+

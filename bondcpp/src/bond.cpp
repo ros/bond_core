@@ -29,9 +29,7 @@
 
 // Author: Stuart Glaser
 
-#include <bondcpp/bond.h>
-#include <boost/thread/thread_time.hpp>
-#include <boost/date_time/posix_time/posix_time_types.hpp>
+#include <bondcpp/bond.hpp>
 
 #ifdef _WIN32
 #include <Rpc.h>
@@ -40,17 +38,22 @@
 #endif
 
 #include <algorithm>
+#include <chrono>
+#include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
 
-namespace bond {
+using namespace std::chrono_literals;
 
+namespace bond
+{
 static std::string makeUUID()
 {
 #ifdef _WIN32
   UUID uuid;
   UuidCreate(&uuid);
-  unsigned char *str;
+  unsigned char * str;
   UuidToStringA(&uuid, &str);
   std::string return_string(reinterpret_cast<char *>(str));
   RpcStringFreeA(&str);
@@ -64,12 +67,11 @@ static std::string makeUUID()
 #endif
 }
 
-Bond::Bond(const std::string &topic, const std::string &id,
-           boost::function<void(void)> on_broken,
-           boost::function<void(void)> on_formed)
-  :
-
-  bondsm_(new BondSM(this)),
+Bond::Bond(
+  const std::string & topic, const std::string & id, rclcpp::Node::SharedPtr nh,
+  std::function<void(void)> on_broken,
+  std::function<void(void)> on_formed)
+: bondsm_(new BondSM(this)),
   sm_(*bondsm_),
   topic_(topic),
   id_(id),
@@ -78,15 +80,17 @@ Bond::Bond(const std::string &topic, const std::string &id,
   on_formed_(on_formed),
   sisterDiedFirst_(false),
   started_(false),
-
-  connect_timer_(ros::WallDuration(), boost::bind(&Bond::onConnectTimeout, this)),
-  heartbeat_timer_(ros::WallDuration(), boost::bind(&Bond::onHeartbeatTimeout, this)),
-  disconnect_timer_(ros::WallDuration(), boost::bind(&Bond::onDisconnectTimeout, this))
+  connect_timer_reset_flag_(false),
+  disconnect_timer_reset_flag_(false),
+  heartbeat_timer_reset_flag_(false),
+  deadpublishing_timer_reset_flag_(false)
 {
-  setConnectTimeout(bond::Constants::DEFAULT_CONNECT_TIMEOUT);
-  setDisconnectTimeout(bond::Constants::DEFAULT_DISCONNECT_TIMEOUT);
-  setHeartbeatTimeout(bond::Constants::DEFAULT_HEARTBEAT_TIMEOUT);
-  setHeartbeatPeriod(bond::Constants::DEFAULT_HEARTBEAT_PERIOD);
+  nh_ = nh;
+  setConnectTimeout(bond::msg::Constants::DEFAULT_CONNECT_TIMEOUT);
+  setDisconnectTimeout(bond::msg::Constants::DEFAULT_DISCONNECT_TIMEOUT);
+  setHeartbeatTimeout(bond::msg::Constants::DEFAULT_HEARTBEAT_TIMEOUT);
+  setHeartbeatPeriod(bond::msg::Constants::DEFAULT_HEARTBEAT_PERIOD);
+  setDeadPublishPeriod(bond::msg::Constants::DEAD_PUBLISH_PERIOD);
 }
 
 Bond::~Bond()
@@ -94,175 +98,284 @@ Bond::~Bond()
   if (!started_) {
     return;
   }
-
   breakBond();
-  if (!waitUntilBroken(ros::Duration(1.0))) {
-    ROS_DEBUG("Bond failed to break on destruction %s (%s)", id_.c_str(), instance_id_.c_str());
+  if (!waitUntilBroken(rclcpp::Duration(1.0 * 1e9))) {
+    RCLCPP_DEBUG(nh_->get_logger(), "Bond failed to break on destruction %s (%s)",
+      id_.c_str(), instance_id_.c_str());
   }
 
   // Must destroy the subscription before locking mutex_: shutdown()
   // will block until the status callback completes, and the status
   // callback locks mutex_ (in flushPendingCallbacks).
-  sub_.shutdown();
-
   // Stops the timers before locking the mutex.  Makes sure none of
   // the callbacks are running when we aquire the mutex.
-  publishingTimer_.stop();
-  connect_timer_.cancel();
-  heartbeat_timer_.cancel();
-  disconnect_timer_.cancel();
-
-  boost::mutex::scoped_lock lock(mutex_);
-  pub_.shutdown();
+  publishingTimerCancel();
+  // deadpublishingTimerCancel();
+  connectTimerCancel();
+  heartbeatTimerCancel();
+  disconnectTimerCancel();
+  std::unique_lock<std::mutex> lock(mutex_);
 }
-
 
 void Bond::setConnectTimeout(double dur)
 {
   if (started_) {
-    ROS_ERROR("Cannot set timeouts after calling start()");
+    RCLCPP_ERROR(nh_->get_logger(), "Cannot set timeouts after calling start()");
     return;
   }
+  connect_timeout_ = dur * 1e9;  // conversion from seconds to nanoseconds
+}
 
-  connect_timeout_ = dur;
-  connect_timer_.setDuration(ros::WallDuration(connect_timeout_));
+void Bond::connectTimerReset()
+{
+  rclcpp::Duration dur1(connect_timeout_);
+  const std::chrono::nanoseconds period1(dur1.nanoseconds());
+  // Callback function of connect timer
+  auto connectTimerResetCallback =
+    [this]() -> void
+    {
+      if (connect_timer_reset_flag_) {
+        onConnectTimeout();
+        connect_timer_->cancel();
+        connect_timer_reset_flag_ = false;
+      }    // flag is needed to have valid callback
+    };
+  // Connect timer started on node
+  connect_timer_ = nh_->create_wall_timer(period1, connectTimerResetCallback);
+}
+
+void Bond::connectTimerCancel()
+{
+  connect_timer_->cancel();
 }
 
 void Bond::setDisconnectTimeout(double dur)
 {
   if (started_) {
-    ROS_ERROR("Cannot set timeouts after calling start()");
+    RCLCPP_ERROR(nh_->get_logger(), "Cannot set timeouts after calling start()");
     return;
   }
 
-  disconnect_timeout_ = dur;
-  disconnect_timer_.setDuration(ros::WallDuration(disconnect_timeout_));
+  disconnect_timeout_ = dur * 1e9;  // conversion from seconds to nanoseconds
+}
+
+void Bond::disconnectTimerReset()
+{
+  rclcpp::Duration dur2(disconnect_timeout_);
+  const std::chrono::nanoseconds period2(dur2.nanoseconds());
+  // Callback function of disconnect timer
+  auto disconnectTimerResetCallback =
+    [this]() -> void
+    {
+      if (disconnect_timer_reset_flag_) {
+        onDisconnectTimeout();
+        disconnect_timer_->cancel();
+        disconnect_timer_reset_flag_ = false;
+      }    // flag is needed to have valid callback
+    };
+  //  Disconnect timer started on node
+  disconnect_timer_ = nh_->create_wall_timer(period2, disconnectTimerResetCallback);
+}
+
+void Bond::disconnectTimerCancel()
+{
+  disconnect_timer_->cancel();
 }
 
 void Bond::setHeartbeatTimeout(double dur)
 {
   if (started_) {
-    ROS_ERROR("Cannot set timeouts after calling start()");
+    RCLCPP_ERROR(nh_->get_logger(), "Cannot set timeouts after calling start()");
     return;
   }
 
-  heartbeat_timeout_ = dur;
-  heartbeat_timer_.setDuration(ros::WallDuration(heartbeat_timeout_));
+  heartbeat_timeout_ = dur * 1e9;  //    conversion from seconds to nanoseconds
+}
+
+void Bond::heartbeatTimerReset()
+{
+  rclcpp::Duration dur3(heartbeat_timeout_);
+  const std::chrono::nanoseconds period3(dur3.nanoseconds());
+  //  Callback function of heartbeat timer
+  auto heartbeatTimerResetCallback =
+    [this]() -> void
+    {
+      if (heartbeat_timer_reset_flag_) {
+        onHeartbeatTimeout();
+        heartbeat_timer_->cancel();
+        heartbeat_timer_reset_flag_ = false;
+      }      //  flag is needed to have valid callback
+    };
+  //    heartbeat timer started on node
+  heartbeat_timer_ = nh_->create_wall_timer(period3, heartbeatTimerResetCallback);
+}
+
+void Bond::heartbeatTimerCancel()
+{
+  heartbeat_timer_->cancel();
 }
 
 void Bond::setHeartbeatPeriod(double dur)
 {
   if (started_) {
-    ROS_ERROR("Cannot set timeouts after calling start()");
+    RCLCPP_ERROR(nh_->get_logger(), "Cannot set timeouts after calling start()");
     return;
   }
 
-  heartbeat_period_ = dur;
+  heartbeat_period_ = dur * 1e9;     //  conversion from seconds to nanoseconds
 }
 
-void Bond::setCallbackQueue(ros::CallbackQueueInterface *queue)
+void Bond::publishingTimerReset()
+{
+  rclcpp::Duration dur4(heartbeat_period_);
+  const std::chrono::nanoseconds period4(dur4.nanoseconds());
+  //  Callback function of publishing timer
+  auto publishingTimerResetCallback =
+    [this]() -> void
+    {
+      doPublishing();
+    };
+  //  publishing timer started on node
+  publishing_timer_ = nh_->create_wall_timer(period4, publishingTimerResetCallback);
+}
+
+void Bond::publishingTimerCancel()
+{
+  publishing_timer_->cancel();
+}
+
+void Bond::setDeadPublishPeriod(double dur)
 {
   if (started_) {
-    ROS_ERROR("Cannot set callback queue after calling start()");
+    RCLCPP_ERROR(nh_->get_logger(), "Cannot set timeouts after calling start()");
+    return;
+  }
+
+  dead_publish_period_ = dur * 1e9;  //  conversion from seconds to nanoseconds
+}
+
+void Bond::deadpublishingTimerReset()
+{
+  rclcpp::Duration dur5(dead_publish_period_);
+  const std::chrono::nanoseconds period5(dur5.nanoseconds());
+  //  callback function of dead publishing timer which will publish data when bond is broken
+  auto deadpublishingTimerResetCallback =
+    [this]() -> void
+    {
+      if (deadpublishing_timer_reset_flag_) {
+        doPublishing();
+        deadpublishing_timer_reset_flag_ = false;
+      }     //  flag is needed to have valid callback
+    };
+  //  dead publishing timer started on node
+  deadpublishing_timer_ = nh_->create_wall_timer(period5, deadpublishingTimerResetCallback);
+}
+
+void Bond::deadpublishingTimerCancel()
+{
+  deadpublishing_timer_->cancel();
+}
+
+/* TODO Callback Queue is not availabe in ROS2
+void Bond::setCallbackQueue(rclcpp::CallbackQueueInterface *queue)
+{
+  if (started_) {
+    RCLCPP_ERROR(nh_->get_logger(),"Cannot set callback queue after calling start()");
     return;
   }
 
   nh_.setCallbackQueue(queue);
-}
-
+}*/
 
 void Bond::start()
 {
-  boost::mutex::scoped_lock lock(mutex_);
-  connect_timer_.reset();
-  pub_ = nh_.advertise<bond::Status>(topic_, 5);
-  sub_ = nh_.subscribe<bond::Status>(topic_, 30, boost::bind(&Bond::bondStatusCB, this, _1));
-
-  publishingTimer_ = nh_.createSteadyTimer(
-    ros::WallDuration(heartbeat_period_), &Bond::doPublishing, this);
+  std::unique_lock<std::mutex> lock(mutex_);
+  connect_timer_reset_flag_ = true;
+  connectTimerReset();
+  pub_ = nh_->create_publisher<bond::msg::Status>(topic_, rclcpp::QoS(rclcpp::KeepLast(5)));
+  sub_ = nh_->create_subscription<bond::msg::Status>(topic_, rclcpp::SystemDefaultsQoS(),
+      std::bind(&Bond::bondStatusCB, this, std::placeholders::_1));
+  publishingTimerReset();
   started_ = true;
+  heartbeatTimerReset();
+  disconnectTimerReset();
+  //  deadpublishingTimerReset();
 }
 
-void Bond::setFormedCallback(boost::function<void(void)> on_formed)
+void Bond::setFormedCallback(std::function<void(void)> on_formed)
 {
-  boost::mutex::scoped_lock lock(mutex_);
+  std::unique_lock<std::mutex> lock(mutex_);
   on_formed_ = on_formed;
 }
 
-void Bond::setBrokenCallback(boost::function<void(void)> on_broken)
+void Bond::setBrokenCallback(std::function<void(void)> on_broken)
 {
-  boost::mutex::scoped_lock lock(mutex_);
+  std::unique_lock<std::mutex> lock(mutex_);
   on_broken_ = on_broken;
 }
 
-bool Bond::waitUntilFormed(ros::Duration timeout)
+bool Bond::waitUntilFormed(rclcpp::Duration timeout)
 {
-  return waitUntilFormed(ros::WallDuration(timeout.sec, timeout.nsec));
-}
-bool Bond::waitUntilFormed(ros::WallDuration timeout)
-{
-  boost::mutex::scoped_lock lock(mutex_);
-  ros::SteadyTime deadline(ros::SteadyTime::now() + timeout);
+  double time_conv = timeout.nanoseconds() * 1e9;
+  rclcpp::Duration timeout1(time_conv);
+  //  std::unique_lock<std::mutex> lock(mutex_);
+  rclcpp::Clock steady_clock(RCL_STEADY_TIME);
+  rclcpp::Time deadline(steady_clock.now() + timeout1);
 
   while (sm_.getState().getId() == SM::WaitingForSister.getId()) {
-    if (!ros::ok()) {
+    if (!rclcpp::ok()) {
       break;
     }
-
-    ros::WallDuration wait_time = ros::WallDuration(0.1);
-    if (timeout >= ros::WallDuration(0.0)) {
-      wait_time = std::min(wait_time, deadline - ros::SteadyTime::now());
+    rclcpp::Duration wait_time = rclcpp::Duration(0.1 * 1e9);
+    if (timeout1 >= rclcpp::Duration(0.0 * 1e9)) {
+      rclcpp::Clock steady_clock(RCL_STEADY_TIME);
+      wait_time = std::min(wait_time, deadline - steady_clock.now());
     }
-
-    if (wait_time <= ros::WallDuration(0.0)) {
-      break;  // The deadline has expired
+    if (wait_time <= rclcpp::Duration(0.0 * 1e9)) {
+      break;  //  The deadline has expired
     }
-
-    condition_.timed_wait(mutex_, boost::posix_time::milliseconds(
-      static_cast<int64_t>(wait_time.toSec() * 1000.0f)));
+    rclcpp::spin_some(nh_);
   }
+
   return sm_.getState().getId() != SM::WaitingForSister.getId();
 }
 
-bool Bond::waitUntilBroken(ros::Duration timeout)
+bool Bond::waitUntilBroken(rclcpp::Duration timeout)
 {
-  return waitUntilBroken(ros::WallDuration(timeout.sec, timeout.nsec));
-}
-bool Bond::waitUntilBroken(ros::WallDuration timeout)
-{
-  boost::mutex::scoped_lock lock(mutex_);
-  ros::SteadyTime deadline(ros::SteadyTime::now() + timeout);
-
+  double time_conv = timeout.nanoseconds() * 1e9;
+  rclcpp::Duration timeout1(time_conv);
+  //  std::unique_lock<std::mutex> lock(mutex_);
+  rclcpp::Clock steady_clock(RCL_STEADY_TIME);
+  rclcpp::Time deadline(steady_clock.now() + timeout1);
   while (sm_.getState().getId() != SM::Dead.getId()) {
-    if (!ros::ok()) {
+    if (!rclcpp::ok()) {
       break;
     }
-
-    ros::WallDuration wait_time = ros::WallDuration(0.1);
-    if (timeout >= ros::WallDuration(0.0)) {
-      wait_time = std::min(wait_time, deadline - ros::SteadyTime::now());
+    rclcpp::Duration wait_time = rclcpp::Duration(0.1 * 1e9);
+    if (timeout1 >= rclcpp::Duration(0.0 * 1e9)) {
+      rclcpp::Clock steady_clock(RCL_STEADY_TIME);
+      wait_time = std::min(wait_time, deadline - steady_clock.now());
+    }
+    if (wait_time <= rclcpp::Duration(0.0 * 1e9)) {
+      break;  //  The deadline has expired
     }
 
-    if (wait_time <= ros::WallDuration(0.0)) {
-      break;  // The deadline has expired
-    }
-
-    condition_.timed_wait(mutex_, boost::posix_time::milliseconds(
-      static_cast<int64_t>(wait_time.toSec() * 1000.0f)));
+    rclcpp::spin_some(nh_);
   }
+
   return sm_.getState().getId() == SM::Dead.getId();
 }
 
 bool Bond::isBroken()
 {
-  boost::mutex::scoped_lock lock(mutex_);
+  std::unique_lock<std::mutex> lock(mutex_);
   return sm_.getState().getId() == SM::Dead.getId();
 }
 
 void Bond::breakBond()
 {
   {
-    boost::mutex::scoped_lock lock(mutex_);
+    std::unique_lock<std::mutex> lock(mutex_);
     if (sm_.getState().getId() != SM::Dead.getId()) {
       sm_.Die();
       publishStatus(false);
@@ -271,105 +384,103 @@ void Bond::breakBond()
   flushPendingCallbacks();
 }
 
-
 void Bond::onConnectTimeout()
 {
   {
-    boost::mutex::scoped_lock lock(mutex_);
+    std::unique_lock<std::mutex> lock(mutex_);
     sm_.ConnectTimeout();
   }
   flushPendingCallbacks();
 }
+
 void Bond::onHeartbeatTimeout()
 {
-  // Checks that heartbeat timeouts haven't been disabled globally.
+  //  Checks that heartbeat timeouts haven't been disabled globally.
   bool disable_heartbeat_timeout;
-  nh_.param(bond::Constants::DISABLE_HEARTBEAT_TIMEOUT_PARAM, disable_heartbeat_timeout, false);
+  nh_->get_parameter_or("bond::msg::Constants::DISABLE_HEARTBEAT_TIMEOUT_PARAM",
+    disable_heartbeat_timeout, false);
   if (disable_heartbeat_timeout) {
-    ROS_WARN("Heartbeat timeout is disabled.  Not breaking bond (topic: %s, id: %s)",
-             topic_.c_str(), id_.c_str());
+    RCLCPP_WARN(nh_->get_logger(), "Heartbeat timeout is disabled.");
+    RCLCPP_WARN(nh_->get_logger(), "Not breaking bond (topic: %s, id: %s)",
+      topic_.c_str(), id_.c_str());
     return;
   }
 
   {
-    boost::mutex::scoped_lock lock(mutex_);
+    std::unique_lock<std::mutex> lock(mutex_);
     sm_.HeartbeatTimeout();
   }
   flushPendingCallbacks();
 }
+
 void Bond::onDisconnectTimeout()
 {
   {
-    boost::mutex::scoped_lock lock(mutex_);
+    std::unique_lock<std::mutex> lock(mutex_);
     sm_.DisconnectTimeout();
   }
   flushPendingCallbacks();
 }
 
-void Bond::bondStatusCB(const bond::Status::ConstPtr &msg)
+void Bond::bondStatusCB(const bond::msg::Status::ConstSharedPtr msg)
 {
-  // Filters out messages from other bonds and messages from ourself
+  //  Filters out messages from other bonds and messages from ourself
   if (msg->id == id_ && msg->instance_id != instance_id_) {
     {
-      boost::mutex::scoped_lock lock(mutex_);
+      std::unique_lock<std::mutex> lock(mutex_);
 
       if (sister_instance_id_.empty()) {
         sister_instance_id_ = msg->instance_id;
       }
-      if (sister_instance_id_ != msg->instance_id) {
-        ROS_ERROR(
-          "More than two locations are trying to use a single bond (topic: %s, id: %s).  "
-          "You should only instantiate at most two bond instances for each (topic, id) pair.",
-          topic_.c_str(), id_.c_str());
-        return;
-      }
+    }
 
-      if (msg->active) {
-        sm_.SisterAlive();
-      } else {
-        sm_.SisterDead();
-
-        // Immediate ack for sister's death notification
-        if (sisterDiedFirst_) {
-          publishStatus(false);
-        }
+    if (msg->active) {
+      sm_.SisterAlive();
+    } else {
+      sm_.SisterDead();
+      //  Immediate ack for sister's death notification
+      if (sisterDiedFirst_) {
+        publishStatus(false);
       }
     }
-    flushPendingCallbacks();
   }
+  flushPendingCallbacks();
 }
 
-void Bond::doPublishing(const ros::SteadyTimerEvent &)
+void Bond::doPublishing()
 {
-  boost::mutex::scoped_lock lock(mutex_);
+  std::unique_lock<std::mutex> lock(mutex_);
   if (sm_.getState().getId() == SM::WaitingForSister.getId() ||
-      sm_.getState().getId() == SM::Alive.getId()) {
+    sm_.getState().getId() == SM::Alive.getId())
+  {
     publishStatus(true);
   } else if (sm_.getState().getId() == SM::AwaitSisterDeath.getId()) {
     publishStatus(false);
   } else {
-    publishingTimer_.stop();
+    publishingTimerCancel();
+    //  deadpublishingTimerCancel();
   }
 }
 
 void Bond::publishStatus(bool active)
 {
-  bond::Status::Ptr msg(new bond::Status);
-  msg->header.stamp = ros::Time::now();
-  msg->id = id_;
-  msg->instance_id = instance_id_;
-  msg->active = active;
-  msg->heartbeat_timeout = heartbeat_timeout_;
-  msg->heartbeat_period = heartbeat_period_;
-  pub_.publish(msg);
+  bond::msg::Status msg;
+  rclcpp::Clock steady_clock(RCL_STEADY_TIME);
+  rclcpp::Time now = steady_clock.now();
+  msg.header.stamp = now;
+  msg.id = id_;
+  msg.instance_id = instance_id_;
+  msg.active = active;
+  msg.heartbeat_timeout = heartbeat_timeout_;
+  msg.heartbeat_period = heartbeat_period_;
+  pub_->publish(msg);
 }
-
 
 void Bond::flushPendingCallbacks()
 {
-  std::vector<boost::function<void(void)> > callbacks;
+  std::vector<std::function<void(void)>> callbacks;
   {
-    boost::mutex::scoped_lock lock(mutex_);
+    std::unique_lock<std::mutex> lock(mutex_);
     callbacks = pending_callbacks_;
     pending_callbacks_.clear();
   }
@@ -379,12 +490,12 @@ void Bond::flushPendingCallbacks()
   }
 }
 
-}  // namespace bond
+}  //  namespace bond
 
 
 void BondSM::Connected()
 {
-  b->connect_timer_.cancel();
+  b->connectTimerCancel();
   b->condition_.notify_all();
   if (b->on_formed_) {
     b->pending_callbacks_.push_back(b->on_formed_);
@@ -399,8 +510,8 @@ void BondSM::SisterDied()
 void BondSM::Death()
 {
   b->condition_.notify_all();
-  b->heartbeat_timer_.cancel();
-  b->disconnect_timer_.cancel();
+  b->heartbeatTimerCancel();
+  b->disconnectTimerCancel();
   if (b->on_broken_) {
     b->pending_callbacks_.push_back(b->on_broken_);
   }
@@ -408,12 +519,15 @@ void BondSM::Death()
 
 void BondSM::Heartbeat()
 {
-  b->heartbeat_timer_.reset();
+  b->heartbeat_timer_reset_flag_ = true;
+  b->heartbeatTimerReset();
 }
 
 void BondSM::StartDying()
 {
-  b->heartbeat_timer_.cancel();
-  b->disconnect_timer_.reset();
-  b->publishingTimer_.setPeriod(ros::WallDuration(bond::Constants::DEAD_PUBLISH_PERIOD));
+  b->heartbeatTimerCancel();
+  b->disconnect_timer_reset_flag_ = true;
+  b->disconnectTimerReset();
+  /* TODO b->deadpublishing_timer_reset_flag_ = true;
+  b->deadpublishingTimerReset();*/
 }

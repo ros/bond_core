@@ -1,27 +1,35 @@
 <?xml version="1.0"?>
-<?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
-<package format="2">
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
   <name>bondcpp</name>
-  <version>1.8.3</version>
+  <version>2.0.0</version>
   <description>
     C++ implementation of bond, a mechanism for checking when
     another process has terminated.
   </description>
   <maintainer email="michael@openrobotics.org">Michael Carroll</maintainer>
   <license>BSD</license>
-
   <url type="website">http://www.ros.org/wiki/bondcpp</url>
   <url type="bugtracker">https://github.com/ros/bond_core/issues</url>
   <url type="repository">https://github.com/ros/bond_core</url>
   <author>Stuart Glaser</author>
 
-  <buildtool_depend>catkin</buildtool_depend>
+  <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <build_depend version_gte="0.3.2">cmake_modules</build_depend>
+  <build_depend>bond</build_depend>
+  <build_depend>rclcpp</build_depend>
+  <build_depend>smclib</build_depend>
+  <build_depend>uuid</build_depend>
 
-  <depend>bond</depend>
-  <depend>boost</depend>
-  <depend>roscpp</depend>
-  <depend>smclib</depend>
-  <depend>uuid</depend>
+  <exec_depend>bond</exec_depend>
+  <exec_depend>rclcpp</exec_depend>
+  <exec_depend>smclib</exec_depend>
+  <exec_depend>uuid</exec_depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+<export>
+    <build_type>ament_cmake</build_type>
+  </export>
 </package>
