@@ -33,7 +33,7 @@ import uuid
 
 import rospy
 
-import BondSM_sm
+from . import BondSM_sm
 
 from bond.msg import Constants, Status
 
