@@ -106,9 +106,6 @@ class SmcException
 //
 
 public:
-// Destructor.
-  virtual ~SmcException() throw()
-  {}
 
 protected:
   // Constructor.
@@ -144,10 +141,6 @@ public:
   : SmcException("no state to pop from state stack")
   {}
 
-  // Destructor.
-  virtual ~PopOnEmptyStateStackException() throw()
-  {}
-
 protected:
 private:
   // -----------------------------------------------------------
@@ -174,10 +167,6 @@ public:
   // Default constructor.
   StateUndefinedException()
   : SmcException("transition invoked while in transition")
-  {}
-
-  // Destructor.
-  virtual ~StateUndefinedException() throw()
   {}
 
 protected:
@@ -227,7 +216,7 @@ public:
   {}
 
   // Destructor.
-  virtual ~TransitionUndefinedException() throw()
+  virtual ~TransitionUndefinedException() noexcept
   {
     if (_state != NULL) {
       delete[] _state;
@@ -328,7 +317,7 @@ public:
   {}
 
   // Destructor.
-  virtual ~IndexOutOfBoundsException() throw()
+  virtual ~IndexOutOfBoundsException() noexcept
   {}
 
   // Assignment operator.
