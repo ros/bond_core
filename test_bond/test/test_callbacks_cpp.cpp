@@ -27,16 +27,19 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <gtest/gtest.h>
+#include <string>
 
 #ifndef _WIN32
 # include <uuid/uuid.h>
 #else
 # include <rpc.h>
 #endif
-#include <gtest/gtest.h>
-#include <string>
-#include "rclcpp/rclcpp.hpp"
+
 #include "bondcpp/bond.hpp"
+
+#include "rclcpp/rclcpp.hpp"
+
 #include "test_bond/srv/test_bond.hpp"
 
 const char TOPIC[] = "test_bond_topic";
