@@ -2,6 +2,11 @@
 Changelog for package bond
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.8.4 (2020-02-24)
+------------------
+* Make Michael Carroll the maintainer (`#40 <https://github.com/ros/bond_core/issues/40>`_)
+* Contributors: Mikael Arguedas
+
 1.8.3 (2018-08-17)
 ------------------
 

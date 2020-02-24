@@ -2,6 +2,12 @@
 Changelog for package smclib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.8.4 (2020-02-24)
+------------------
+* remove windows.h to avoid namespace pollutions. (`#46 <https://github.com/ros/bond_core/issues/46>`_)
+* Make Michael Carroll the maintainer (`#40 <https://github.com/ros/bond_core/issues/40>`_)
+* Contributors: James Xu, Mikael Arguedas
+
 1.8.3 (2018-08-17)
 ------------------
 

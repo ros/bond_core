@@ -2,6 +2,12 @@
 Changelog for package bondpy
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.8.4 (2020-02-24)
+------------------
+* Fix import (`#48 <https://github.com/ros/bond_core/issues/48>`_)
+* Make Michael Carroll the maintainer (`#40 <https://github.com/ros/bond_core/issues/40>`_)
+* Contributors: Markus Grimm, Mikael Arguedas
+
 1.8.3 (2018-08-17)
 ------------------
 
@@ -29,7 +35,7 @@ Changelog for package bondpy
 
 1.7.17 (2016-03-15)
 -------------------
-* Queue size for a publisher `#10 <https://github.com/ros/bond_core/issues/10>`_ 
+* Queue size for a publisher `#10 <https://github.com/ros/bond_core/issues/10>`_
   Squash the warning.
 * update maintainer
 * Made code a bit more readable `#12 <https://github.com/ros/bond_core/pull/12>`_
