@@ -2,6 +2,12 @@
 Changelog for package bondpy
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Use setuptools instead of distutils (`#61 <https://github.com/ros/bond_core/issues/61>`_)
+* Bump CMake minimum version to use CMP0048 (`#58 <https://github.com/ros/bond_core/issues/58>`_)
+* Contributors: Alejandro Hernández Cordero, Michael Carroll
+
 1.8.4 (2020-02-24)
 ------------------
 * Fix import (`#48 <https://github.com/ros/bond_core/issues/48>`_)

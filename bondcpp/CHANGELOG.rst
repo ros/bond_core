@@ -2,6 +2,11 @@
 Changelog for package bondcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Bump CMake minimum version to use CMP0048 (`#58 <https://github.com/ros/bond_core/issues/58>`_)
+* Contributors: Michael Carroll
+
 1.8.4 (2020-02-24)
 ------------------
 * Solved static linking problems with bondcpp (`#44 <https://github.com/ros/bond_core/issues/44>`_)
