@@ -119,6 +119,8 @@ class Bond(object):
         self.disconnect_timeout = Constants.DEFAULT_DISCONNECT_TIMEOUT
         self.heartbeat_period = Constants.DEFAULT_HEARTBEAT_PERIOD
 
+        self.sub = None
+
         # queue_size 1 : avoid having a client receive backed up, potentially
         # late heartbearts, discussion@https://github.com/ros/bond_core/pull/10
         self.pub = rospy.Publisher(self.topic, Status, queue_size=1)
@@ -198,7 +200,8 @@ class Bond(object):
 
     def shutdown(self):
         if not self.is_shutdown:
-            self.sub.unregister()
+            if self.sub is not None:
+                self.sub.unregister()
             with self.lock:
                 self.is_shutdown = True
                 if self.sm.getState().getName() != 'SM.Dead':

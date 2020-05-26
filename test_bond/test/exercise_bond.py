@@ -148,6 +148,14 @@ class Exerciser(unittest.TestCase):
         self.assertFalse(bond.wait_until_broken(rospy.Duration(1.0)))
         self.assertTrue(bond.wait_until_broken(rospy.Duration(10.0)))
 
+    # Shutdown() before start()
+    def test_shutdown_before_start(self):
+        id = gen_id()
+        self.bond = bondpy.Bond(TOPIC, id)
+
+        self.bond.shutdown()
+        self.bond = None
+
     def setUp(self):
         self.bond = None
 
