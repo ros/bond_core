@@ -12,6 +12,7 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(bond REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_lifecycle REQUIRED)
 find_package(smclib REQUIRED)
 find_package(Threads REQUIRED)
 
@@ -31,6 +32,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 ament_target_dependencies(${PROJECT_NAME}
   bond
   rclcpp
+  rclcpp_lifecycle
   smclib)
 target_link_libraries(${PROJECT_NAME} ${uuid_ABS_PATH})
 
@@ -45,7 +47,7 @@ install(
   DESTINATION include)
 
 ament_export_dependencies(ament_cmake)
-ament_export_dependencies(bond rclcpp smclib)
+ament_export_dependencies(bond rclcpp rclcpp_lifecycle smclib)
 ament_export_include_directories(include)
 ament_export_libraries(${PROJECT_NAME})
 

@@ -45,6 +45,7 @@
 #include "bondcpp/BondSM_sm.hpp"
 
 #include "rclcpp/rclcpp.hpp"
+#include "rclcpp_lifecycle/lifecycle_node.hpp"
 
 namespace bond
 {
@@ -62,17 +63,36 @@ public:
    * \param topic The topic used to exchange the bond status messages.
    * \param id The ID of the bond, which should match the ID used on
    *           the sister's end.
+   * \param nh Lifecycle Node shared ptr.
    * \param on_broken callback that will be called when the bond is broken.
    * \param on_formed callback that will be called when the bond is formed.
    */
   Bond(
-    const std::string & topic, const std::string & id, rclcpp::Node::SharedPtr nh,
+    const std::string & topic, const std::string & id,
+    rclcpp_lifecycle::LifecycleNode::SharedPtr nh,
+    std::function<void(void)> on_broken = std::function<void(void)>(),
+    std::function<void(void)> on_formed = std::function<void(void)>());
+
+  /** \brief Constructs a bond, but does not connect
+   *
+   * \param topic The topic used to exchange the bond status messages.
+   * \param id The ID of the bond, which should match the ID used on
+   *           the sister's end.
+   * \param nh Node shared ptr.
+   * \param on_broken callback that will be called when the bond is broken.
+   * \param on_formed callback that will be called when the bond is formed.
+   */
+  Bond(
+    const std::string & topic, const std::string & id,
+    rclcpp::Node::SharedPtr nh,
     std::function<void(void)> on_broken = std::function<void(void)>(),
     std::function<void(void)> on_formed = std::function<void(void)>());
 
   /** \brief Destructs the object, breaking the bond if it is still formed.
    */
   ~Bond();
+
+  void setupConnections();
 
   double getConnectTimeout() const {return connect_timeout_;}
   void setConnectTimeout(double dur);
@@ -135,7 +155,11 @@ private:
   rclcpp::TimerBase::SharedPtr heartbeat_timer_;
   rclcpp::TimerBase::SharedPtr publishing_timer_;
   rclcpp::TimerBase::SharedPtr deadpublishing_timer_;
-  rclcpp::Node::SharedPtr nh_;
+
+  rclcpp::node_interfaces::NodeBaseInterface::SharedPtr node_base_;
+  rclcpp::node_interfaces::NodeLoggingInterface::SharedPtr node_logging_;
+  rclcpp::node_interfaces::NodeTimersInterface::SharedPtr node_timers_;
+
   std::unique_ptr<BondSM> bondsm_;
   BondSMContext sm_;
 
@@ -184,6 +208,7 @@ struct BondSM
 {
   explicit BondSM(bond::Bond * b_)
   : b(b_) {}
+
   void Connected();
   void SisterDied();
   void Death();
