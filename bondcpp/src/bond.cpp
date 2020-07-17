@@ -91,7 +91,7 @@ Bond::Bond(
   node_timers_ = nh->get_node_timers_interface();
   setupConnections();
 
-  pub_ = nh->create_publisher<bond::msg::Status>(topic_, rclcpp::QoS(rclcpp::KeepLast(5)));
+  pub_ = rclcpp::create_publisher<bond::msg::Status>(nh, topic_, rclcpp::QoS(rclcpp::KeepLast(5)));
   sub_ = nh->create_subscription<bond::msg::Status>(topic_, rclcpp::SystemDefaultsQoS(),
       std::bind(&Bond::bondStatusCB, this, std::placeholders::_1));
 }
@@ -120,7 +120,7 @@ Bond::Bond(
   node_timers_ = nh->get_node_timers_interface();
   setupConnections();
 
-  pub_ = nh->create_publisher<bond::msg::Status>(topic_, rclcpp::QoS(rclcpp::KeepLast(5)));
+  pub_ = rclcpp::create_publisher<bond::msg::Status>(nh, topic_, rclcpp::QoS(rclcpp::KeepLast(5)));
   sub_ = nh->create_subscription<bond::msg::Status>(topic_, rclcpp::SystemDefaultsQoS(),
       std::bind(&Bond::bondStatusCB, this, std::placeholders::_1));
 }
