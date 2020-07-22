@@ -136,16 +136,19 @@ Bond::~Bond()
       id_.c_str(), instance_id_.c_str());
   }
 
+
   // Must destroy the subscription before locking mutex_: shutdown()
   // will block until the status callback completes, and the status
   // callback locks mutex_ (in flushPendingCallbacks).
   // Stops the timers before locking the mutex.  Makes sure none of
   // the callbacks are running when we aquire the mutex.
+
   publishingTimerCancel();
   // deadpublishingTimerCancel();
   connectTimerCancel();
   heartbeatTimerCancel();
   disconnectTimerCancel();
+
   std::unique_lock<std::mutex> lock(mutex_);
 }
 
@@ -189,7 +192,9 @@ void Bond::connectTimerReset()
 
 void Bond::connectTimerCancel()
 {
-  connect_timer_->cancel();
+  if (connect_timer_ && !connect_timer_->is_canceled()) {
+    connect_timer_->cancel();
+  }
 }
 
 void Bond::setDisconnectTimeout(double dur)
@@ -224,7 +229,9 @@ void Bond::disconnectTimerReset()
 
 void Bond::disconnectTimerCancel()
 {
-  disconnect_timer_->cancel();
+  if (disconnect_timer_ && !disconnect_timer_->is_canceled()) {
+    disconnect_timer_->cancel();
+  }
 }
 
 void Bond::setHeartbeatTimeout(double dur)
@@ -259,7 +266,9 @@ void Bond::heartbeatTimerReset()
 
 void Bond::heartbeatTimerCancel()
 {
-  heartbeat_timer_->cancel();
+  if (heartbeat_timer_ && !heartbeat_timer_->is_canceled()) {
+    heartbeat_timer_->cancel();
+  }
 }
 
 void Bond::setHeartbeatPeriod(double dur)
@@ -290,7 +299,9 @@ void Bond::publishingTimerReset()
 
 void Bond::publishingTimerCancel()
 {
-  publishing_timer_->cancel();
+  if (publishing_timer_ && !publishing_timer_->is_canceled()) {
+    publishing_timer_->cancel();
+  }
 }
 
 void Bond::setDeadPublishPeriod(double dur)
@@ -324,7 +335,9 @@ void Bond::deadpublishingTimerReset()
 
 void Bond::deadpublishingTimerCancel()
 {
-  deadpublishing_timer_->cancel();
+  if (deadpublishing_timer_ && !deadpublishing_timer_->is_canceled()) {
+    deadpublishing_timer_->cancel();
+  }
 }
 
 /* TODO Callback Queue is not availabe in ROS2
@@ -564,7 +577,7 @@ void BondSM::StartDying()
 {
   b->heartbeatTimerCancel();
   b->disconnect_timer_reset_flag_ = true;
-  b->disconnectTimerReset();
+  b->disconnect_timer_.reset();
   /* TODO b->deadpublishing_timer_reset_flag_ = true;
   b->deadpublishingTimerReset();*/
 }

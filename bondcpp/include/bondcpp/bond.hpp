@@ -150,15 +150,28 @@ public:
 
 private:
   friend struct ::BondSM;
+
+  void onConnectTimeout();
+  void onHeartbeatTimeout();
+  void onDisconnectTimeout();
+
+  void bondStatusCB(const bond::msg::Status::ConstSharedPtr msg);
+
+  void doPublishing();
+  void publishStatus(bool active);
+
+  std::vector<std::function<void(void)>> pending_callbacks_;
+  void flushPendingCallbacks();
+
+  rclcpp::node_interfaces::NodeBaseInterface::SharedPtr node_base_;
+  rclcpp::node_interfaces::NodeTimersInterface::SharedPtr node_timers_;
+  rclcpp::node_interfaces::NodeLoggingInterface::SharedPtr node_logging_;
+
   rclcpp::TimerBase::SharedPtr connect_timer_;
   rclcpp::TimerBase::SharedPtr disconnect_timer_;
   rclcpp::TimerBase::SharedPtr heartbeat_timer_;
   rclcpp::TimerBase::SharedPtr publishing_timer_;
   rclcpp::TimerBase::SharedPtr deadpublishing_timer_;
-
-  rclcpp::node_interfaces::NodeBaseInterface::SharedPtr node_base_;
-  rclcpp::node_interfaces::NodeLoggingInterface::SharedPtr node_logging_;
-  rclcpp::node_interfaces::NodeTimersInterface::SharedPtr node_timers_;
 
   std::unique_ptr<BondSM> bondsm_;
   BondSMContext sm_;
@@ -186,18 +199,6 @@ private:
 
   rclcpp::Subscription<bond::msg::Status>::SharedPtr sub_;
   rclcpp::Publisher<bond::msg::Status>::SharedPtr pub_;
-
-  void onConnectTimeout();
-  void onHeartbeatTimeout();
-  void onDisconnectTimeout();
-
-  void bondStatusCB(const bond::msg::Status::ConstSharedPtr msg);
-
-  void doPublishing();
-  void publishStatus(bool active);
-
-  std::vector<std::function<void(void)>> pending_callbacks_;
-  void flushPendingCallbacks();
 };
 
 }  // namespace bond
