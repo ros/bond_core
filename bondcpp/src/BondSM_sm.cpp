@@ -62,6 +62,7 @@ void BondSMState::DisconnectTimeout(BondSMContext & context)
 
 void BondSMState::HeartbeatTimeout(BondSMContext & context)
 {
+  std::cout << "HeartbeatTimeout CRASH" << std::endl;
   Default(context);
 }
 
@@ -167,6 +168,8 @@ void SM_Alive::Die(BondSMContext & context)
 
 void SM_Alive::HeartbeatTimeout(BondSMContext & context)
 {
+  std::cout << "HeartbeatTimeout ALIVE" << std::endl;
+
   BondSM & ctxt(context.getOwner());
 
   (context.getState()).Exit(context);
@@ -239,6 +242,8 @@ void SM_AwaitSisterDeath::DisconnectTimeout(BondSMContext & context)
 
 void SM_AwaitSisterDeath::HeartbeatTimeout(BondSMContext & context)
 {
+  std::cout << "HeartbeatTimeout SISTER DEATH" << std::endl;
+
   (context.getState()).Exit(context);
   context.setState(SM::AwaitSisterDeath);
   (context.getState()).Entry(context);
@@ -290,6 +295,8 @@ void SM_Dead::DisconnectTimeout(BondSMContext & context)
 
 void SM_Dead::HeartbeatTimeout(BondSMContext & context)
 {
+  std::cout << "HeartbeatTimeout DEAD" << std::endl;
+
   (context.getState()).Exit(context);
   context.setState(SM::Dead);
   (context.getState()).Entry(context);

@@ -186,8 +186,8 @@ private:
   bool started_;
   bool connect_timer_reset_flag_;
   bool disconnect_timer_reset_flag_;
-  bool heartbeat_timer_reset_flag_;
   bool deadpublishing_timer_reset_flag_;
+  bool disable_heartbeat_timeout_;
   std::mutex mutex_;
   std::condition_variable condition_;
 

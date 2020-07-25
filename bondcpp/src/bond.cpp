@@ -83,16 +83,23 @@ Bond::Bond(
   started_(false),
   connect_timer_reset_flag_(false),
   disconnect_timer_reset_flag_(false),
-  heartbeat_timer_reset_flag_(false),
-  deadpublishing_timer_reset_flag_(false)
+  deadpublishing_timer_reset_flag_(false),
+  disable_heartbeat_timeout_(false)
 {
   node_base_ = nh->get_node_base_interface();
   node_logging_ = nh->get_node_logging_interface();
   node_timers_ = nh->get_node_timers_interface();
+  if (!nh->has_parameter(bond::msg::Constants::DISABLE_HEARTBEAT_TIMEOUT_PARAM)) {
+    nh->declare_parameter(bond::msg::Constants::DISABLE_HEARTBEAT_TIMEOUT_PARAM, false);
+  }
+
+  disable_heartbeat_timeout_ =
+    nh->get_parameter(bond::msg::Constants::DISABLE_HEARTBEAT_TIMEOUT_PARAM).as_bool();
+
   setupConnections();
 
   pub_ = rclcpp::create_publisher<bond::msg::Status>(nh, topic_, rclcpp::QoS(rclcpp::KeepLast(5)));
-  sub_ = nh->create_subscription<bond::msg::Status>(topic_, rclcpp::SystemDefaultsQoS(),
+  sub_ = nh->create_subscription<bond::msg::Status>(topic_, rclcpp::QoS(100),
       std::bind(&Bond::bondStatusCB, this, std::placeholders::_1));
 }
 
@@ -112,16 +119,22 @@ Bond::Bond(
   started_(false),
   connect_timer_reset_flag_(false),
   disconnect_timer_reset_flag_(false),
-  heartbeat_timer_reset_flag_(false),
   deadpublishing_timer_reset_flag_(false)
 {
   node_base_ = nh->get_node_base_interface();
   node_logging_ = nh->get_node_logging_interface();
   node_timers_ = nh->get_node_timers_interface();
+  if (!nh->has_parameter(bond::msg::Constants::DISABLE_HEARTBEAT_TIMEOUT_PARAM)) {
+    nh->declare_parameter(bond::msg::Constants::DISABLE_HEARTBEAT_TIMEOUT_PARAM, false);
+  }
+
+  disable_heartbeat_timeout_ =
+    nh->get_parameter(bond::msg::Constants::DISABLE_HEARTBEAT_TIMEOUT_PARAM).as_bool();
+
   setupConnections();
 
   pub_ = rclcpp::create_publisher<bond::msg::Status>(nh, topic_, rclcpp::QoS(rclcpp::KeepLast(5)));
-  sub_ = nh->create_subscription<bond::msg::Status>(topic_, rclcpp::SystemDefaultsQoS(),
+  sub_ = nh->create_subscription<bond::msg::Status>(topic_, rclcpp::QoS(100),
       std::bind(&Bond::bondStatusCB, this, std::placeholders::_1));
 }
 
@@ -178,7 +191,7 @@ void Bond::connectTimerReset()
   auto connectTimerResetCallback =
     [this]() -> void
     {
-      if (connect_timer_reset_flag_) {
+      if (connect_timer_reset_flag_ && started_) {
         onConnectTimeout();
         connect_timer_->cancel();
         connect_timer_reset_flag_ = false;
@@ -215,7 +228,7 @@ void Bond::disconnectTimerReset()
   auto disconnectTimerResetCallback =
     [this]() -> void
     {
-      if (disconnect_timer_reset_flag_) {
+      if (disconnect_timer_reset_flag_ && started_) {
         onDisconnectTimeout();
         disconnect_timer_->cancel();
         disconnect_timer_reset_flag_ = false;
@@ -252,11 +265,25 @@ void Bond::heartbeatTimerReset()
   auto heartbeatTimerResetCallback =
     [this]() -> void
     {
-      if (heartbeat_timer_reset_flag_) {
-        onHeartbeatTimeout();
-        heartbeat_timer_->cancel();
-        heartbeat_timer_reset_flag_ = false;
-      }      //  flag is needed to have valid callback
+      if (!started_ || disable_heartbeat_timeout_) {
+        return;
+      }
+
+      // timer will call on instantiation, don't process
+      // TODO maybe replace with connection first
+        // I think this is why non-determinstic, sometimes this helps with the wait
+        // or determinstic just timing - try removing this later when things working
+      static bool first = true;
+      if (first) {
+        first = false;
+        return;
+      }
+
+      onHeartbeatTimeout();//TODO crash due to this being called while state Default
+                           //TODO WHY is that happening? Main Q to answer for Soln.
+                           //TODO or readd application waitUntilFormed() !?
+                           //TODO crashing when not connected yet before triggering callback
+                           //TODO could this be from the flags in connect/disconnect? stops state setting on call
     };
   //    heartbeat timer started on node
   heartbeat_timer_ = rclcpp::create_wall_timer(
@@ -357,10 +384,10 @@ void Bond::start()
   connect_timer_reset_flag_ = true;
   connectTimerReset();
   publishingTimerReset();
-  started_ = true;
   heartbeatTimerReset();
   disconnectTimerReset();
   //  deadpublishingTimerReset();
+  started_ = true;
 }
 
 void Bond::setFormedCallback(std::function<void(void)> on_formed)
@@ -474,14 +501,17 @@ void Bond::onDisconnectTimeout()
 
 void Bond::bondStatusCB(const bond::msg::Status::ConstSharedPtr msg)
 {
+  if (!started_) {
+    return;
+  }
+
   //  Filters out messages from other bonds and messages from ourself
   if (msg->id == id_ && msg->instance_id != instance_id_) {
-    {
-      std::unique_lock<std::mutex> lock(mutex_);
 
-      if (sister_instance_id_.empty()) {
-        sister_instance_id_ = msg->instance_id;
-      }
+    std::unique_lock<std::mutex> lock(mutex_);
+
+    if (sister_instance_id_.empty()) {
+      sister_instance_id_ = msg->instance_id;
     }
 
     if (msg->active) {
@@ -506,7 +536,7 @@ void Bond::doPublishing()
     publishStatus(true);
   } else if (sm_.getState().getId() == SM::AwaitSisterDeath.getId()) {
     publishStatus(false);
-  } else {
+  } else {  // SM::Dead
     publishingTimerCancel();
     //  deadpublishingTimerCancel();
   }
@@ -514,16 +544,16 @@ void Bond::doPublishing()
 
 void Bond::publishStatus(bool active)
 {
-  bond::msg::Status msg;
+  std::unique_ptr<bond::msg::Status> msg = std::make_unique<bond::msg::Status>();
   rclcpp::Clock steady_clock(RCL_STEADY_TIME);
   rclcpp::Time now = steady_clock.now();
-  msg.header.stamp = now;
-  msg.id = id_;
-  msg.instance_id = instance_id_;
-  msg.active = active;
-  msg.heartbeat_timeout = heartbeat_timeout_;
-  msg.heartbeat_period = heartbeat_period_;
-  pub_->publish(msg);
+  msg->header.stamp = now;
+  msg->id = id_;
+  msg->instance_id = instance_id_;
+  msg->active = active;
+  msg->heartbeat_timeout = heartbeat_timeout_;
+  msg->heartbeat_period = heartbeat_period_;
+  pub_->publish(std::move(msg));
 }
 
 void Bond::flushPendingCallbacks()
@@ -569,7 +599,6 @@ void BondSM::Death()
 
 void BondSM::Heartbeat()
 {
-  b->heartbeat_timer_reset_flag_ = true;
   b->heartbeatTimerReset();
 }
 
