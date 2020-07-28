@@ -390,18 +390,16 @@ void Bond::setBrokenCallback(std::function<void(void)> on_broken)
 
 bool Bond::waitUntilFormed(rclcpp::Duration timeout)
 {
-  double time_conv = timeout.nanoseconds() * 1e9;
-  rclcpp::Duration timeout1(time_conv);
   //  std::unique_lock<std::mutex> lock(mutex_);
   rclcpp::Clock steady_clock(RCL_STEADY_TIME);
-  rclcpp::Time deadline(steady_clock.now() + timeout1);
+  rclcpp::Time deadline(steady_clock.now() + timeout);
 
   while (sm_.getState().getId() == SM::WaitingForSister.getId()) {
     if (!rclcpp::ok()) {
       break;
     }
     rclcpp::Duration wait_time = rclcpp::Duration(0.1 * 1e9);
-    if (timeout1 >= rclcpp::Duration(0.0 * 1e9)) {
+    if (timeout >= rclcpp::Duration(0.0 * 1e9)) {
       rclcpp::Clock steady_clock(RCL_STEADY_TIME);
       wait_time = std::min(wait_time, deadline - steady_clock.now());
     }
@@ -415,24 +413,21 @@ bool Bond::waitUntilFormed(rclcpp::Duration timeout)
 
 bool Bond::waitUntilBroken(rclcpp::Duration timeout)
 {
-  double time_conv = timeout.nanoseconds() * 1e9;
-  rclcpp::Duration timeout1(time_conv);
   //  std::unique_lock<std::mutex> lock(mutex_);
   rclcpp::Clock steady_clock(RCL_STEADY_TIME);
-  rclcpp::Time deadline(steady_clock.now() + timeout1);
+  rclcpp::Time deadline(steady_clock.now() + timeout);
   while (sm_.getState().getId() != SM::Dead.getId()) {
     if (!rclcpp::ok()) {
       break;
     }
     rclcpp::Duration wait_time = rclcpp::Duration(0.1 * 1e9);
-    if (timeout1 >= rclcpp::Duration(0.0 * 1e9)) {
+    if (timeout >= rclcpp::Duration(0.0 * 1e9)) {
       rclcpp::Clock steady_clock(RCL_STEADY_TIME);
       wait_time = std::min(wait_time, deadline - steady_clock.now());
     }
     if (wait_time <= rclcpp::Duration(0.0 * 1e9)) {
       break;  //  The deadline has expired
     }
-
   }
 
   return sm_.getState().getId() == SM::Dead.getId();
