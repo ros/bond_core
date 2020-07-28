@@ -269,21 +269,7 @@ void Bond::heartbeatTimerReset()
         return;
       }
 
-      // timer will call on instantiation, don't process
-      // TODO maybe replace with connection first
-        // I think this is why non-determinstic, sometimes this helps with the wait
-        // or determinstic just timing - try removing this later when things working
-      static bool first = true;
-      if (first) {
-        first = false;
-        return;
-      }
-
-      onHeartbeatTimeout();//TODO crash due to this being called while state Default
-                           //TODO WHY is that happening? Main Q to answer for Soln.
-                           //TODO or readd application waitUntilFormed() !?
-                           //TODO crashing when not connected yet before triggering callback
-                           //TODO could this be from the flags in connect/disconnect? stops state setting on call
+      onHeartbeatTimeout();
     };
   //    heartbeat timer started on node
   heartbeat_timer_ = rclcpp::create_wall_timer(
@@ -422,7 +408,6 @@ bool Bond::waitUntilFormed(rclcpp::Duration timeout)
     if (wait_time <= rclcpp::Duration(0.0 * 1e9)) {
       break;  //  The deadline has expired
     }
-    rclcpp::spin_some(node_base_);
   }
 
   return sm_.getState().getId() != SM::WaitingForSister.getId();
@@ -448,7 +433,6 @@ bool Bond::waitUntilBroken(rclcpp::Duration timeout)
       break;  //  The deadline has expired
     }
 
-    rclcpp::spin_some(node_base_);
   }
 
   return sm_.getState().getId() == SM::Dead.getId();
