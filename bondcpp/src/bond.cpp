@@ -393,6 +393,7 @@ bool Bond::waitUntilFormed(rclcpp::Duration timeout)
   //  std::unique_lock<std::mutex> lock(mutex_);
   rclcpp::Clock steady_clock(RCL_STEADY_TIME);
   rclcpp::Time deadline(steady_clock.now() + timeout);
+  rclcpp::Rate r(100);
 
   while (sm_.getState().getId() == SM::WaitingForSister.getId()) {
     if (!rclcpp::ok()) {
@@ -406,6 +407,7 @@ bool Bond::waitUntilFormed(rclcpp::Duration timeout)
     if (wait_time <= rclcpp::Duration(0.0 * 1e9)) {
       break;  //  The deadline has expired
     }
+    r.sleep();
   }
 
   return sm_.getState().getId() != SM::WaitingForSister.getId();
@@ -416,6 +418,8 @@ bool Bond::waitUntilBroken(rclcpp::Duration timeout)
   //  std::unique_lock<std::mutex> lock(mutex_);
   rclcpp::Clock steady_clock(RCL_STEADY_TIME);
   rclcpp::Time deadline(steady_clock.now() + timeout);
+  rclcpp::Rate r(100);
+
   while (sm_.getState().getId() != SM::Dead.getId()) {
     if (!rclcpp::ok()) {
       break;
@@ -428,6 +432,7 @@ bool Bond::waitUntilBroken(rclcpp::Duration timeout)
     if (wait_time <= rclcpp::Duration(0.0 * 1e9)) {
       break;  //  The deadline has expired
     }
+    r.sleep();
   }
 
   return sm_.getState().getId() == SM::Dead.getId();
