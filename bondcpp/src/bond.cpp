@@ -144,7 +144,7 @@ Bond::~Bond()
     return;
   }
   breakBond();
-  if (rclcpp::ok() && !waitUntilBroken(rclcpp::Duration(1.0 * 1e9))) {
+  if (rclcpp::ok() && !waitUntilBroken(rclcpp::Duration(0.10 * 1e9))) {
     RCLCPP_DEBUG(node_logging_->get_logger(), "Bond failed to break on destruction %s (%s)",
       id_.c_str(), instance_id_.c_str());
   }
