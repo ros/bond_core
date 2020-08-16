@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(bondcpp)
 
-find_package(Boost REQUIRED)
+find_package(Boost REQUIRED date_time thread)
 find_package(catkin REQUIRED bond cmake_modules roscpp smclib)
 find_package(UUID REQUIRED)
 
