@@ -400,11 +400,11 @@ bool Bond::waitUntilFormed(rclcpp::Duration timeout)
       break;
     }
     rclcpp::Duration wait_time = rclcpp::Duration(0.1 * 1e9);
-    if (timeout >= rclcpp::Duration(0.0 * 1e9)) {
+    if (timeout >= rclcpp::Duration(0.0)) {
       rclcpp::Clock steady_clock(RCL_STEADY_TIME);
       wait_time = std::min(wait_time, deadline - steady_clock.now());
     }
-    if (wait_time <= rclcpp::Duration(0.0 * 1e9)) {
+    if (wait_time <= rclcpp::Duration(0.0)) {
       break;  //  The deadline has expired
     }
     r.sleep();
@@ -425,11 +425,11 @@ bool Bond::waitUntilBroken(rclcpp::Duration timeout)
       break;
     }
     rclcpp::Duration wait_time = rclcpp::Duration(0.1 * 1e9);
-    if (timeout >= rclcpp::Duration(0.0 * 1e9)) {
+    if (timeout >= rclcpp::Duration(0.0)) {
       rclcpp::Clock steady_clock(RCL_STEADY_TIME);
       wait_time = std::min(wait_time, deadline - steady_clock.now());
     }
-    if (wait_time <= rclcpp::Duration(0.0 * 1e9)) {
+    if (wait_time <= rclcpp::Duration(0.0)) {
       break;  //  The deadline has expired
     }
     r.sleep();
