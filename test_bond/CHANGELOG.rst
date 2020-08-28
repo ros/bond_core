@@ -2,8 +2,8 @@
 Changelog for package test_bond
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.8.6 (2020-08-28)
+------------------
 * bondpy: Prevent exception in Bond.shutdown() (`#62 <https://github.com/ros/bond_core/issues/62>`_)
 * Contributors: Martin Pecka
 

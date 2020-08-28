@@ -2,8 +2,8 @@
 Changelog for package bondcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.8.6 (2020-08-28)
+------------------
 * narrow down required boost dependencies (`#68 <https://github.com/ros/bond_core/issues/68>`_)
 * Contributors: Mikael Arguedas
 
