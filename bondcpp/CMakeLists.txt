@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(bondcpp)
 
-find_package(Boost REQUIRED)
+find_package(Boost REQUIRED date_time thread)
 find_package(catkin REQUIRED bond cmake_modules roscpp smclib)
 find_package(UUID REQUIRED)
 
@@ -24,7 +24,7 @@ add_library(${PROJECT_NAME}
   src/bond.cpp
   src/BondSM_sm.cpp
 )
-target_link_libraries(${PROJECT_NAME} ${UUID_LIBRARIES} ${catkin_LIBRARIES} ${BOOST_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${UUID_LIBRARIES} ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
 if(catkin_EXPORTED_TARGETS)
   add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
