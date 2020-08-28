@@ -2,6 +2,9 @@
 Changelog for package bond_core
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 1.8.5 (2020-05-14)
 ------------------
 * Bump CMake minimum version to use CMP0048 (`#58 <https://github.com/ros/bond_core/issues/58>`_)

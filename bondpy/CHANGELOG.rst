@@ -2,6 +2,11 @@
 Changelog for package bondpy
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* bondpy: Prevent exception in Bond.shutdown() (`#62 <https://github.com/ros/bond_core/issues/62>`_)
+* Contributors: Martin Pecka
+
 1.8.5 (2020-05-14)
 ------------------
 * Use setuptools instead of distutils (`#61 <https://github.com/ros/bond_core/issues/61>`_)

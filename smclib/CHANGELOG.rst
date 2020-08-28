@@ -2,6 +2,9 @@
 Changelog for package smclib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 1.8.5 (2020-05-14)
 ------------------
 * Use setuptools instead of distutils (`#61 <https://github.com/ros/bond_core/issues/61>`_)
