@@ -38,16 +38,16 @@ class Timeout
 {
 public:
   Timeout(
-    const ros::Duration &d,
-    boost::function<void(void)> on_timeout = boost::function<void(void)>());
+      const ros::Duration& d,
+      boost::function<void(void)> on_timeout = boost::function<void(void)>());
   Timeout(
-    const ros::WallDuration &d,
-    boost::function<void(void)> on_timeout = boost::function<void(void)>());
+      const ros::WallDuration& d,
+      boost::function<void(void)> on_timeout = boost::function<void(void)>());
   ~Timeout();
 
   // Undefined what these do to a running timeout
-  void setDuration(const ros::Duration &d);
-  void setDuration(const ros::WallDuration &d);
+  void setDuration(const ros::Duration& d);
+  void setDuration(const ros::WallDuration& d);
 
   void reset();
   void cancel();
@@ -60,10 +60,9 @@ private:
   ros::WallDuration duration_;
   boost::function<void(void)> on_timeout_;
 
-  void timerCallback(const ros::SteadyTimerEvent &e);
+  void timerCallback(const ros::SteadyTimerEvent& e);
 };
 
+} // namespace bond
 
-}  // namespace bond
-
-#endif  // BONDCPP__TIMEOUT_H_
+#endif // BONDCPP__TIMEOUT_H_

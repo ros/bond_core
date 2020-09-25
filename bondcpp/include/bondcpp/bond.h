@@ -48,13 +48,13 @@
 #include <vector>
 
 #ifdef ROS_BUILD_SHARED_LIBS // ros is being built around shared libraries
-  #ifdef bondcpp_EXPORTS // we are building a shared lib/dll
-    #define BONDCPP_DECL ROS_HELPER_EXPORT
-  #else // we are using shared lib/dll
-    #define BONDCPP_DECL ROS_HELPER_IMPORT
-  #endif
+    #ifdef bondcpp_EXPORTS // we are building a shared lib/dll
+        #define BONDCPP_DECL ROS_HELPER_EXPORT
+    #else // we are using shared lib/dll
+        #define BONDCPP_DECL ROS_HELPER_IMPORT
+    #endif
 #else // ros is being built around static libraries
-  #define BONDCPP_DECL
+    #define BONDCPP_DECL
 #endif
 
 namespace bond {
@@ -76,7 +76,8 @@ public:
    * \param on_broken callback that will be called when the bond is broken.
    * \param on_formed callback that will be called when the bond is formed.
    */
-  Bond(const std::string &topic, const std::string &id,
+  Bond(const std::string& topic,
+       const std::string& id,
        boost::function<void(void)> on_broken = boost::function<void(void)>(),
        boost::function<void(void)> on_formed = boost::function<void(void)>());
 
@@ -93,7 +94,7 @@ public:
   double getHeartbeatPeriod() const { return heartbeat_period_; }
   void setHeartbeatPeriod(double dur);
 
-  void setCallbackQueue(ros::CallbackQueueInterface *queue);
+  void setCallbackQueue(ros::CallbackQueueInterface* queue);
 
   /** \brief Starts the bond and connects to the sister process.
    */
@@ -184,22 +185,21 @@ private:
   void onHeartbeatTimeout();
   void onDisconnectTimeout();
 
-  void bondStatusCB(const bond::Status::ConstPtr &msg);
+  void bondStatusCB(const bond::Status::ConstPtr& msg);
 
-  void doPublishing(const ros::SteadyTimerEvent &e);
+  void doPublishing(const ros::SteadyTimerEvent& e);
   void publishStatus(bool active);
 
   std::vector<boost::function<void(void)> > pending_callbacks_;
   void flushPendingCallbacks();
 };
 
-}  // namespace bond
-
+} // namespace bond
 
 // Internal use only
 struct BondSM
 {
-  BondSM(bond::Bond *b_) : b(b_) {}
+  BondSM(bond::Bond* b_) : b(b_) {}
   void Connected();
   void SisterDied();
   void Death();
@@ -207,7 +207,7 @@ struct BondSM
   void StartDying();
 
 private:
-  bond::Bond *b;
+  bond::Bond* b;
 };
 
-#endif  // BONDCPP__BOND_H_
+#endif // BONDCPP__BOND_H_
