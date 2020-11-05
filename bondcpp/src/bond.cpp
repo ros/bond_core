@@ -144,7 +144,7 @@ Bond::~Bond()
     return;
   }
   breakBond();
-  if (rclcpp::ok() && !waitUntilBroken(rclcpp::Duration(0.10 * 1e9))) {
+  if (rclcpp::ok() && !waitUntilBroken(rclcpp::Duration(100ms))) {
     RCLCPP_DEBUG(node_logging_->get_logger(), "Bond failed to break on destruction %s (%s)",
       id_.c_str(), instance_id_.c_str());
   }
@@ -399,12 +399,12 @@ bool Bond::waitUntilFormed(rclcpp::Duration timeout)
     if (!rclcpp::ok()) {
       break;
     }
-    rclcpp::Duration wait_time = rclcpp::Duration(0.1 * 1e9);
-    if (timeout >= rclcpp::Duration(0.0)) {
+    rclcpp::Duration wait_time = rclcpp::Duration(100ms);
+    if (timeout >= rclcpp::Duration(0.0s)) {
       rclcpp::Clock steady_clock(RCL_STEADY_TIME);
       wait_time = std::min(wait_time, deadline - steady_clock.now());
     }
-    if (wait_time <= rclcpp::Duration(0.0)) {
+    if (wait_time <= rclcpp::Duration(0.0s)) {
       break;  //  The deadline has expired
     }
     r.sleep();
@@ -424,12 +424,12 @@ bool Bond::waitUntilBroken(rclcpp::Duration timeout)
     if (!rclcpp::ok()) {
       break;
     }
-    rclcpp::Duration wait_time = rclcpp::Duration(0.1 * 1e9);
-    if (timeout >= rclcpp::Duration(0.0)) {
+    rclcpp::Duration wait_time = rclcpp::Duration(100ms);
+    if (timeout >= rclcpp::Duration(0.0s)) {
       rclcpp::Clock steady_clock(RCL_STEADY_TIME);
       wait_time = std::min(wait_time, deadline - steady_clock.now());
     }
-    if (wait_time <= rclcpp::Duration(0.0)) {
+    if (wait_time <= rclcpp::Duration(0.0s)) {
       break;  //  The deadline has expired
     }
     r.sleep();
