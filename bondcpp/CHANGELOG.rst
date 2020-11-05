@@ -2,6 +2,14 @@
 Changelog for package bondcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.0.0 (2020-11-05)
+------------------
+* Lifecycle support 2 (`#67 <https://github.com/ros/bond_core/issues/67>`_)
+* find uuid correctly on ubuntu and osx (`#55 <https://github.com/ros/bond_core/issues/55>`_)
+* Ros2 devel (`#54 <https://github.com/ros/bond_core/issues/54>`_)
+* Make Michael Carroll the maintainer (`#40 <https://github.com/ros/bond_core/issues/40>`_)
+* Contributors: Karsten Knese, Mikael Arguedas, Steve Macenski
+
 1.8.3 (2018-08-17)
 ------------------
 * Argument to Boost Milliseconds must be integral in Boost >= 1.67 (`#37 <https://github.com/ros/bond_core/issues/37>`_)

@@ -2,6 +2,13 @@
 Changelog for package smclib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.0.0 (2020-11-05)
+------------------
+* fix deprecation warnings (`#56 <https://github.com/ros/bond_core/issues/56>`_)
+* Ros2 devel (`#54 <https://github.com/ros/bond_core/issues/54>`_)
+* Make Michael Carroll the maintainer (`#40 <https://github.com/ros/bond_core/issues/40>`_)
+* Contributors: Karsten Knese, Mikael Arguedas
+
 1.8.3 (2018-08-17)
 ------------------
 
