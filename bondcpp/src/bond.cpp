@@ -42,6 +42,7 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 using namespace std::chrono_literals;
@@ -99,8 +100,9 @@ Bond::Bond(
   setupConnections();
 
   pub_ = rclcpp::create_publisher<bond::msg::Status>(nh, topic_, rclcpp::QoS(rclcpp::KeepLast(5)));
-  sub_ = nh->create_subscription<bond::msg::Status>(topic_, rclcpp::QoS(100),
-      std::bind(&Bond::bondStatusCB, this, std::placeholders::_1));
+  sub_ = nh->create_subscription<bond::msg::Status>(
+    topic_, rclcpp::QoS(100),
+    std::bind(&Bond::bondStatusCB, this, std::placeholders::_1));
 }
 
 Bond::Bond(
@@ -134,8 +136,9 @@ Bond::Bond(
   setupConnections();
 
   pub_ = rclcpp::create_publisher<bond::msg::Status>(nh, topic_, rclcpp::QoS(rclcpp::KeepLast(5)));
-  sub_ = nh->create_subscription<bond::msg::Status>(topic_, rclcpp::QoS(100),
-      std::bind(&Bond::bondStatusCB, this, std::placeholders::_1));
+  sub_ = nh->create_subscription<bond::msg::Status>(
+    topic_, rclcpp::QoS(100),
+    std::bind(&Bond::bondStatusCB, this, std::placeholders::_1));
 }
 
 Bond::~Bond()
@@ -145,7 +148,8 @@ Bond::~Bond()
   }
   breakBond();
   if (rclcpp::ok() && !waitUntilBroken(rclcpp::Duration(0.10 * 1e9))) {
-    RCLCPP_DEBUG(node_logging_->get_logger(), "Bond failed to break on destruction %s (%s)",
+    RCLCPP_DEBUG(
+      node_logging_->get_logger(), "Bond failed to break on destruction %s (%s)",
       id_.c_str(), instance_id_.c_str());
   }
 
@@ -491,7 +495,6 @@ void Bond::bondStatusCB(const bond::msg::Status::ConstSharedPtr msg)
 
   //  Filters out messages from other bonds and messages from ourself
   if (msg->id == id_ && msg->instance_id != instance_id_) {
-
     std::unique_lock<std::mutex> lock(mutex_);
 
     if (sister_instance_id_.empty()) {
