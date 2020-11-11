@@ -147,7 +147,7 @@ Bond::~Bond()
     return;
   }
   breakBond();
-  if (rclcpp::ok() && !waitUntilBroken(rclcpp::Duration(0.10 * 1e9))) {
+  if (rclcpp::ok() && !waitUntilBroken(rclcpp::Duration(100ms))) {
     RCLCPP_DEBUG(
       node_logging_->get_logger(), "Bond failed to break on destruction %s (%s)",
       id_.c_str(), instance_id_.c_str());
@@ -189,7 +189,7 @@ void Bond::setConnectTimeout(double dur)
 
 void Bond::connectTimerReset()
 {
-  rclcpp::Duration dur1(connect_timeout_);
+  rclcpp::Duration dur1(rclcpp::Duration::from_nanoseconds(connect_timeout_));
   const std::chrono::nanoseconds period1(dur1.nanoseconds());
   // Callback function of connect timer
   auto connectTimerResetCallback =
@@ -226,7 +226,7 @@ void Bond::setDisconnectTimeout(double dur)
 
 void Bond::disconnectTimerReset()
 {
-  rclcpp::Duration dur2(disconnect_timeout_);
+  rclcpp::Duration dur2(rclcpp::Duration::from_nanoseconds(disconnect_timeout_));
   const std::chrono::nanoseconds period2(dur2.nanoseconds());
   // Callback function of disconnect timer
   auto disconnectTimerResetCallback =
@@ -263,7 +263,7 @@ void Bond::setHeartbeatTimeout(double dur)
 
 void Bond::heartbeatTimerReset()
 {
-  rclcpp::Duration dur3(heartbeat_timeout_);
+  rclcpp::Duration dur3(rclcpp::Duration::from_nanoseconds(heartbeat_timeout_));
   const std::chrono::nanoseconds period3(dur3.nanoseconds());
   //  Callback function of heartbeat timer
   auto heartbeatTimerResetCallback =
@@ -300,7 +300,7 @@ void Bond::setHeartbeatPeriod(double dur)
 
 void Bond::publishingTimerReset()
 {
-  rclcpp::Duration dur4(heartbeat_period_);
+  rclcpp::Duration dur4(rclcpp::Duration::from_nanoseconds(heartbeat_period_));
   const std::chrono::nanoseconds period4(dur4.nanoseconds());
   //  Callback function of publishing timer
   auto publishingTimerResetCallback =
@@ -333,7 +333,7 @@ void Bond::setDeadPublishPeriod(double dur)
 
 void Bond::deadpublishingTimerReset()
 {
-  rclcpp::Duration dur5(dead_publish_period_);
+  rclcpp::Duration dur5(rclcpp::Duration::from_nanoseconds(dead_publish_period_));
   const std::chrono::nanoseconds period5(dur5.nanoseconds());
   //  callback function of dead publishing timer which will publish data when bond is broken
   auto deadpublishingTimerResetCallback =
@@ -403,12 +403,12 @@ bool Bond::waitUntilFormed(rclcpp::Duration timeout)
     if (!rclcpp::ok()) {
       break;
     }
-    rclcpp::Duration wait_time = rclcpp::Duration(0.1 * 1e9);
-    if (timeout >= rclcpp::Duration(0.0)) {
+    rclcpp::Duration wait_time = rclcpp::Duration(100ms);
+    if (timeout >= rclcpp::Duration(0.0s)) {
       rclcpp::Clock steady_clock(RCL_STEADY_TIME);
       wait_time = std::min(wait_time, deadline - steady_clock.now());
     }
-    if (wait_time <= rclcpp::Duration(0.0)) {
+    if (wait_time <= rclcpp::Duration(0.0s)) {
       break;  //  The deadline has expired
     }
     r.sleep();
@@ -428,12 +428,12 @@ bool Bond::waitUntilBroken(rclcpp::Duration timeout)
     if (!rclcpp::ok()) {
       break;
     }
-    rclcpp::Duration wait_time = rclcpp::Duration(0.1 * 1e9);
-    if (timeout >= rclcpp::Duration(0.0)) {
+    rclcpp::Duration wait_time = rclcpp::Duration(100ms);
+    if (timeout >= rclcpp::Duration(0.0s)) {
       rclcpp::Clock steady_clock(RCL_STEADY_TIME);
       wait_time = std::min(wait_time, deadline - steady_clock.now());
     }
-    if (wait_time <= rclcpp::Duration(0.0)) {
+    if (wait_time <= rclcpp::Duration(0.0s)) {
       break;  //  The deadline has expired
     }
     r.sleep();
