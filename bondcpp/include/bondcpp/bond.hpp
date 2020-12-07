@@ -48,6 +48,8 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_lifecycle/lifecycle_node.hpp"
 
+using namespace std::chrono_literals;
+
 namespace bond
 {
 // Sentinel value for disabling timeouts
@@ -137,6 +139,7 @@ public:
    * \return true iff the bond has been formed.
    */
   bool waitUntilFormed(rclcpp::Duration timeout = bond::NoTimeout);
+  
   /** \brief Blocks until the bond is broken for at most 'duration'.
    *    Assumes the node to be spinning in the background
    *
@@ -144,6 +147,7 @@ public:
    * \return true iff the bond has been broken, even if it has never been formed.
    */
   bool waitUntilBroken(rclcpp::Duration timeout = bond::NoTimeout);
+
   /** \brief Indicates if the bond is broken.
    */
   bool isBroken();
