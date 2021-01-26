@@ -2,8 +2,8 @@
 Changelog for package bondcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+3.0.0 (2021-01-26)
+------------------
 * [Fixing CI] using chrono literals for durations from rclcpp API update (`#69 <https://github.com/ros/bond_core/issues/69>`_)
 * Contributors: Steve Macenski
 
