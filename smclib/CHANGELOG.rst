@@ -2,6 +2,9 @@
 Changelog for package smclib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 2.0.0 (2020-11-05)
 ------------------
 * fix deprecation warnings (`#56 <https://github.com/ros/bond_core/issues/56>`_)
