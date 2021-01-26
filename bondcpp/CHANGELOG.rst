@@ -2,6 +2,12 @@
 Changelog for package bondcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fix cpplint/uncrustify errors.
+* Add build dependencies on pkg-config.
+* Contributors: Chris Lalancette
+
 3.0.0 (2021-01-26)
 ------------------
 * [Fixing CI] using chrono literals for durations from rclcpp API update (`#69 <https://github.com/ros/bond_core/issues/69>`_)
