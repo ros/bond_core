@@ -2,8 +2,8 @@
 Changelog for package smclib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+3.0.1 (2021-01-26)
+------------------
 * Fix cpplint/uncrustify errors.
 * Contributors: Chris Lalancette
 

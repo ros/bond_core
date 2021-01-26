@@ -2,8 +2,8 @@
 Changelog for package test_bond
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+3.0.1 (2021-01-26)
+------------------
 * Add build dependencies on pkg-config.
 * Contributors: Chris Lalancette
 
