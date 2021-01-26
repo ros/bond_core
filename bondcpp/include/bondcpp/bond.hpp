@@ -32,13 +32,13 @@
 #ifndef BONDCPP__BOND_HPP_
 #define BONDCPP__BOND_HPP_
 
+#include <chrono>
 #include <condition_variable>
 #include <functional>
 #include <memory>
 #include <mutex>
 #include <string>
 #include <vector>
-#include <chrono>
 
 #include "bond/msg/constants.hpp"
 #include "bond/msg/status.hpp"
@@ -47,8 +47,6 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_lifecycle/lifecycle_node.hpp"
-
-using namespace std::chrono_literals;
 
 namespace bond
 {
@@ -135,14 +133,14 @@ public:
    * \param timeout Maximum duration to wait.  If -1 then this call will not timeout.
    * \return true iff the bond has been formed.
    */
-  bool waitUntilFormed(rclcpp::Duration timeout = rclcpp::Duration(-1s));
+  bool waitUntilFormed(rclcpp::Duration timeout = rclcpp::Duration(std::chrono::seconds(-1)));
   /** \brief Blocks until the bond is broken for at most 'duration'.
    *    Assumes the node to be spinning in the background
    *
    * \param timeout Maximum duration to wait.  If -1 then this call will not timeout.
    * \return true iff the bond has been broken, even if it has never been formed.
    */
-  bool waitUntilBroken(rclcpp::Duration timeout = rclcpp::Duration(-1s));
+  bool waitUntilBroken(rclcpp::Duration timeout = rclcpp::Duration(std::chrono::seconds(-1)));
   /** \brief Indicates if the bond is broken.
    */
   bool isBroken();
