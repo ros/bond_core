@@ -31,6 +31,7 @@
   <test_depend>ament_lint_common</test_depend>
   <test_depend>bond</test_depend>
   <test_depend>bondcpp</test_depend>
+  <test_depend>pkg-config</test_depend>
   <test_depend>rclcpp</test_depend>
   <test_depend>rclcpp_lifecycle</test_depend>
   <test_depend>uuid</test_depend>
