@@ -111,13 +111,13 @@ public:
    * \param timeout Maximum duration to wait.  If -1 then this call will not timeout.
    * \return true iff the bond has been formed.
    */
-  bool waitUntilFormed(rclcpp::Duration timeout = rclcpp::Duration(-1 * 1e9));
+  bool waitUntilFormed(rclcpp::Duration timeout = rclcpp::Duration::from_seconds(-1));
   /** \brief Blocks until the bond is broken for at most 'duration'.
    *
    * \param timeout Maximum duration to wait.  If -1 then this call will not timeout.
    * \return true iff the bond has been broken, even if it has never been formed.
    */
-  bool waitUntilBroken(rclcpp::Duration timeout = rclcpp::Duration(-1 * 1e9));
+  bool waitUntilBroken(rclcpp::Duration timeout = rclcpp::Duration::from_seconds(-1 * 1e9));
   /** \brief Indicates if the bond is broken.
    */
   bool isBroken();

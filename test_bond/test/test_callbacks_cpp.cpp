@@ -87,8 +87,8 @@ TEST_F(TestCallbacksCpp, dieInLifeCallback)
   a.start();
   b.start();
 
-  EXPECT_TRUE(a.waitUntilFormed(rclcpp::Duration(5.0)));
-  EXPECT_TRUE(b.waitUntilBroken(rclcpp::Duration(3.0)));
+  EXPECT_TRUE(a.waitUntilFormed(rclcpp::Duration(rclcpp::Duration::from_seconds(5.0))));
+  EXPECT_TRUE(b.waitUntilBroken(rclcpp::Duration(rclcpp::Duration::from_seconds(3.0))));
 }
 
 TEST_F(TestCallbacksCpp, remoteNeverConnects)
@@ -98,6 +98,6 @@ TEST_F(TestCallbacksCpp, remoteNeverConnects)
   bond::Bond a1(TOPIC, id2, nh2);
 
   a1.start();
-  EXPECT_FALSE(a1.waitUntilFormed(rclcpp::Duration(5.0)));
-  EXPECT_TRUE(a1.waitUntilBroken(rclcpp::Duration(10.0)));
+  EXPECT_FALSE(a1.waitUntilFormed(rclcpp::Duration(rclcpp::Duration::from_seconds(5.0))));
+  EXPECT_TRUE(a1.waitUntilBroken(rclcpp::Duration(rclcpp::Duration::from_seconds(10.0))));
 }
