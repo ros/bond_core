@@ -473,7 +473,9 @@ void Bond::onHeartbeatTimeout()
 {
   {
     std::unique_lock<std::mutex> lock(mutex_);
-    sm_.HeartbeatTimeout();
+    if (sm_.getState().getId() != SM::WaitingForSister.getId()) {
+      sm_.HeartbeatTimeout();
+    }
   }
   flushPendingCallbacks();
 }
