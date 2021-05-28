@@ -105,8 +105,6 @@ class SmcException
 // Member methods
 //
 
-public:
-
 protected:
   // Constructor.
   explicit SmcException(const std::string & reason)
@@ -609,7 +607,8 @@ public:
         _state->getName() <<
         std::endl;
 #else
-      TRACE("ENTER STATE     : %s\n\r",
+      TRACE(
+        "ENTER STATE     : %s\n\r",
         _state->getName());
 #endif  // SMC_USES_IOSTREAMS
     }
@@ -656,7 +655,8 @@ public:
         _state->getName() <<
         std::endl;
 #else
-      TRACE("PUSH TO STATE   : %s\n\r",
+      TRACE(
+        "PUSH TO STATE   : %s\n\r",
         _state->getName());
 #endif  // SMC_USES_IOSTREAMS
     }
@@ -688,7 +688,8 @@ public:
         _state->getName() <<
         std::endl;
 #else
-      TRACE("POP TO STATE    : %s\n\r",
+      TRACE(
+        "POP TO STATE    : %s\n\r",
         _state->getName());
 #endif  // SMC_USES_IOSTREAMS
     }
