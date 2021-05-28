@@ -2,6 +2,11 @@
 Changelog for package test_bond
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.1.0 (2021-05-28)
+------------------
+* Add build dependencies on pkg-config.
+* Contributors: Chris Lalancette
+
 2.0.0 (2020-11-05)
 ------------------
 * Lifecycle support 2 (`#67 <https://github.com/ros/bond_core/issues/67>`_)
