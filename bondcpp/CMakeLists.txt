@@ -5,9 +5,12 @@ if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 14)
 endif()
 
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
+add_definitions(-DNOMINMAX)
 
 find_package(ament_cmake REQUIRED)
 find_package(bond REQUIRED)
@@ -16,10 +19,14 @@ find_package(rclcpp_lifecycle REQUIRED)
 find_package(smclib REQUIRED)
 find_package(Threads REQUIRED)
 
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(UUID REQUIRED uuid)
-# we have to find the absolute path to uuid as target_link_directories is not available before cmake 3.13
-find_library(uuid_ABS_PATH ${UUID_LIBRARIES} PATHS ${UUID_LIBRARY_DIRS})
+if(UNIX AND NOT APPLE)
+  find_package(PkgConfig REQUIRED)
+  pkg_check_modules(UUID REQUIRED uuid)
+  # we have to find the absolute path to uuid as target_link_directories is not available before cmake 3.13
+  find_library(uuid_ABS_PATH ${UUID_LIBRARIES} PATHS ${UUID_LIBRARY_DIRS})
+elseif(WIN32)
+  set(uuid_ABS_PATH Rpcrt4.lib)
+endif()
 
 add_library(${PROJECT_NAME}
   SHARED
