@@ -34,6 +34,10 @@ target_include_directories(${PROJECT_NAME} PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
   ${UUID_INCLUDE_DIRS})
+if(WIN32)
+  target_compile_definitions(${PROJECT_NAME}
+    PRIVATE "BONDCPP_BUILDING_LIBRARY")
+endif()
 ament_target_dependencies(${PROJECT_NAME}
   bond
   rclcpp
