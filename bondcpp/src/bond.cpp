@@ -70,35 +70,51 @@ static std::string makeUUID()
 
 Bond::Bond(
   const std::string & topic, const std::string & id,
-  rclcpp_lifecycle::LifecycleNode::SharedPtr nh,
+  rclcpp::node_interfaces::NodeBaseInterface::SharedPtr node_base,
+  rclcpp::node_interfaces::NodeLoggingInterface::SharedPtr node_logging,
+  rclcpp::node_interfaces::NodeParametersInterface::SharedPtr node_params,
+  rclcpp::node_interfaces::NodeTimersInterface::SharedPtr node_timers,
   EventCallback on_broken,
   EventCallback on_formed)
-: bondsm_(new BondSM(this)),
+: node_base_(node_base),
+  node_logging_(node_logging),
+  node_timers_(node_timers),
+  bondsm_(std::make_unique<BondSM>(this)),
   sm_(*bondsm_),
   topic_(topic),
   id_(id),
   instance_id_(makeUUID()),
   on_broken_(on_broken),
-  on_formed_(on_formed),
-  sisterDiedFirst_(false),
-  started_(false),
-  connect_timer_reset_flag_(false),
-  disconnect_timer_reset_flag_(false),
-  deadpublishing_timer_reset_flag_(false),
-  disable_heartbeat_timeout_(false)
+  on_formed_(on_formed)
 {
-  node_base_ = nh->get_node_base_interface();
-  node_logging_ = nh->get_node_logging_interface();
-  node_timers_ = nh->get_node_timers_interface();
-  if (!nh->has_parameter(bond::msg::Constants::DISABLE_HEARTBEAT_TIMEOUT_PARAM)) {
-    nh->declare_parameter(bond::msg::Constants::DISABLE_HEARTBEAT_TIMEOUT_PARAM, false);
+  if (!node_params->has_parameter(bond::msg::Constants::DISABLE_HEARTBEAT_TIMEOUT_PARAM)) {
+    node_params->declare_parameter(
+      bond::msg::Constants::DISABLE_HEARTBEAT_TIMEOUT_PARAM,
+      rclcpp::ParameterValue(false));
   }
 
   disable_heartbeat_timeout_ =
-    nh->get_parameter(bond::msg::Constants::DISABLE_HEARTBEAT_TIMEOUT_PARAM).as_bool();
+    node_params->get_parameter(bond::msg::Constants::DISABLE_HEARTBEAT_TIMEOUT_PARAM).as_bool();
 
-  setupConnections();
+  setConnectTimeout(bond::msg::Constants::DEFAULT_CONNECT_TIMEOUT);
+  setDisconnectTimeout(bond::msg::Constants::DEFAULT_DISCONNECT_TIMEOUT);
+  setHeartbeatTimeout(bond::msg::Constants::DEFAULT_HEARTBEAT_TIMEOUT);
+  setHeartbeatPeriod(bond::msg::Constants::DEFAULT_HEARTBEAT_PERIOD);
+  setDeadPublishPeriod(bond::msg::Constants::DEAD_PUBLISH_PERIOD);
+}
 
+Bond::Bond(
+  const std::string & topic, const std::string & id,
+  rclcpp_lifecycle::LifecycleNode::SharedPtr nh,
+  EventCallback on_broken,
+  EventCallback on_formed)
+: Bond(topic, id,
+    nh->get_node_base_interface(),
+    nh->get_node_logging_interface(),
+    nh->get_node_parameters_interface(),
+    nh->get_node_timers_interface(),
+    on_broken, on_formed)
+{
   pub_ = rclcpp::create_publisher<bond::msg::Status>(nh, topic_, rclcpp::QoS(rclcpp::KeepLast(5)));
   sub_ = nh->create_subscription<bond::msg::Status>(
     topic_, rclcpp::QoS(100),
@@ -110,31 +126,13 @@ Bond::Bond(
   rclcpp::Node::SharedPtr nh,
   EventCallback on_broken,
   EventCallback on_formed)
-: bondsm_(new BondSM(this)),
-  sm_(*bondsm_),
-  topic_(topic),
-  id_(id),
-  instance_id_(makeUUID()),
-  on_broken_(on_broken),
-  on_formed_(on_formed),
-  sisterDiedFirst_(false),
-  started_(false),
-  connect_timer_reset_flag_(false),
-  disconnect_timer_reset_flag_(false),
-  deadpublishing_timer_reset_flag_(false)
+: Bond(topic, id,
+    nh->get_node_base_interface(),
+    nh->get_node_logging_interface(),
+    nh->get_node_parameters_interface(),
+    nh->get_node_timers_interface(),
+    on_broken, on_formed)
 {
-  node_base_ = nh->get_node_base_interface();
-  node_logging_ = nh->get_node_logging_interface();
-  node_timers_ = nh->get_node_timers_interface();
-  if (!nh->has_parameter(bond::msg::Constants::DISABLE_HEARTBEAT_TIMEOUT_PARAM)) {
-    nh->declare_parameter(bond::msg::Constants::DISABLE_HEARTBEAT_TIMEOUT_PARAM, false);
-  }
-
-  disable_heartbeat_timeout_ =
-    nh->get_parameter(bond::msg::Constants::DISABLE_HEARTBEAT_TIMEOUT_PARAM).as_bool();
-
-  setupConnections();
-
   pub_ = rclcpp::create_publisher<bond::msg::Status>(nh, topic_, rclcpp::QoS(rclcpp::KeepLast(5)));
   sub_ = nh->create_subscription<bond::msg::Status>(
     topic_, rclcpp::QoS(100),
@@ -167,15 +165,6 @@ Bond::~Bond()
   disconnectTimerCancel();
 
   std::unique_lock<std::mutex> lock(mutex_);
-}
-
-void Bond::setupConnections()
-{
-  setConnectTimeout(bond::msg::Constants::DEFAULT_CONNECT_TIMEOUT);
-  setDisconnectTimeout(bond::msg::Constants::DEFAULT_DISCONNECT_TIMEOUT);
-  setHeartbeatTimeout(bond::msg::Constants::DEFAULT_HEARTBEAT_TIMEOUT);
-  setHeartbeatPeriod(bond::msg::Constants::DEFAULT_HEARTBEAT_PERIOD);
-  setDeadPublishPeriod(bond::msg::Constants::DEAD_PUBLISH_PERIOD);
 }
 
 void Bond::setConnectTimeout(double dur)

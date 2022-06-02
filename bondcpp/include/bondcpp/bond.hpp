@@ -59,6 +59,29 @@ class Bond
 {
 public:
   using EventCallback = std::function<void (void)>;
+
+private:
+  /** \brief Constructor to delegate common functionality
+   *
+   * \param topic The topic used to exchange the bond status messages.
+   * \param id The ID of the bond, which should match the ID used on
+   *           the sister's end.
+   * \param node_base base node interface
+   * \param node_logging logging node interface
+   * \param node_timers timers node interface
+   * \param on_broken callback that will be called when the bond is broken.
+   * \param on_formed callback that will be called when the bond is formed.
+   */
+  Bond(
+    const std::string & topic, const std::string & id,
+    rclcpp::node_interfaces::NodeBaseInterface::SharedPtr node_base,
+    rclcpp::node_interfaces::NodeLoggingInterface::SharedPtr node_logging,
+    rclcpp::node_interfaces::NodeParametersInterface::SharedPtr node_params,
+    rclcpp::node_interfaces::NodeTimersInterface::SharedPtr node_timers,
+    EventCallback on_broken = EventCallback(),
+    EventCallback on_formed = EventCallback());
+
+public:
   /** \brief Constructs a bond, but does not connect
    *
    * \param topic The topic used to exchange the bond status messages.
@@ -92,8 +115,6 @@ public:
   /** \brief Destructs the object, breaking the bond if it is still formed.
    */
   ~Bond();
-
-  void setupConnections();
 
   double getConnectTimeout() const {return connect_timeout_;}
   void setConnectTimeout(double dur);
@@ -167,8 +188,8 @@ private:
   void flushPendingCallbacks();
 
   rclcpp::node_interfaces::NodeBaseInterface::SharedPtr node_base_;
-  rclcpp::node_interfaces::NodeTimersInterface::SharedPtr node_timers_;
   rclcpp::node_interfaces::NodeLoggingInterface::SharedPtr node_logging_;
+  rclcpp::node_interfaces::NodeTimersInterface::SharedPtr node_timers_;
 
   rclcpp::TimerBase::SharedPtr connect_timer_;
   rclcpp::TimerBase::SharedPtr disconnect_timer_;
@@ -186,12 +207,12 @@ private:
   EventCallback on_broken_;
   EventCallback on_formed_;
 
-  bool sisterDiedFirst_;
-  bool started_;
-  bool connect_timer_reset_flag_;
-  bool disconnect_timer_reset_flag_;
-  bool deadpublishing_timer_reset_flag_;
-  bool disable_heartbeat_timeout_;
+  bool sisterDiedFirst_ {false};
+  bool started_ {false};
+  bool connect_timer_reset_flag_ {false};
+  bool disconnect_timer_reset_flag_ {false};
+  bool deadpublishing_timer_reset_flag_ {false};
+  bool disable_heartbeat_timeout_ {false};
   std::mutex mutex_;
 
   double connect_timeout_;
