@@ -58,6 +58,7 @@ namespace bond
 class Bond
 {
 public:
+  using EventCallback = std::function<void (void)>;
   /** \brief Constructs a bond, but does not connect
    *
    * \param topic The topic used to exchange the bond status messages.
@@ -70,8 +71,8 @@ public:
   Bond(
     const std::string & topic, const std::string & id,
     rclcpp_lifecycle::LifecycleNode::SharedPtr nh,
-    std::function<void(void)> on_broken = std::function<void(void)>(),
-    std::function<void(void)> on_formed = std::function<void(void)>());
+    EventCallback on_broken = EventCallback(),
+    EventCallback on_formed = EventCallback());
 
   /** \brief Constructs a bond, but does not connect
    *
@@ -85,8 +86,8 @@ public:
   Bond(
     const std::string & topic, const std::string & id,
     rclcpp::Node::SharedPtr nh,
-    std::function<void(void)> on_broken = std::function<void(void)>(),
-    std::function<void(void)> on_formed = std::function<void(void)>());
+    EventCallback on_broken = EventCallback(),
+    EventCallback on_formed = EventCallback());
 
   /** \brief Destructs the object, breaking the bond if it is still formed.
    */
@@ -120,11 +121,11 @@ public:
   void start();
   /** \brief Sets the formed callback.
    */
-  void setFormedCallback(std::function<void(void)> on_formed);
+  void setFormedCallback(EventCallback on_formed);
 
   /** \brief Sets the broken callback
    */
-  void setBrokenCallback(std::function<void(void)> on_broken);
+  void setBrokenCallback(EventCallback on_broken);
 
   /** \brief Blocks until the bond is formed for at most 'duration'.
    *    Assumes the node to be spinning in the background
@@ -162,7 +163,7 @@ private:
   void doPublishing();
   void publishStatus(bool active);
 
-  std::vector<std::function<void(void)>> pending_callbacks_;
+  std::vector<EventCallback> pending_callbacks_;
   void flushPendingCallbacks();
 
   rclcpp::node_interfaces::NodeBaseInterface::SharedPtr node_base_;
@@ -182,8 +183,9 @@ private:
   std::string id_;
   std::string instance_id_;
   std::string sister_instance_id_;
-  std::function<void(void)> on_broken_;
-  std::function<void(void)> on_formed_;
+  EventCallback on_broken_;
+  EventCallback on_formed_;
+
   bool sisterDiedFirst_;
   bool started_;
   bool connect_timer_reset_flag_;
@@ -201,9 +203,7 @@ private:
   rclcpp::Subscription<bond::msg::Status>::SharedPtr sub_;
   rclcpp::Publisher<bond::msg::Status>::SharedPtr pub_;
 };
-
 }  // namespace bond
-
 
 // Internal use only
 struct BondSM

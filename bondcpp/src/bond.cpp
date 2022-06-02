@@ -71,8 +71,8 @@ static std::string makeUUID()
 Bond::Bond(
   const std::string & topic, const std::string & id,
   rclcpp_lifecycle::LifecycleNode::SharedPtr nh,
-  std::function<void(void)> on_broken,
-  std::function<void(void)> on_formed)
+  EventCallback on_broken,
+  EventCallback on_formed)
 : bondsm_(new BondSM(this)),
   sm_(*bondsm_),
   topic_(topic),
@@ -108,8 +108,8 @@ Bond::Bond(
 Bond::Bond(
   const std::string & topic, const std::string & id,
   rclcpp::Node::SharedPtr nh,
-  std::function<void(void)> on_broken,
-  std::function<void(void)> on_formed)
+  EventCallback on_broken,
+  EventCallback on_formed)
 : bondsm_(new BondSM(this)),
   sm_(*bondsm_),
   topic_(topic),
@@ -380,13 +380,13 @@ void Bond::start()
   started_ = true;
 }
 
-void Bond::setFormedCallback(std::function<void(void)> on_formed)
+void Bond::setFormedCallback(EventCallback on_formed)
 {
   std::unique_lock<std::mutex> lock(mutex_);
   on_formed_ = on_formed;
 }
 
-void Bond::setBrokenCallback(std::function<void(void)> on_broken)
+void Bond::setBrokenCallback(EventCallback on_broken)
 {
   std::unique_lock<std::mutex> lock(mutex_);
   on_broken_ = on_broken;
@@ -545,7 +545,7 @@ void Bond::publishStatus(bool active)
 
 void Bond::flushPendingCallbacks()
 {
-  std::vector<std::function<void(void)>> callbacks;
+  std::vector<EventCallback> callbacks;
   {
     std::unique_lock<std::mutex> lock(mutex_);
     callbacks = pending_callbacks_;
