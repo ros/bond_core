@@ -163,8 +163,6 @@ Bond::~Bond()
   connectTimerCancel();
   heartbeatTimerCancel();
   disconnectTimerCancel();
-
-  std::unique_lock<std::mutex> lock(mutex_);
 }
 
 void Bond::setConnectTimeout(double dur)
@@ -359,7 +357,6 @@ void Bond::setCallbackQueue(rclcpp::CallbackQueueInterface *queue)
 
 void Bond::start()
 {
-  std::unique_lock<std::mutex> lock(mutex_);
   connect_timer_reset_flag_ = true;
   connectTimerReset();
   publishingTimerReset();
@@ -371,24 +368,24 @@ void Bond::start()
 
 void Bond::setFormedCallback(EventCallback on_formed)
 {
-  std::unique_lock<std::mutex> lock(mutex_);
+  std::unique_lock<std::mutex> lock(callbacks_mutex_);
   on_formed_ = on_formed;
 }
 
 void Bond::setBrokenCallback(EventCallback on_broken)
 {
-  std::unique_lock<std::mutex> lock(mutex_);
+  std::unique_lock<std::mutex> lock(callbacks_mutex_);
   on_broken_ = on_broken;
 }
 
 bool Bond::waitUntilFormed(rclcpp::Duration timeout)
 {
-  //  std::unique_lock<std::mutex> lock(mutex_);
   rclcpp::Clock steady_clock(RCL_STEADY_TIME);
   rclcpp::Time deadline(steady_clock.now() + timeout);
   rclcpp::Rate r(100);
 
-  while (sm_.getState().getId() == SM::WaitingForSister.getId()) {
+  bool formed = false;
+  while (!formed) {
     if (!rclcpp::ok()) {
       break;
     }
@@ -401,19 +398,25 @@ bool Bond::waitUntilFormed(rclcpp::Duration timeout)
       break;  //  The deadline has expired
     }
     r.sleep();
+
+    std::unique_lock<std::mutex> lock(state_machine_mutex_);
+    if (sm_.getState().getId() != SM::WaitingForSister.getId()) {
+      formed = true;
+      break;
+    }
   }
 
-  return sm_.getState().getId() != SM::WaitingForSister.getId();
+  return formed;
 }
 
 bool Bond::waitUntilBroken(rclcpp::Duration timeout)
 {
-  //  std::unique_lock<std::mutex> lock(mutex_);
   rclcpp::Clock steady_clock(RCL_STEADY_TIME);
   rclcpp::Time deadline(steady_clock.now() + timeout);
   rclcpp::Rate r(100);
 
-  while (sm_.getState().getId() != SM::Dead.getId()) {
+  bool broken = false;
+  while (!broken) {
     if (!rclcpp::ok()) {
       break;
     }
@@ -426,53 +429,51 @@ bool Bond::waitUntilBroken(rclcpp::Duration timeout)
       break;  //  The deadline has expired
     }
     r.sleep();
+
+    std::unique_lock<std::mutex> lock(state_machine_mutex_);
+    if (sm_.getState().getId() == SM::Dead.getId()) {
+      broken = true;
+      break;
+    }
   }
 
-  return sm_.getState().getId() == SM::Dead.getId();
+  return broken;
 }
 
 bool Bond::isBroken()
 {
-  std::unique_lock<std::mutex> lock(mutex_);
+  std::unique_lock<std::mutex> lock(state_machine_mutex_);
   return sm_.getState().getId() == SM::Dead.getId();
 }
 
 void Bond::breakBond()
 {
-  {
-    std::unique_lock<std::mutex> lock(mutex_);
-    if (sm_.getState().getId() != SM::Dead.getId()) {
-      sm_.Die();
-      publishStatus(false);
-    }
+  std::unique_lock<std::mutex> lock(state_machine_mutex_);
+  if (sm_.getState().getId() != SM::Dead.getId()) {
+    sm_.Die();
+    publishStatus(false);
   }
   flushPendingCallbacks();
 }
 
 void Bond::onConnectTimeout()
 {
-  {
-    std::unique_lock<std::mutex> lock(mutex_);
-    sm_.ConnectTimeout();
-  }
+  std::unique_lock<std::mutex> lock(state_machine_mutex_);
+  sm_.ConnectTimeout();
   flushPendingCallbacks();
 }
 
 void Bond::onHeartbeatTimeout()
 {
-  {
-    std::unique_lock<std::mutex> lock(mutex_);
-    sm_.HeartbeatTimeout();
-  }
+  std::unique_lock<std::mutex> lock(state_machine_mutex_);
+  sm_.HeartbeatTimeout();
   flushPendingCallbacks();
 }
 
 void Bond::onDisconnectTimeout()
 {
-  {
-    std::unique_lock<std::mutex> lock(mutex_);
-    sm_.DisconnectTimeout();
-  }
+  std::unique_lock<std::mutex> lock(state_machine_mutex_);
+  sm_.DisconnectTimeout();
   flushPendingCallbacks();
 }
 
@@ -484,7 +485,7 @@ void Bond::bondStatusCB(const bond::msg::Status::ConstSharedPtr msg)
 
   //  Filters out messages from other bonds and messages from ourself
   if (msg->id == id_ && msg->instance_id != instance_id_) {
-    std::unique_lock<std::mutex> lock(mutex_);
+    std::unique_lock<std::mutex> lock(state_machine_mutex_);
 
     if (sister_instance_id_.empty()) {
       sister_instance_id_ = msg->instance_id;
@@ -505,7 +506,7 @@ void Bond::bondStatusCB(const bond::msg::Status::ConstSharedPtr msg)
 
 void Bond::doPublishing()
 {
-  std::unique_lock<std::mutex> lock(mutex_);
+  std::unique_lock<std::mutex> lock(state_machine_mutex_);
   if (sm_.getState().getId() == SM::WaitingForSister.getId() ||
     sm_.getState().getId() == SM::Alive.getId())
   {
@@ -536,7 +537,7 @@ void Bond::flushPendingCallbacks()
 {
   std::vector<EventCallback> callbacks;
   {
-    std::unique_lock<std::mutex> lock(mutex_);
+    std::unique_lock<std::mutex> lock(callbacks_mutex_);
     callbacks = pending_callbacks_;
     pending_callbacks_.clear();
   }

@@ -184,7 +184,6 @@ private:
   void doPublishing();
   void publishStatus(bool active);
 
-  std::vector<EventCallback> pending_callbacks_;
   void flushPendingCallbacks();
 
   rclcpp::node_interfaces::NodeBaseInterface::SharedPtr node_base_;
@@ -197,6 +196,7 @@ private:
   rclcpp::TimerBase::SharedPtr publishing_timer_;
   rclcpp::TimerBase::SharedPtr deadpublishing_timer_;
 
+  std::mutex state_machine_mutex_;
   std::unique_ptr<BondSM> bondsm_;
   BondSMContext sm_;
 
@@ -204,6 +204,9 @@ private:
   std::string id_;
   std::string instance_id_;
   std::string sister_instance_id_;
+
+  std::mutex callbacks_mutex_;
+  std::vector<EventCallback> pending_callbacks_;
   EventCallback on_broken_;
   EventCallback on_formed_;
 
@@ -213,7 +216,6 @@ private:
   bool disconnect_timer_reset_flag_ {false};
   bool deadpublishing_timer_reset_flag_ {false};
   bool disable_heartbeat_timeout_ {false};
-  std::mutex mutex_;
 
   double connect_timeout_;
   double heartbeat_timeout_;
