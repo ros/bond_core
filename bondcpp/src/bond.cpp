@@ -360,7 +360,6 @@ void Bond::start()
   connect_timer_reset_flag_ = true;
   connectTimerReset();
   publishingTimerReset();
-  heartbeatTimerReset();
   disconnectTimerReset();
   //  deadpublishingTimerReset();
   started_ = true;
