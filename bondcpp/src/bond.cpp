@@ -563,7 +563,6 @@ void Bond::flushPendingCallbacks()
 void BondSM::Connected()
 {
   b->connectTimerCancel();
-  b->condition_.notify_all();
   if (b->on_formed_) {
     b->pending_callbacks_.push_back(b->on_formed_);
   }
@@ -576,7 +575,6 @@ void BondSM::SisterDied()
 
 void BondSM::Death()
 {
-  b->condition_.notify_all();
   b->heartbeatTimerCancel();
   b->disconnectTimerCancel();
   if (b->on_broken_) {

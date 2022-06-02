@@ -33,7 +33,6 @@
 #define BONDCPP__BOND_HPP_
 
 #include <chrono>
-#include <condition_variable>
 #include <functional>
 #include <memory>
 #include <mutex>
@@ -192,7 +191,6 @@ private:
   bool deadpublishing_timer_reset_flag_;
   bool disable_heartbeat_timeout_;
   std::mutex mutex_;
-  std::condition_variable condition_;
 
   double connect_timeout_;
   double heartbeat_timeout_;
