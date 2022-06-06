@@ -60,7 +60,6 @@ class Bond
 public:
   using EventCallback = std::function<void (void)>;
 
-private:
   /** \brief Constructor to delegate common functionality
    *
    * \param topic The topic used to exchange the bond status messages.
@@ -78,10 +77,10 @@ private:
     rclcpp::node_interfaces::NodeLoggingInterface::SharedPtr node_logging,
     rclcpp::node_interfaces::NodeParametersInterface::SharedPtr node_params,
     rclcpp::node_interfaces::NodeTimersInterface::SharedPtr node_timers,
+    rclcpp::node_interfaces::NodeTopicsInterface::SharedPtr node_topics,
     EventCallback on_broken = EventCallback(),
     EventCallback on_formed = EventCallback());
 
-public:
   /** \brief Constructs a bond, but does not connect
    *
    * \param topic The topic used to exchange the bond status messages.
@@ -116,6 +115,8 @@ public:
    */
   ~Bond();
 
+  void setupConnections();
+
   double getConnectTimeout() const {return connect_timeout_;}
   void setConnectTimeout(double dur);
   void connectTimerReset();
@@ -140,6 +141,7 @@ public:
   /** \brief Starts the bond and connects to the sister process.
    */
   void start();
+
   /** \brief Sets the formed callback.
    */
   void setFormedCallback(EventCallback on_formed);
@@ -155,6 +157,7 @@ public:
    * \return true iff the bond has been formed.
    */
   bool waitUntilFormed(rclcpp::Duration timeout = rclcpp::Duration(std::chrono::seconds(-1)));
+
   /** \brief Blocks until the bond is broken for at most 'duration'.
    *    Assumes the node to be spinning in the background
    *
@@ -162,12 +165,15 @@ public:
    * \return true iff the bond has been broken, even if it has never been formed.
    */
   bool waitUntilBroken(rclcpp::Duration timeout = rclcpp::Duration(std::chrono::seconds(-1)));
+
   /** \brief Indicates if the bond is broken.
    */
   bool isBroken();
+
   /** \brief Breaks the bond, notifying the other process.
    */
   void breakBond();
+
   std::string getTopic() {return topic_;}
   std::string getId() {return id_;}
   std::string getInstanceId() {return instance_id_;}

@@ -74,6 +74,7 @@ Bond::Bond(
   rclcpp::node_interfaces::NodeLoggingInterface::SharedPtr node_logging,
   rclcpp::node_interfaces::NodeParametersInterface::SharedPtr node_params,
   rclcpp::node_interfaces::NodeTimersInterface::SharedPtr node_timers,
+  rclcpp::node_interfaces::NodeTopicsInterface::SharedPtr node_topics,
   EventCallback on_broken,
   EventCallback on_formed)
 : node_base_(node_base),
@@ -96,11 +97,20 @@ Bond::Bond(
   disable_heartbeat_timeout_ =
     node_params->get_parameter(bond::msg::Constants::DISABLE_HEARTBEAT_TIMEOUT_PARAM).as_bool();
 
-  setConnectTimeout(bond::msg::Constants::DEFAULT_CONNECT_TIMEOUT);
-  setDisconnectTimeout(bond::msg::Constants::DEFAULT_DISCONNECT_TIMEOUT);
-  setHeartbeatTimeout(bond::msg::Constants::DEFAULT_HEARTBEAT_TIMEOUT);
-  setHeartbeatPeriod(bond::msg::Constants::DEFAULT_HEARTBEAT_PERIOD);
-  setDeadPublishPeriod(bond::msg::Constants::DEAD_PUBLISH_PERIOD);
+  setupConnections();
+
+  pub_ = rclcpp::create_publisher<bond::msg::Status>(
+    node_params,
+    node_topics,
+    topic_,
+    rclcpp::QoS(rclcpp::KeepLast(5)));
+
+  sub_ = rclcpp::create_subscription<bond::msg::Status>(
+    node_params,
+    node_topics,
+    topic_,
+    rclcpp::QoS(100),
+    std::bind(&Bond::bondStatusCB, this, std::placeholders::_1));
 }
 
 Bond::Bond(
@@ -113,12 +123,9 @@ Bond::Bond(
     nh->get_node_logging_interface(),
     nh->get_node_parameters_interface(),
     nh->get_node_timers_interface(),
+    nh->get_node_topics_interface(),
     on_broken, on_formed)
 {
-  pub_ = rclcpp::create_publisher<bond::msg::Status>(nh, topic_, rclcpp::QoS(rclcpp::KeepLast(5)));
-  sub_ = nh->create_subscription<bond::msg::Status>(
-    topic_, rclcpp::QoS(100),
-    std::bind(&Bond::bondStatusCB, this, std::placeholders::_1));
 }
 
 Bond::Bond(
@@ -131,12 +138,9 @@ Bond::Bond(
     nh->get_node_logging_interface(),
     nh->get_node_parameters_interface(),
     nh->get_node_timers_interface(),
+    nh->get_node_topics_interface(),
     on_broken, on_formed)
 {
-  pub_ = rclcpp::create_publisher<bond::msg::Status>(nh, topic_, rclcpp::QoS(rclcpp::KeepLast(5)));
-  sub_ = nh->create_subscription<bond::msg::Status>(
-    topic_, rclcpp::QoS(100),
-    std::bind(&Bond::bondStatusCB, this, std::placeholders::_1));
 }
 
 Bond::~Bond()
@@ -151,18 +155,20 @@ Bond::~Bond()
       id_.c_str(), instance_id_.c_str());
   }
 
-
-  // Must destroy the subscription before locking mutex_: shutdown()
-  // will block until the status callback completes, and the status
-  // callback locks mutex_ (in flushPendingCallbacks).
-  // Stops the timers before locking the mutex.  Makes sure none of
-  // the callbacks are running when we aquire the mutex.
-
   publishingTimerCancel();
   // deadpublishingTimerCancel();
   connectTimerCancel();
   heartbeatTimerCancel();
   disconnectTimerCancel();
+}
+
+void Bond::setupConnections()
+{
+  setConnectTimeout(bond::msg::Constants::DEFAULT_CONNECT_TIMEOUT);
+  setDisconnectTimeout(bond::msg::Constants::DEFAULT_DISCONNECT_TIMEOUT);
+  setHeartbeatTimeout(bond::msg::Constants::DEFAULT_HEARTBEAT_TIMEOUT);
+  setHeartbeatPeriod(bond::msg::Constants::DEFAULT_HEARTBEAT_PERIOD);
+  setDeadPublishPeriod(bond::msg::Constants::DEAD_PUBLISH_PERIOD);
 }
 
 void Bond::setConnectTimeout(double dur)
@@ -447,32 +453,40 @@ bool Bond::isBroken()
 
 void Bond::breakBond()
 {
-  std::unique_lock<std::mutex> lock(state_machine_mutex_);
-  if (sm_.getState().getId() != SM::Dead.getId()) {
-    sm_.Die();
-    publishStatus(false);
+  {
+    std::unique_lock<std::mutex> lock(state_machine_mutex_);
+    if (sm_.getState().getId() != SM::Dead.getId()) {
+      sm_.Die();
+      publishStatus(false);
+    }
   }
   flushPendingCallbacks();
 }
 
 void Bond::onConnectTimeout()
 {
-  std::unique_lock<std::mutex> lock(state_machine_mutex_);
-  sm_.ConnectTimeout();
+  {
+    std::unique_lock<std::mutex> lock(state_machine_mutex_);
+    sm_.ConnectTimeout();
+  }
   flushPendingCallbacks();
 }
 
 void Bond::onHeartbeatTimeout()
 {
-  std::unique_lock<std::mutex> lock(state_machine_mutex_);
-  sm_.HeartbeatTimeout();
+  {
+    std::unique_lock<std::mutex> lock(state_machine_mutex_);
+    sm_.HeartbeatTimeout();
+  }
   flushPendingCallbacks();
 }
 
 void Bond::onDisconnectTimeout()
 {
-  std::unique_lock<std::mutex> lock(state_machine_mutex_);
-  sm_.DisconnectTimeout();
+  {
+    std::unique_lock<std::mutex> lock(state_machine_mutex_);
+    sm_.DisconnectTimeout();
+  }
   flushPendingCallbacks();
 }
 
