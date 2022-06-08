@@ -86,7 +86,17 @@ Bond::Bond(
   id_(id),
   instance_id_(makeUUID()),
   on_broken_(on_broken),
-  on_formed_(on_formed)
+  on_formed_(on_formed),
+  connect_timeout_(
+    rclcpp::Duration::from_seconds(bond::msg::Constants::DEFAULT_CONNECT_TIMEOUT)),
+  disconnect_timeout_(
+    rclcpp::Duration::from_seconds(bond::msg::Constants::DEFAULT_DISCONNECT_TIMEOUT)),
+  heartbeat_timeout_(
+    rclcpp::Duration::from_seconds(bond::msg::Constants::DEFAULT_HEARTBEAT_TIMEOUT)),
+  heartbeat_period_(
+    rclcpp::Duration::from_seconds(bond::msg::Constants::DEFAULT_HEARTBEAT_PERIOD)),
+  dead_publish_period_(
+    rclcpp::Duration::from_seconds(bond::msg::Constants::DEAD_PUBLISH_PERIOD))
 {
   if (!node_params->has_parameter(bond::msg::Constants::DISABLE_HEARTBEAT_TIMEOUT_PARAM)) {
     node_params->declare_parameter(
@@ -156,7 +166,7 @@ Bond::~Bond()
   }
 
   publishingTimerCancel();
-  // deadpublishingTimerCancel();
+  deadpublishingTimerCancel();
   connectTimerCancel();
   heartbeatTimerCancel();
   disconnectTimerCancel();
@@ -177,13 +187,11 @@ void Bond::setConnectTimeout(double dur)
     RCLCPP_ERROR(node_logging_->get_logger(), "Cannot set timeouts after calling start()");
     return;
   }
-  connect_timeout_ = dur * 1e9;  // conversion from seconds to nanoseconds
+  connect_timeout_ = rclcpp::Duration::from_seconds(dur);
 }
 
 void Bond::connectTimerReset()
 {
-  rclcpp::Duration dur1(rclcpp::Duration::from_nanoseconds(connect_timeout_));
-  const std::chrono::nanoseconds period1(dur1.nanoseconds());
   // Callback function of connect timer
   auto connectTimerResetCallback =
     [this]() -> void
@@ -196,8 +204,11 @@ void Bond::connectTimerReset()
     };
   // Connect timer started on node
   connect_timer_ = rclcpp::create_wall_timer(
-    period1, std::move(connectTimerResetCallback),
-    nullptr, node_base_.get(), node_timers_.get());
+    connect_timeout_.to_chrono<std::chrono::nanoseconds>(),
+    std::move(connectTimerResetCallback),
+    nullptr,
+    node_base_.get(),
+    node_timers_.get());
 }
 
 void Bond::connectTimerCancel()
@@ -213,14 +224,11 @@ void Bond::setDisconnectTimeout(double dur)
     RCLCPP_ERROR(node_logging_->get_logger(), "Cannot set timeouts after calling start()");
     return;
   }
-
-  disconnect_timeout_ = dur * 1e9;  // conversion from seconds to nanoseconds
+  disconnect_timeout_ = rclcpp::Duration::from_seconds(dur);
 }
 
 void Bond::disconnectTimerReset()
 {
-  rclcpp::Duration dur2(rclcpp::Duration::from_nanoseconds(disconnect_timeout_));
-  const std::chrono::nanoseconds period2(dur2.nanoseconds());
   // Callback function of disconnect timer
   auto disconnectTimerResetCallback =
     [this]() -> void
@@ -233,8 +241,11 @@ void Bond::disconnectTimerReset()
     };
   //  Disconnect timer started on node
   disconnect_timer_ = rclcpp::create_wall_timer(
-    period2, std::move(disconnectTimerResetCallback),
-    nullptr, node_base_.get(), node_timers_.get());
+    disconnect_timeout_.to_chrono<std::chrono::nanoseconds>(),
+    std::move(disconnectTimerResetCallback),
+    nullptr,
+    node_base_.get(),
+    node_timers_.get());
 }
 
 void Bond::disconnectTimerCancel()
@@ -251,13 +262,11 @@ void Bond::setHeartbeatTimeout(double dur)
     return;
   }
 
-  heartbeat_timeout_ = dur * 1e9;  //    conversion from seconds to nanoseconds
+  heartbeat_timeout_ = rclcpp::Duration::from_seconds(dur);
 }
 
 void Bond::heartbeatTimerReset()
 {
-  rclcpp::Duration dur3(rclcpp::Duration::from_nanoseconds(heartbeat_timeout_));
-  const std::chrono::nanoseconds period3(dur3.nanoseconds());
   //  Callback function of heartbeat timer
   auto heartbeatTimerResetCallback =
     [this]() -> void
@@ -270,7 +279,8 @@ void Bond::heartbeatTimerReset()
     };
   //    heartbeat timer started on node
   heartbeat_timer_ = rclcpp::create_wall_timer(
-    period3, std::move(heartbeatTimerResetCallback),
+    heartbeat_timeout_.to_chrono<std::chrono::nanoseconds>(),
+    std::move(heartbeatTimerResetCallback),
     nullptr, node_base_.get(), node_timers_.get());
 }
 
@@ -288,13 +298,11 @@ void Bond::setHeartbeatPeriod(double dur)
     return;
   }
 
-  heartbeat_period_ = dur * 1e9;     //  conversion from seconds to nanoseconds
+  heartbeat_period_ = rclcpp::Duration::from_seconds(dur);
 }
 
 void Bond::publishingTimerReset()
 {
-  rclcpp::Duration dur4(rclcpp::Duration::from_nanoseconds(heartbeat_period_));
-  const std::chrono::nanoseconds period4(dur4.nanoseconds());
   //  Callback function of publishing timer
   auto publishingTimerResetCallback =
     [this]() -> void
@@ -303,8 +311,11 @@ void Bond::publishingTimerReset()
     };
   //  publishing timer started on node
   publishing_timer_ = rclcpp::create_wall_timer(
-    period4, std::move(publishingTimerResetCallback),
-    nullptr, node_base_.get(), node_timers_.get());
+    heartbeat_period_.to_chrono<std::chrono::nanoseconds>(),
+    std::move(publishingTimerResetCallback),
+    nullptr,
+    node_base_.get(),
+    node_timers_.get());
 }
 
 void Bond::publishingTimerCancel()
@@ -321,26 +332,25 @@ void Bond::setDeadPublishPeriod(double dur)
     return;
   }
 
-  dead_publish_period_ = dur * 1e9;  //  conversion from seconds to nanoseconds
+  dead_publish_period_ = rclcpp::Duration::from_seconds(dur);
 }
 
 void Bond::deadpublishingTimerReset()
 {
-  rclcpp::Duration dur5(rclcpp::Duration::from_nanoseconds(dead_publish_period_));
-  const std::chrono::nanoseconds period5(dur5.nanoseconds());
   //  callback function of dead publishing timer which will publish data when bond is broken
   auto deadpublishingTimerResetCallback =
     [this]() -> void
     {
-      if (deadpublishing_timer_reset_flag_) {
-        doPublishing();
-        deadpublishing_timer_reset_flag_ = false;
-      }     //  flag is needed to have valid callback
+      doPublishing();
     };
+
   //  dead publishing timer started on node
   deadpublishing_timer_ = rclcpp::create_wall_timer(
-    period5, std::move(deadpublishingTimerResetCallback),
-    nullptr, node_base_.get(), node_timers_.get());
+    dead_publish_period_.to_chrono<std::chrono::nanoseconds>(),
+    std::move(deadpublishingTimerResetCallback),
+    nullptr,
+    node_base_.get(),
+    node_timers_.get());
 }
 
 void Bond::deadpublishingTimerCancel()
@@ -350,24 +360,12 @@ void Bond::deadpublishingTimerCancel()
   }
 }
 
-/* TODO Callback Queue is not availabe in ROS2
-void Bond::setCallbackQueue(rclcpp::CallbackQueueInterface *queue)
-{
-  if (started_) {
-    RCLCPP_ERROR(nh_->get_logger(),"Cannot set callback queue after calling start()");
-    return;
-  }
-
-  nh_.setCallbackQueue(queue);
-}*/
-
 void Bond::start()
 {
   connect_timer_reset_flag_ = true;
   connectTimerReset();
   publishingTimerReset();
   disconnectTimerReset();
-  //  deadpublishingTimerReset();
   started_ = true;
 }
 
@@ -541,8 +539,8 @@ void Bond::publishStatus(bool active)
   msg->id = id_;
   msg->instance_id = instance_id_;
   msg->active = active;
-  msg->heartbeat_timeout = heartbeat_timeout_;
-  msg->heartbeat_period = heartbeat_period_;
+  msg->heartbeat_timeout = heartbeat_timeout_.seconds();
+  msg->heartbeat_period = heartbeat_period_.seconds();
   pub_->publish(std::move(msg));
 }
 
@@ -595,6 +593,5 @@ void BondSM::StartDying()
   b->heartbeatTimerCancel();
   b->disconnect_timer_reset_flag_ = true;
   b->disconnect_timer_.reset();
-  /* TODO b->deadpublishing_timer_reset_flag_ = true;
-  b->deadpublishingTimerReset();*/
+  b->deadpublishingTimerReset();
 }

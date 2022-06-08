@@ -117,23 +117,27 @@ public:
 
   void setupConnections();
 
-  double getConnectTimeout() const {return connect_timeout_;}
+  double getConnectTimeout() const {return connect_timeout_.seconds();}
   void setConnectTimeout(double dur);
   void connectTimerReset();
   void connectTimerCancel();
-  double getDisconnectTimeout() const {return disconnect_timeout_;}
+
+  double getDisconnectTimeout() const {return disconnect_timeout_.seconds();}
   void setDisconnectTimeout(double dur);
   void disconnectTimerReset();
   void disconnectTimerCancel();
-  double getHeartbeatTimeout() const {return heartbeat_timeout_;}
+
+  double getHeartbeatTimeout() const {return heartbeat_timeout_.seconds();}
   void setHeartbeatTimeout(double dur);
   void heartbeatTimerReset();
   void heartbeatTimerCancel();
-  double getHeartbeatPeriod() const {return heartbeat_period_;}
+
+  double getHeartbeatPeriod() const {return heartbeat_period_.seconds();}
   void setHeartbeatPeriod(double dur);
   void publishingTimerReset();
   void publishingTimerCancel();
-  double getDeadPublishPeriod() const {return dead_publish_period_;}
+
+  double getDeadPublishPeriod() const {return dead_publish_period_.seconds();}
   void setDeadPublishPeriod(double dur);
   void deadpublishingTimerReset();
   void deadpublishingTimerCancel();
@@ -223,11 +227,11 @@ private:
   bool deadpublishing_timer_reset_flag_ {false};
   bool disable_heartbeat_timeout_ {false};
 
-  double connect_timeout_;
-  double heartbeat_timeout_;
-  double disconnect_timeout_;
-  double heartbeat_period_;
-  double dead_publish_period_;
+  rclcpp::Duration connect_timeout_;
+  rclcpp::Duration disconnect_timeout_;
+  rclcpp::Duration heartbeat_timeout_;
+  rclcpp::Duration heartbeat_period_;
+  rclcpp::Duration dead_publish_period_;
 
   rclcpp::Subscription<bond::msg::Status>::SharedPtr sub_;
   rclcpp::Publisher<bond::msg::Status>::SharedPtr pub_;
