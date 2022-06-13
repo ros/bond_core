@@ -44,8 +44,8 @@
 
 #include "bondcpp/BondSM_sm.hpp"
 
-#include "rclcpp/rclcpp.hpp"
-#include "rclcpp_lifecycle/lifecycle_node.hpp"
+#include <rclcpp/rclcpp.hpp>
+#include <rclcpp_lifecycle/lifecycle_node.hpp>
 
 namespace bond
 {
@@ -189,12 +189,18 @@ private:
   void onHeartbeatTimeout();
   void onDisconnectTimeout();
 
-  void bondStatusCB(const bond::msg::Status::ConstSharedPtr msg);
+  void bondStatusCB(const bond::msg::Status & msg);
 
   void doPublishing();
   void publishStatus(bool active);
 
   void flushPendingCallbacks();
+
+  bool isStateAlive();
+  bool isStateAwaitSisterDeath();
+  bool isStateDead();
+  bool isStateWaitingForSister();
+
 
   rclcpp::node_interfaces::NodeBaseInterface::SharedPtr node_base_;
   rclcpp::node_interfaces::NodeLoggingInterface::SharedPtr node_logging_;

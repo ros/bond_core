@@ -39,11 +39,14 @@
 
 #include <algorithm>
 #include <chrono>
-#include <iostream>
+#include <functional>
 #include <memory>
 #include <string>
 #include <utility>
 #include <vector>
+
+#include <rclcpp/rclcpp.hpp>
+#include <rclcpp_lifecycle/lifecycle_node.hpp>
 
 using namespace std::chrono_literals;
 
@@ -205,7 +208,7 @@ void Bond::connectTimerReset()
   // Connect timer started on node
   connect_timer_ = rclcpp::create_wall_timer(
     connect_timeout_.to_chrono<std::chrono::nanoseconds>(),
-    std::move(connectTimerResetCallback),
+    connectTimerResetCallback,
     nullptr,
     node_base_.get(),
     node_timers_.get());
@@ -242,7 +245,7 @@ void Bond::disconnectTimerReset()
   //  Disconnect timer started on node
   disconnect_timer_ = rclcpp::create_wall_timer(
     disconnect_timeout_.to_chrono<std::chrono::nanoseconds>(),
-    std::move(disconnectTimerResetCallback),
+    disconnectTimerResetCallback,
     nullptr,
     node_base_.get(),
     node_timers_.get());
@@ -280,7 +283,7 @@ void Bond::heartbeatTimerReset()
   //    heartbeat timer started on node
   heartbeat_timer_ = rclcpp::create_wall_timer(
     heartbeat_timeout_.to_chrono<std::chrono::nanoseconds>(),
-    std::move(heartbeatTimerResetCallback),
+    heartbeatTimerResetCallback,
     nullptr, node_base_.get(), node_timers_.get());
 }
 
@@ -312,7 +315,7 @@ void Bond::publishingTimerReset()
   //  publishing timer started on node
   publishing_timer_ = rclcpp::create_wall_timer(
     heartbeat_period_.to_chrono<std::chrono::nanoseconds>(),
-    std::move(publishingTimerResetCallback),
+    publishingTimerResetCallback,
     nullptr,
     node_base_.get(),
     node_timers_.get());
@@ -347,7 +350,7 @@ void Bond::deadpublishingTimerReset()
   //  dead publishing timer started on node
   deadpublishing_timer_ = rclcpp::create_wall_timer(
     dead_publish_period_.to_chrono<std::chrono::nanoseconds>(),
-    std::move(deadpublishingTimerResetCallback),
+    deadpublishingTimerResetCallback,
     nullptr,
     node_base_.get(),
     node_timers_.get());
@@ -394,7 +397,6 @@ bool Bond::waitUntilFormed(rclcpp::Duration timeout)
     }
     rclcpp::Duration wait_time = rclcpp::Duration(100ms);
     if (timeout >= rclcpp::Duration(0.0s)) {
-      rclcpp::Clock steady_clock(RCL_STEADY_TIME);
       wait_time = std::min(wait_time, deadline - steady_clock.now());
     }
     if (wait_time <= rclcpp::Duration(0.0s)) {
@@ -402,10 +404,8 @@ bool Bond::waitUntilFormed(rclcpp::Duration timeout)
     }
     r.sleep();
 
-    std::unique_lock<std::mutex> lock(state_machine_mutex_);
-    if (sm_.getState().getId() != SM::WaitingForSister.getId()) {
+    if (!isStateWaitingForSister()) {
       formed = true;
-      break;
     }
   }
 
@@ -425,7 +425,6 @@ bool Bond::waitUntilBroken(rclcpp::Duration timeout)
     }
     rclcpp::Duration wait_time = rclcpp::Duration(100ms);
     if (timeout >= rclcpp::Duration(0.0s)) {
-      rclcpp::Clock steady_clock(RCL_STEADY_TIME);
       wait_time = std::min(wait_time, deadline - steady_clock.now());
     }
     if (wait_time <= rclcpp::Duration(0.0s)) {
@@ -433,10 +432,8 @@ bool Bond::waitUntilBroken(rclcpp::Duration timeout)
     }
     r.sleep();
 
-    std::unique_lock<std::mutex> lock(state_machine_mutex_);
-    if (sm_.getState().getId() == SM::Dead.getId()) {
+    if (isStateDead()) {
       broken = true;
-      break;
     }
   }
 
@@ -445,18 +442,41 @@ bool Bond::waitUntilBroken(rclcpp::Duration timeout)
 
 bool Bond::isBroken()
 {
+  return isStateDead();
+}
+
+bool Bond::isStateAlive()
+{
+  std::unique_lock<std::mutex> lock(state_machine_mutex_);
+  return sm_.getState().getId() == SM::Alive.getId();
+}
+
+bool Bond::isStateAwaitSisterDeath()
+{
+  std::unique_lock<std::mutex> lock(state_machine_mutex_);
+  return sm_.getState().getId() == SM::AwaitSisterDeath.getId();
+}
+
+bool Bond::isStateDead()
+{
   std::unique_lock<std::mutex> lock(state_machine_mutex_);
   return sm_.getState().getId() == SM::Dead.getId();
 }
 
+bool Bond::isStateWaitingForSister()
+{
+  std::unique_lock<std::mutex> lock(state_machine_mutex_);
+  return sm_.getState().getId() == SM::WaitingForSister.getId();
+}
+
 void Bond::breakBond()
 {
-  {
-    std::unique_lock<std::mutex> lock(state_machine_mutex_);
-    if (sm_.getState().getId() != SM::Dead.getId()) {
+  if (!isStateDead()) {
+    {
+      std::unique_lock<std::mutex> lock(state_machine_mutex_);
       sm_.Die();
-      publishStatus(false);
     }
+    publishStatus(false);
   }
   flushPendingCallbacks();
 }
@@ -488,24 +508,26 @@ void Bond::onDisconnectTimeout()
   flushPendingCallbacks();
 }
 
-void Bond::bondStatusCB(const bond::msg::Status::ConstSharedPtr msg)
+void Bond::bondStatusCB(const bond::msg::Status & msg)
 {
   if (!started_) {
     return;
   }
 
   //  Filters out messages from other bonds and messages from ourself
-  if (msg->id == id_ && msg->instance_id != instance_id_) {
-    std::unique_lock<std::mutex> lock(state_machine_mutex_);
-
+  if (msg.id == id_ && msg.instance_id != instance_id_) {
     if (sister_instance_id_.empty()) {
-      sister_instance_id_ = msg->instance_id;
+      sister_instance_id_ = msg.instance_id;
     }
 
-    if (msg->active) {
+    if (msg.active) {
+      std::unique_lock<std::mutex> lock(state_machine_mutex_);
       sm_.SisterAlive();
     } else {
-      sm_.SisterDead();
+      {
+        std::unique_lock<std::mutex> lock(state_machine_mutex_);
+        sm_.SisterDead();
+      }
       //  Immediate ack for sister's death notification
       if (sisterDiedFirst_) {
         publishStatus(false);
@@ -518,30 +540,28 @@ void Bond::bondStatusCB(const bond::msg::Status::ConstSharedPtr msg)
 void Bond::doPublishing()
 {
   std::unique_lock<std::mutex> lock(state_machine_mutex_);
-  if (sm_.getState().getId() == SM::WaitingForSister.getId() ||
-    sm_.getState().getId() == SM::Alive.getId())
-  {
+  if (isStateWaitingForSister() || isStateAlive()) {
     publishStatus(true);
-  } else if (sm_.getState().getId() == SM::AwaitSisterDeath.getId()) {
+  } else if (isStateAwaitSisterDeath()) {
     publishStatus(false);
   } else {  // SM::Dead
     publishingTimerCancel();
-    //  deadpublishingTimerCancel();
+    deadpublishingTimerCancel();
   }
 }
 
 void Bond::publishStatus(bool active)
 {
-  std::unique_ptr<bond::msg::Status> msg = std::make_unique<bond::msg::Status>();
+  bond::msg::Status msg;
   rclcpp::Clock steady_clock(RCL_STEADY_TIME);
   rclcpp::Time now = steady_clock.now();
-  msg->header.stamp = now;
-  msg->id = id_;
-  msg->instance_id = instance_id_;
-  msg->active = active;
-  msg->heartbeat_timeout = heartbeat_timeout_.seconds();
-  msg->heartbeat_period = heartbeat_period_.seconds();
-  pub_->publish(std::move(msg));
+  msg.header.stamp = now;
+  msg.id = id_;
+  msg.instance_id = instance_id_;
+  msg.active = active;
+  msg.heartbeat_timeout = heartbeat_timeout_.seconds();
+  msg.heartbeat_period = heartbeat_period_.seconds();
+  pub_->publish(msg);
 }
 
 void Bond::flushPendingCallbacks()
@@ -565,6 +585,7 @@ void BondSM::Connected()
 {
   b->connectTimerCancel();
   if (b->on_formed_) {
+    std::unique_lock<std::mutex> lock(b->callbacks_mutex_);
     b->pending_callbacks_.push_back(b->on_formed_);
   }
 }
@@ -579,6 +600,7 @@ void BondSM::Death()
   b->heartbeatTimerCancel();
   b->disconnectTimerCancel();
   if (b->on_broken_) {
+    std::unique_lock<std::mutex> lock(b->callbacks_mutex_);
     b->pending_callbacks_.push_back(b->on_broken_);
   }
 }
