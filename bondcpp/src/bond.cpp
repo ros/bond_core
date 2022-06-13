@@ -539,7 +539,6 @@ void Bond::bondStatusCB(const bond::msg::Status & msg)
 
 void Bond::doPublishing()
 {
-  std::unique_lock<std::mutex> lock(state_machine_mutex_);
   if (isStateWaitingForSister() || isStateAlive()) {
     publishStatus(true);
   } else if (isStateAwaitSisterDeath()) {
