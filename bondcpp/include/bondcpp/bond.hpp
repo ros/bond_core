@@ -178,9 +178,9 @@ public:
    */
   void breakBond();
 
-  std::string getTopic() {return topic_;}
-  std::string getId() {return id_;}
-  std::string getInstanceId() {return instance_id_;}
+  std::string getTopic() const {return topic_;}
+  std::string getId() const {return id_;}
+  std::string getInstanceId() const {return instance_id_;}
 
 private:
   friend struct ::BondSM;
