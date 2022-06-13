@@ -2,6 +2,9 @@
 Changelog for package test_bond
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.0.2 (2022-04-01)
+------------------
+
 3.0.1 (2021-01-26)
 ------------------
 * Add build dependencies on pkg-config.

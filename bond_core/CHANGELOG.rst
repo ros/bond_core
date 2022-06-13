@@ -2,6 +2,11 @@
 Changelog for package bond_core
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.0.2 (2022-04-01)
+------------------
+* Remove test_bond dependency from bond_core (`#79 <https://github.com/ros/bond_core/issues/79>`_)
+* Contributors: Michael Carroll
+
 3.0.1 (2021-01-26)
 ------------------
 

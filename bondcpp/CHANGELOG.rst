@@ -2,6 +2,9 @@
 Changelog for package bondcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.0.2 (2022-04-01)
+------------------
+
 3.0.1 (2021-01-26)
 ------------------
 * Fix cpplint/uncrustify errors.
