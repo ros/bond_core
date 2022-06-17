@@ -8,7 +8,6 @@ endif()
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
-add_definitions(-DNOMINMAX)
 
 find_package(ament_cmake REQUIRED)
 find_package(bond REQUIRED)
@@ -36,7 +35,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
   ${UUID_INCLUDE_DIRS})
 if(WIN32)
   target_compile_definitions(${PROJECT_NAME}
-    PRIVATE "BONDCPP_BUILDING_LIBRARY")
+    PRIVATE "BONDCPP_BUILDING_LIBRARY" "NOMINMAX")
 endif()
 ament_target_dependencies(${PROJECT_NAME}
   bond
