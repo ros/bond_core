@@ -38,6 +38,9 @@ from bondpy.BondSM_sm import BondSM_sm
 
 from bond.msg import Constants, Status
 
+def duration_to_sec(duration):
+    # Dividing by 1e9 may be lossy but it was done like this in ROS1
+    return float(duration.nanoseconds) / 1e9
 
 def as_ros_duration(d):
     if not isinstance(d, Duration):
@@ -46,12 +49,8 @@ def as_ros_duration(d):
 
 def as_float_duration(d):
     if isinstance(d, Duration):
-        # Dividing by 1e9 may be lossy but it was done like this in ROS1
-        return float(d.nanoseconds) / 1e9
+        return duration_to_sec(d)
     return d
-
-def duration_to_sec(duration):
-    return float(duration.nanoseconds) / 1e9
 
 ## Internal use only
 class Timeout:
@@ -323,14 +322,14 @@ class Bond(object):
                     break
                 wait_duration = 0.1
                 if self.deadline:
-                    wait_duration = min(wait_duration, float(self.deadline.left().nanoseconds) / 1e9)
+                    wait_duration = min(wait_duration, duration_to_sec(self.deadline.left()))
                 self.condition.wait(wait_duration)
             return self.sm.getState().getName() != 'SM.WaitingForSister'
 
     ## \brief Blocks until the bond is broken for at most 'duration'.
     #
     # \param timeout Maximum duration to wait.  If None then this call will not timeout.
-    # \return true iff the bond has been broken, even if it has never been formed.
+    # \return true if the bond has been broken, even if it has never been formed.
     def wait_until_broken(self, timeout=None):
         if self.deadline:
             self.deadline.cancel()
@@ -345,12 +344,12 @@ class Bond(object):
                     break
                 wait_duration = 0.1
                 if self.deadline:
-                    wait_duration = min(wait_duration, float(self.deadline.left().nanoseconds) / 1e9)
+                    wait_duration = min(wait_duration, duration_to_sec(self.deadline.left()))
                 self.condition.wait(wait_duration)
             return self.sm.getState().getName() == 'SM.Dead'
 
     ## \brief Indicates if the bond is broken
-    # \return true iff the bond has been broken.
+    # \return true if the bond has been broken
     def is_broken(self):
         with self.lock:
             return self.sm.getState().getName() == 'SM.Dead'
