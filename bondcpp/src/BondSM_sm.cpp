@@ -112,6 +112,7 @@ void SM_WaitingForSister::SisterAlive(BondSMContext& context)
     {
         ctxt.Connected();
         context.setState(SM::Alive);
+        ctxt.Heartbeat();
     }
     catch (...)
     {
