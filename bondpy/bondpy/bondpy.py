@@ -307,7 +307,7 @@ class Bond(object):
     ## \brief Blocks until the bond is formed for at most 'duration'.
     #
     # \param timeout Maximum duration to wait.  If None then this call will not timeout.
-    # \return true if the bond has been formed.
+    # \return true iff the bond has been formed.
     def wait_until_formed(self, timeout=None):
         if self.deadline:
             self.deadline.cancel()
@@ -329,7 +329,7 @@ class Bond(object):
     ## \brief Blocks until the bond is broken for at most 'duration'.
     #
     # \param timeout Maximum duration to wait.  If None then this call will not timeout.
-    # \return true if the bond has been broken, even if it has never been formed.
+    # \return true iff the bond has been broken, even if it has never been formed.
     def wait_until_broken(self, timeout=None):
         if self.deadline:
             self.deadline.cancel()
@@ -349,7 +349,7 @@ class Bond(object):
             return self.sm.getState().getName() == 'SM.Dead'
 
     ## \brief Indicates if the bond is broken
-    # \return true if the bond has been broken
+    # \return true iff the bond has been broken
     def is_broken(self):
         with self.lock:
             return self.sm.getState().getName() == 'SM.Dead'
