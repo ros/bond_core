@@ -10,8 +10,8 @@ def test_connection():
         node_1 = rclpy.create_node('test_node_1', context=context)
         node_2 = rclpy.create_node('test_node_2', context=context)
 
-        bond_a = Bond('test_topic_bond', 'test_id', node_1)
-        bond_b = Bond('test_topic_bond', 'test_id', node_2)
+        bond_a = Bond(node_1, 'test_topic_bond', 'test_id')
+        bond_b = Bond(node_2, 'test_topic_bond', 'test_id')
 
         bond_a.start()
         bond_b.start()
@@ -29,8 +29,8 @@ def test_disconnection():
         node_1 = rclpy.create_node('test_node_1', context=context)
         node_2 = rclpy.create_node('test_node_2', context=context)
 
-        bond_a = Bond('test_topic_bond', 'test_id', node_1)
-        bond_b = Bond('test_topic_bond', 'test_id', node_2)
+        bond_a = Bond(node_1, 'test_topic_bond', 'test_id')
+        bond_b = Bond(node_2, 'test_topic_bond', 'test_id')
 
         bond_a.start()
         bond_b.start()
