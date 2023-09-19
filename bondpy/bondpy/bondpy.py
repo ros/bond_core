@@ -93,7 +93,7 @@ class Bond(object):
     #           the sister's end
     # \param on_broken callback that will be called when the bond is broken.
     # \param on_formed callback that will be called when the bond is formed.
-    def __init__(self, topic, id, node, on_broken=None, on_formed=None):
+    def __init__(self, node, topic, id, on_broken=None, on_formed=None):
         self.__started = False
         self.topic = topic
         self.id = id
