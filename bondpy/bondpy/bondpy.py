@@ -38,19 +38,23 @@ from bondpy.BondSM_sm import BondSM_sm
 
 from bond.msg import Constants, Status
 
+
 def duration_to_sec(duration):
     # Dividing by 1e9 may be lossy but it was done like this in ROS1
     return float(duration.nanoseconds) / 1e9
+
 
 def as_ros_duration(d):
     if not isinstance(d, Duration):
         return Duration(seconds=d)
     return d
 
+
 def as_float_duration(d):
     if isinstance(d, Duration):
         return duration_to_sec(d)
     return d
+
 
 ## Internal use only
 class Timeout:
@@ -180,11 +184,12 @@ class Bond(object):
     def _on_heartbeat_timeout(self):
         # Checks that heartbeat timeouts haven't been disabled globally
         self.node.declare_parameter(Constants.DISABLE_HEARTBEAT_TIMEOUT_PARAM, False)
-        disable_heartbeat_timeout = self.node.get_parameter(Constants.DISABLE_HEARTBEAT_TIMEOUT_PARAM).value
+        disable_heartbeat_timeout = self.node.get_parameter(
+            Constants.DISABLE_HEARTBEAT_TIMEOUT_PARAM).value
         if disable_heartbeat_timeout:
             self.node.get_logger().warn(
-                "Heartbeat timeout is disabled.  Not breaking bond (topic: %s, id: %s)" %
-                    (self.topic, self.id))
+                f"Heartbeat timeout is disabled.  \
+                Not breaking bond (topic: {self.topic}, id: {self.id})")
             return
 
         with self.lock:
@@ -221,9 +226,10 @@ class Bond(object):
 
                 if msg.instance_id != self.sister_instance_id:
                     self.node.get_logger().error(
-                        "More than two locations are trying to use a single bond (topic: %s, id: %s).  " +
-                        "You should only instantiate at most two bond instances for each (topic, id) pair." %
-                        (self.topic, self.id))
+                        f"More than two locations are trying to use a single bond \
+                        (topic: {self.topic}, id: {self.id}).  " +
+                        "You should only instantiate at most two bond instances for each \
+                        (topic, id) pair.")
                     return
 
                 if msg.active:
@@ -249,7 +255,8 @@ class Bond(object):
     def _publishing_thread(self):
         with self.lock:
             # Publishing ALIVE
-            while not self.is_shutdown and self.sm.getState().getName() in ['SM.WaitingForSister', 'SM.Alive']:
+            while not self.is_shutdown and \
+                  self.sm.getState().getName() in ['SM.WaitingForSister', 'SM.Alive']:
                 self._publish(True)
                 self.condition.wait(self.heartbeat_period)
 

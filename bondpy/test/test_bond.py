@@ -3,6 +3,7 @@ from rclpy.duration import Duration
 
 from bondpy.bondpy import Bond
 
+
 def test_connection():
     context = rclpy.Context()
     rclpy.init(context=context)
@@ -21,6 +22,7 @@ def test_connection():
 
     finally:
         rclpy.shutdown(context=context)
+
 
 def test_disconnection():
     context = rclpy.Context()

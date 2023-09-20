@@ -1,8 +1,7 @@
-from setuptools import setup, find_packages
+from catkin_pkg.python_setup import generate_distutils_setup
+from setuptools import setup
 
 package_name = 'bondpy'
-
-from catkin_pkg.python_setup import generate_distutils_setup
 
 d = generate_distutils_setup(
     packages=['bondpy'],
@@ -12,7 +11,7 @@ d = generate_distutils_setup(
     data_files=[
         ('share/' + package_name, ['package.xml']),
         ('share/ament_index/resource_index/packages',
-        ['resource/' + package_name])
+         ['resource/' + package_name])
     ],
     tests_require=['pytest']
 )
