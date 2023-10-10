@@ -2,6 +2,11 @@
 Changelog for package bondcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.0.0 (2022-09-01)
+------------------
+* Bond cleanups (`#87 <https://github.com/ros/bond_core/issues/87>`_)
+* Contributors: Michael Carroll
+
 3.0.2 (2022-04-01)
 ------------------
 

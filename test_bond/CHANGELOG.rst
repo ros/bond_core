@@ -2,6 +2,12 @@
 Changelog for package test_bond
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.0.0 (2022-09-01)
+------------------
+* Bond cleanups (`#87 <https://github.com/ros/bond_core/issues/87>`_)
+* Modernize rosidl_get_typesupport for Humble+ (`#85 <https://github.com/ros/bond_core/issues/85>`_)
+* Contributors: Michael Carroll
+
 3.0.2 (2022-04-01)
 ------------------
 

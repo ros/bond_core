@@ -2,6 +2,11 @@
 Changelog for package smclib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.0.0 (2022-09-01)
+------------------
+* Drop unused access specifiers (`#86 <https://github.com/ros/bond_core/issues/86>`_)
+* Contributors: Michael Carroll
+
 3.0.2 (2022-04-01)
 ------------------
 
