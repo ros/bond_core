@@ -558,8 +558,8 @@ void Bond::publishStatus(bool active)
   msg.id = id_;
   msg.instance_id = instance_id_;
   msg.active = active;
-  msg.heartbeat_timeout = heartbeat_timeout_.seconds();
-  msg.heartbeat_period = heartbeat_period_.seconds();
+  msg.heartbeat_timeout = static_cast<float>(heartbeat_timeout_.seconds());
+  msg.heartbeat_period = static_cast<float>(heartbeat_period_.seconds());
   pub_->publish(msg);
 }
 
