@@ -158,7 +158,7 @@ public:
   void publishingTimerReset();
   BONDCPP_PUBLIC
   void publishingTimerCancel();
-  
+
   BONDCPP_PUBLIC
   double getDeadPublishPeriod() const {return dead_publish_period_.seconds();}
   BONDCPP_PUBLIC
