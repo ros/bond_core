@@ -84,9 +84,13 @@ inline char * copyString(const char * s)
 {
   char * retval = NULL;
   if (s != NULL) {
-    retval = new char[MAX_NAME_LEN + 1];
-    retval[MAX_NAME_LEN] = '\0';
-    (void) std::strncpy(retval, s, MAX_NAME_LEN);
+    size_t copy_len = strlen(s);
+    if (copy_len > MAX_NAME_LEN) {
+      copy_len = MAX_NAME_LEN;
+    }
+    retval = new char[copy_len + 1];
+    memcpy(retval, s, copy_len);
+    retval[copy_len] = '\0';
   }
 
   return retval;

@@ -43,6 +43,7 @@
 #include "bond/msg/status.hpp"
 
 #include "bondcpp/BondSM_sm.hpp"
+#include "bondcpp/visibility_control.hpp"
 
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_lifecycle/lifecycle_node.hpp>
@@ -71,6 +72,7 @@ public:
    * \param on_broken callback that will be called when the bond is broken.
    * \param on_formed callback that will be called when the bond is formed.
    */
+  BONDCPP_PUBLIC
   Bond(
     const std::string & topic, const std::string & id,
     rclcpp::node_interfaces::NodeBaseInterface::SharedPtr node_base,
@@ -90,6 +92,7 @@ public:
    * \param on_broken callback that will be called when the bond is broken.
    * \param on_formed callback that will be called when the bond is formed.
    */
+  BONDCPP_PUBLIC
   Bond(
     const std::string & topic, const std::string & id,
     rclcpp_lifecycle::LifecycleNode::SharedPtr nh,
@@ -105,6 +108,7 @@ public:
    * \param on_broken callback that will be called when the bond is broken.
    * \param on_formed callback that will be called when the bond is formed.
    */
+  BONDCPP_PUBLIC
   Bond(
     const std::string & topic, const std::string & id,
     rclcpp::Node::SharedPtr nh,
@@ -113,45 +117,70 @@ public:
 
   /** \brief Destructs the object, breaking the bond if it is still formed.
    */
+  BONDCPP_PUBLIC
   ~Bond();
 
+  BONDCPP_PUBLIC
   void setupConnections();
 
+  BONDCPP_PUBLIC
   double getConnectTimeout() const {return connect_timeout_.seconds();}
+  BONDCPP_PUBLIC
   void setConnectTimeout(double dur);
+  BONDCPP_PUBLIC
   void connectTimerReset();
+  BONDCPP_PUBLIC
   void connectTimerCancel();
 
+  BONDCPP_PUBLIC
   double getDisconnectTimeout() const {return disconnect_timeout_.seconds();}
+  BONDCPP_PUBLIC
   void setDisconnectTimeout(double dur);
+  BONDCPP_PUBLIC
   void disconnectTimerReset();
+  BONDCPP_PUBLIC
   void disconnectTimerCancel();
 
+  BONDCPP_PUBLIC
   double getHeartbeatTimeout() const {return heartbeat_timeout_.seconds();}
+  BONDCPP_PUBLIC
   void setHeartbeatTimeout(double dur);
+  BONDCPP_PUBLIC
   void heartbeatTimerReset();
+  BONDCPP_PUBLIC
   void heartbeatTimerCancel();
 
+  BONDCPP_PUBLIC
   double getHeartbeatPeriod() const {return heartbeat_period_.seconds();}
+  BONDCPP_PUBLIC
   void setHeartbeatPeriod(double dur);
+  BONDCPP_PUBLIC
   void publishingTimerReset();
+  BONDCPP_PUBLIC
   void publishingTimerCancel();
 
+  BONDCPP_PUBLIC
   double getDeadPublishPeriod() const {return dead_publish_period_.seconds();}
+  BONDCPP_PUBLIC
   void setDeadPublishPeriod(double dur);
+  BONDCPP_PUBLIC
   void deadpublishingTimerReset();
+  BONDCPP_PUBLIC
   void deadpublishingTimerCancel();
 
   /** \brief Starts the bond and connects to the sister process.
    */
+  BONDCPP_PUBLIC
   void start();
 
   /** \brief Sets the formed callback.
    */
+  BONDCPP_PUBLIC
   void setFormedCallback(EventCallback on_formed);
 
   /** \brief Sets the broken callback
    */
+  BONDCPP_PUBLIC
   void setBrokenCallback(EventCallback on_broken);
 
   /** \brief Blocks until the bond is formed for at most 'duration'.
@@ -160,6 +189,7 @@ public:
    * \param timeout Maximum duration to wait.  If -1 then this call will not timeout.
    * \return true iff the bond has been formed.
    */
+  BONDCPP_PUBLIC
   bool waitUntilFormed(rclcpp::Duration timeout = rclcpp::Duration(std::chrono::seconds(-1)));
 
   /** \brief Blocks until the bond is broken for at most 'duration'.
@@ -168,18 +198,24 @@ public:
    * \param timeout Maximum duration to wait.  If -1 then this call will not timeout.
    * \return true iff the bond has been broken, even if it has never been formed.
    */
+  BONDCPP_PUBLIC
   bool waitUntilBroken(rclcpp::Duration timeout = rclcpp::Duration(std::chrono::seconds(-1)));
 
   /** \brief Indicates if the bond is broken.
    */
+  BONDCPP_PUBLIC
   bool isBroken();
 
   /** \brief Breaks the bond, notifying the other process.
    */
+  BONDCPP_PUBLIC
   void breakBond();
 
+  BONDCPP_PUBLIC
   std::string getTopic() const {return topic_;}
+  BONDCPP_PUBLIC
   std::string getId() const {return id_;}
+  BONDCPP_PUBLIC
   std::string getInstanceId() const {return instance_id_;}
 
 private:
