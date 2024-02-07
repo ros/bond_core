@@ -31,12 +31,11 @@ import threading
 import time
 import uuid
 
-import rclpy
-from rclpy.duration import Duration
-
+from bond.msg import Constants, Status
 from bondpy.BondSM_sm import BondSM_sm
 
-from bond.msg import Constants, Status
+import rclpy
+from rclpy.duration import Duration
 
 
 def duration_to_sec(duration):
@@ -93,14 +92,14 @@ class Bond(object):
     ## \brief Constructs a bond, but does not connect.
     #
     # \param topic The topic used to exchange the bond status messages.
-    # \param id The ID of the bond, which should match the ID used on
+    # \param bond_id The ID of the bond, which should match the ID used on
     #           the sister's end
     # \param on_broken callback that will be called when the bond is broken.
     # \param on_formed callback that will be called when the bond is formed.
-    def __init__(self, node, topic, id, on_broken=None, on_formed=None):
+    def __init__(self, node, topic, bond_id, on_broken=None, on_formed=None):
         self.__started = False
         self.topic = topic
-        self.id = id
+        self.id = bond_id
         self.node = node
         self.instance_id = str(uuid.uuid4())
         self.sister_instance_id = None
@@ -188,8 +187,8 @@ class Bond(object):
             Constants.DISABLE_HEARTBEAT_TIMEOUT_PARAM).value
         if disable_heartbeat_timeout:
             self.node.get_logger().warn(
-                f"Heartbeat timeout is disabled.  \
-                Not breaking bond (topic: {self.topic}, id: {self.id})")
+                f'Heartbeat timeout is disabled.  \
+                Not breaking bond (topic: {self.topic}, id: {self.id})')
             return
 
         with self.lock:
@@ -226,10 +225,10 @@ class Bond(object):
 
                 if msg.instance_id != self.sister_instance_id:
                     self.node.get_logger().error(
-                        f"More than two locations are trying to use a single bond \
-                        (topic: {self.topic}, id: {self.id}).  " +
-                        "You should only instantiate at most two bond instances for each \
-                        (topic, id) pair.")
+                        f'More than two locations are trying to use a single bond \
+                        (topic: {self.topic}, id: {self.id}).  ' +
+                        'You should only instantiate at most two bond instances for each \
+                        (topic, id) pair.')
                     return
 
                 if msg.active:
@@ -369,5 +368,5 @@ class Bond(object):
         self._flush_pending_callbacks()
 
     def __repr__(self):
-        return "[Bond %s, Instance %s (%s)]" % \
+        return '[Bond %s, Instance %s (%s)]' % \
             (self.id, self.instance_id, self.sm.getState().getName())

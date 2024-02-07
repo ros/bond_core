@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from bondpy.bondpy import Bond
+
 import rclpy
 from rclpy.duration import Duration
-
-from bondpy.bondpy import Bond
 
 
 def test_connection():
