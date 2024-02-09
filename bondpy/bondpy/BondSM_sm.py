@@ -33,7 +33,7 @@ class BondSMState(statemap.State):
         self.Default(fsm)
 
     def Default(self, fsm):
-        msg = '\n\tState: %s\n\tTransition: %s' % (
+        msg = "\n\tState: %s\n\tTransition: %s" % (
             fsm.getState().getName(), fsm.getTransition())
         raise statemap.TransitionUndefinedException(msg)
 
