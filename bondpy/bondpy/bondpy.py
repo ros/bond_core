@@ -1,22 +1,23 @@
-# Copyright (c) 2009, Willow Garage, Inc.
-# All rights reserved.
+# Copyright 2009 Willow Garage, Inc.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
 #
-#     * Redistributions of source code must retain the above copyright
-#       notice, this list of conditions and the following disclaimer.
-#     * Redistributions in binary form must reproduce the above copyright
-#       notice, this list of conditions and the following disclaimer in the
-#       documentation and/or other materials provided with the distribution.
-#     * Neither the name of the Willow Garage, Inc. nor the names of its
-#       contributors may be used to endorse or promote products derived from
-#       this software without specific prior written permission.
+#    * Redistributions of source code must retain the above copyright
+#      notice, this list of conditions and the following disclaimer.
+#
+#    * Redistributions in binary form must reproduce the above copyright
+#      notice, this list of conditions and the following disclaimer in the
+#      documentation and/or other materials provided with the distribution.
+#
+#    * Neither the name of the Willow Garage, Inc. nor the names of its
+#      contributors may be used to endorse or promote products derived from
+#      this software without specific prior written permission.
 #
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
 # LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 # CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 # SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -25,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-## \author Stuart Glaser
+# \author Stuart Glaser
 
 import threading
 import time
@@ -55,8 +56,9 @@ def as_float_duration(d):
     return d
 
 
-## Internal use only
+# Internal use only
 class Timeout:
+
     def __init__(self, duration, on_timeout=None):
         self.duration = duration
         self.timer = threading.Timer(0, self._on_timer)
@@ -83,13 +85,13 @@ class Timeout:
             self.on_timeout()
 
 
-## \brief Forms a bond to monitor another process.
+# \brief Forms a bond to monitor another process.
 #
 # The Bond class implements a bond, allowing you to monitor another
 # process and be notified when it dies.  In turn, it will be notified
 # when you die.
 class Bond(object):
-    ## \brief Constructs a bond, but does not connect.
+    # \brief Constructs a bond, but does not connect.
     #
     # \param topic The topic used to exchange the bond status messages.
     # \param bond_id The ID of the bond, which should match the ID used on
@@ -164,7 +166,7 @@ class Bond(object):
         self.__heartbeat_period = as_float_duration(per)
     heartbeat_period = property(get_heartbeat_period, set_heartbeat_period)
 
-    ## \brief Starts the bond and connects to the sister process.
+    # \brief Starts the bond and connects to the sister process.
     def start(self):
         with self.lock:
             self.connect_timer.reset()
@@ -272,22 +274,22 @@ class Bond(object):
         for c in callbacks:
             c()
 
-    ## \brief INTERNAL
+    # \brief INTERNAL
     def Connected(self):
         self.connect_timer.cancel()
         self.condition.notify_all()
         if self.on_formed:
             self.pending_callbacks.append(self.on_formed)
 
-    ## \brief INTERNAL
+    # \brief INTERNAL
     def Heartbeat(self):
         self.heartbeat_timer.reset()
 
-    ## \brief INTERNAL
+    # \brief INTERNAL
     def SisterDied(self):
         self.sister_died_first = True
 
-    ## \brief INTERNAL
+    # \brief INTERNAL
     def Death(self):
         self.condition.notify_all()
         self.heartbeat_timer.cancel()
@@ -295,22 +297,22 @@ class Bond(object):
         if self.on_broken:
             self.pending_callbacks.append(self.on_broken)
 
-    ## \brief INTERNAL
+    # \brief INTERNAL
     def StartDying(self):
         self.heartbeat_timer.cancel()
         self.disconnect_timer.reset()
 
-    ## \brief Sets the formed callback
+    # \brief Sets the formed callback
     def set_formed_callback(self, on_formed):
         with self.lock:
             self.on_formed = on_formed
 
-    ## \brief Sets the broken callback
+    # \brief Sets the broken callback
     def set_broken_callback(self, on_broken):
         with self.lock:
             self.on_broken = on_broken
 
-    ## \brief Blocks until the bond is formed for at most 'duration'.
+    # \brief Blocks until the bond is formed for at most 'duration'.
     #
     # \param timeout Maximum duration to wait.  If None then this call will not timeout.
     # \return true iff the bond has been formed.
@@ -332,7 +334,7 @@ class Bond(object):
                 self.condition.wait(wait_duration)
             return self.sm.getState().getName() != 'SM.WaitingForSister'
 
-    ## \brief Blocks until the bond is broken for at most 'duration'.
+    # \brief Blocks until the bond is broken for at most 'duration'.
     #
     # \param timeout Maximum duration to wait.  If None then this call will not timeout.
     # \return true iff the bond has been broken, even if it has never been formed.
@@ -354,13 +356,13 @@ class Bond(object):
                 self.condition.wait(wait_duration)
             return self.sm.getState().getName() == 'SM.Dead'
 
-    ## \brief Indicates if the bond is broken
+    # \brief Indicates if the bond is broken
     # \return true iff the bond has been broken
     def is_broken(self):
         with self.lock:
             return self.sm.getState().getName() == 'SM.Dead'
 
-    ## \brief Breaks the bond, notifying the other process.
+    # \brief Breaks the bond, notifying the other process.
     def break_bond(self):
         with self.lock:
             self.sm.Die()
