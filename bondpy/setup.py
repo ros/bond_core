@@ -1,19 +1,30 @@
-from catkin_pkg.python_setup import generate_distutils_setup
+from setuptools import find_packages
 from setuptools import setup
 
 package_name = 'bondpy'
 
-d = generate_distutils_setup(
-    packages=['bondpy'],
-    package_dir={'': ''},
+setup(
+    name=package_name,
+    version='4.0.0',
+    packages=find_packages(exclude=['test']),
+    data_files=[
+        ('share/ament_index/resource_index/packages', ['resource/' + package_name]),
+        ('share/' + package_name, ['package.xml']),
+    ],
+    install_requires=['setuptools'],
+    zip_safe=True,
     maintainer='Geoffrey Biggs',
     maintainer_email='geoff@openrobotics.org',
-    data_files=[
-        ('share/' + package_name, ['package.xml']),
-        ('share/ament_index/resource_index/packages',
-         ['resource/' + package_name])
+    keywords=['ROS'],
+    classifiers=[
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: Apache Software License',
+        'Programming Language :: Python',
+        'Topic :: Software Development',
     ],
-    tests_require=['pytest']
+    description=(
+        'Python implementation of bond.'
+    ),
+    license='BSD',
+    tests_require=['pytest'],
 )
-
-setup(**d)
