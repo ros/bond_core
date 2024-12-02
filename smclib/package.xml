@@ -14,7 +14,7 @@
 
   <maintainer email="geoff@openrobotics.org">Geoffrey Biggs</maintainer>
 
-  <license>Mozilla Public License Version 1.1</license>
+  <license>MPL-1.1</license>
 
   <url type="website">http://smc.sourceforge.net/</url>
   <url type="bugtracker">https://github.com/ros/bond_core/issues</url>
