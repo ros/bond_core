@@ -22,7 +22,6 @@ rosidl_generate_interfaces(${PROJECT_NAME}
 
 if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
-  set(ament_cmake_copyright_FOUND TRUE)
   find_package(ament_lint_auto REQUIRED)
   find_package(bond REQUIRED)
   find_package(bondcpp REQUIRED)
@@ -31,14 +30,14 @@ if(BUILD_TESTING)
   find_package(rosidl_cmake REQUIRED)
   find_package(Threads REQUIRED)
 
-if(UNIX AND NOT APPLE)
-  find_package(PkgConfig REQUIRED)
-  pkg_check_modules(UUID REQUIRED uuid)
-  # we have to find the absolute path to uuid as target_link_directories is not available before cmake 3.13
-  find_library(uuid_ABS_PATH ${UUID_LIBRARIES} PATHS ${UUID_LIBRARY_DIRS})
-elseif(WIN32)
-  set(uuid_ABS_PATH Rpcrt4.lib)
-endif()
+  if(UNIX AND NOT APPLE)
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(UUID REQUIRED uuid)
+    # we have to find the absolute path to uuid as target_link_directories is not available before cmake 3.13
+    find_library(uuid_ABS_PATH ${UUID_LIBRARIES} PATHS ${UUID_LIBRARY_DIRS})
+  elseif(WIN32)
+    set(uuid_ABS_PATH Rpcrt4.lib)
+  endif()
 
   ament_lint_auto_find_test_dependencies()
 
