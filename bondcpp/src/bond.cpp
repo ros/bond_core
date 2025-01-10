@@ -81,7 +81,9 @@ Bond::Bond(
   EventCallback on_formed)
 : node_base_(node_base),
   node_logging_(node_logging),
+  node_params_(node_params),
   node_timers_(node_timers),
+  node_topics_(node_topics),
   bondsm_(std::make_unique<BondSM>(this)),
   sm_(*bondsm_),
   topic_(topic),
@@ -100,29 +102,23 @@ Bond::Bond(
   dead_publish_period_(
     rclcpp::Duration::from_seconds(bond::msg::Constants::DEAD_PUBLISH_PERIOD))
 {
-  if (!node_params->has_parameter(bond::msg::Constants::DISABLE_HEARTBEAT_TIMEOUT_PARAM)) {
-    node_params->declare_parameter(
+  if (!node_params_->has_parameter(bond::msg::Constants::DISABLE_HEARTBEAT_TIMEOUT_PARAM)) {
+    node_params_->declare_parameter(
       bond::msg::Constants::DISABLE_HEARTBEAT_TIMEOUT_PARAM,
       rclcpp::ParameterValue(false));
   }
 
   disable_heartbeat_timeout_ =
-    node_params->get_parameter(bond::msg::Constants::DISABLE_HEARTBEAT_TIMEOUT_PARAM).as_bool();
+    node_params_->get_parameter(bond::msg::Constants::DISABLE_HEARTBEAT_TIMEOUT_PARAM).as_bool();
 
   setupConnections();
 
   pub_ = rclcpp::create_publisher<bond::msg::Status>(
-    node_params,
-    node_topics,
+    node_params_,
+    node_topics_,
     topic_,
     rclcpp::QoS(rclcpp::KeepLast(5)));
 
-  sub_ = rclcpp::create_subscription<bond::msg::Status>(
-    node_params,
-    node_topics,
-    topic_,
-    rclcpp::QoS(100),
-    std::bind(&Bond::bondStatusCB, this, std::placeholders::_1));
 }
 
 Bond::Bond(
@@ -364,6 +360,30 @@ void Bond::deadpublishingTimerCancel()
 
 void Bond::start()
 {
+  // Need to move subcriber setup here(out of constructor)
+  // to allow usage of weak_from_this()
+
+  if (!started_) {
+    // TBD: Should recreation of subscription be prevented?
+
+    std::weak_ptr<Bond> weakThis = weak_from_this();
+
+    sub_ = rclcpp::create_subscription<bond::msg::Status>(
+      node_params_,
+      node_topics_,
+      topic_,
+      rclcpp::QoS(100),
+      [weakThis](const bond::msg::Status & msg) {
+        if (auto strongThis = weakThis.lock()) {
+          strongThis->bondStatusCB(msg);
+        } else {
+          // Object has gone out of scope, handle accordingly
+        }
+      });
+  } else {
+    RCLCPP_WARN(node_logging_->get_logger(), "start() already started skipping subscription recreation");
+  }
+
   connect_timer_reset_flag_ = true;
   connectTimerReset();
   publishingTimerReset();

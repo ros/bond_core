@@ -55,7 +55,7 @@ namespace bond
  * another process and be notified when it dies.  In turn, it will be
  * notified when you die.
  */
-class Bond
+class Bond : public std::enable_shared_from_this<Bond>
 {
 public:
   using EventCallback = std::function<void (void)>;
@@ -239,7 +239,9 @@ private:
 
   rclcpp::node_interfaces::NodeBaseInterface::SharedPtr node_base_;
   rclcpp::node_interfaces::NodeLoggingInterface::SharedPtr node_logging_;
+  rclcpp::node_interfaces::NodeParametersInterface::SharedPtr node_params_;
   rclcpp::node_interfaces::NodeTimersInterface::SharedPtr node_timers_;
+  rclcpp::node_interfaces::NodeTopicsInterface::SharedPtr node_topics_;
 
   rclcpp::TimerBase::SharedPtr connect_timer_;
   rclcpp::TimerBase::SharedPtr disconnect_timer_;
@@ -274,6 +276,7 @@ private:
   rclcpp::Duration heartbeat_period_;
   rclcpp::Duration dead_publish_period_;
 
+  rclcpp::CallbackGroup::SharedPtr sub_callback_group_;
   rclcpp::Subscription<bond::msg::Status>::SharedPtr sub_;
   rclcpp::Publisher<bond::msg::Status>::SharedPtr pub_;
 };
