@@ -29,6 +29,7 @@
 // Author: Stuart Glaser
 
 #include <bondcpp/bond.hpp>
+#include <bondcpp/createSafeCallback.hpp>
 
 #ifdef _WIN32
 #include <Rpc.h>
@@ -360,28 +361,23 @@ void Bond::deadpublishingTimerCancel()
 
 void Bond::start()
 {
-  // Need to move subcriber setup here(out of constructor)
-  // to allow usage of weak_from_this()
+  // create_subscription must be done outside of constructor
+  // to allow usage of shared_from_this()
 
+  // TBD: Should recreation of subscription be prevented?
   if (!started_) {
-    // TBD: Should recreation of subscription be prevented?
-
-    std::weak_ptr<Bond> weakThis = weak_from_this();
-
     sub_ = rclcpp::create_subscription<bond::msg::Status>(
       node_params_,
       node_topics_,
       topic_,
       rclcpp::QoS(100),
-      [weakThis](const bond::msg::Status & msg) {
-        if (auto strongThis = weakThis.lock()) {
-          strongThis->bondStatusCB(msg);
-        } else {
-          // Object has gone out of scope, handle accordingly
-        }
-      });
+      createSafeSubscriptionMemFuncCallback(
+        shared_from_this(),
+        &Bond::bondStatusCB
+      ));
   } else {
-    RCLCPP_WARN(node_logging_->get_logger(), "start() already started skipping subscription recreation");
+    RCLCPP_WARN(node_logging_->get_logger(),
+      "start() already started skipping subscription recreation");
   }
 
   connect_timer_reset_flag_ = true;
