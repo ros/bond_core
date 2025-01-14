@@ -119,7 +119,6 @@ Bond::Bond(
     node_topics_,
     topic_,
     rclcpp::QoS(rclcpp::KeepLast(5)));
-
 }
 
 Bond::Bond(
@@ -373,8 +372,8 @@ void Bond::start()
       rclcpp::QoS(100),
       createSafeSubscriptionMemFuncCallback(
         shared_from_this(),
-        &Bond::bondStatusCB
-      ));
+        &Bond::bondStatusCB)
+    );
   } else {
     RCLCPP_WARN(node_logging_->get_logger(),
       "start() already started skipping subscription recreation");
