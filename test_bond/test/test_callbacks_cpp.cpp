@@ -124,8 +124,8 @@ TEST_F(TestCallbacksCpp, remoteNeverConnects)
       }
     });
 
-  EXPECT_FALSE(a1.waitUntilFormed(rclcpp::Duration(4.0s)));
-  EXPECT_TRUE(a1.waitUntilBroken(rclcpp::Duration(10.0s)));
+  EXPECT_FALSE(a1->waitUntilFormed(rclcpp::Duration(4.0s)));
+  EXPECT_TRUE(a1->waitUntilBroken(rclcpp::Duration(10.0s)));
 
   isRunning = false;
   runThread.join();
