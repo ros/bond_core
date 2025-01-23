@@ -2,8 +2,8 @@
 Changelog for package smclib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+4.1.1 (2025-01-23)
+------------------
 * Do not include windows.h in statemap.hpp (`#109 <https://github.com/ros/bond_core/issues/109>`_)
   * Do not include windows.h in statemap.hpp
   * Simplify ifdef structure

@@ -2,8 +2,8 @@
 Changelog for package bondpy
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+4.1.1 (2025-01-23)
+------------------
 * Remove empty Doxygen mainpage files (`#106 <https://github.com/ros/bond_core/issues/106>`_)
 * Clarify licenses of bond_core and smclib (`#105 <https://github.com/ros/bond_core/issues/105>`_)
 * Contributors: Michael Carroll
