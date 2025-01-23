@@ -565,16 +565,17 @@ void Bond::doPublishing()
 
 void Bond::publishStatus(bool active)
 {
-  bond::msg::Status msg;
+  auto msg = std::make_unique<bond::msg::Status>();
   rclcpp::Clock steady_clock(RCL_STEADY_TIME);
   rclcpp::Time now = steady_clock.now();
-  msg.header.stamp = now;
-  msg.id = id_;
-  msg.instance_id = instance_id_;
-  msg.active = active;
-  msg.heartbeat_timeout = static_cast<float>(heartbeat_timeout_.seconds());
-  msg.heartbeat_period = static_cast<float>(heartbeat_period_.seconds());
-  pub_->publish(msg);
+  msg->header.stamp = now;
+  msg->id = id_;
+  msg->instance_id = instance_id_;
+  msg->active = active;
+  msg->heartbeat_timeout = static_cast<float>(heartbeat_timeout_.seconds());
+  msg->heartbeat_period = static_cast<float>(heartbeat_period_.seconds());
+  if(pub_->get_subscription_count() < 1){ return; }
+  pub_->publish(std::move(msg));
 }
 
 void Bond::flushPendingCallbacks()
