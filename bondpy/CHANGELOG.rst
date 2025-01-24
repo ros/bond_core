@@ -2,6 +2,11 @@
 Changelog for package bondpy
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* increase buffer size of bond_status callback in bondpy (`#96 <https://github.com/ros/bond_core/issues/96>`_)
+* Contributors: sosoeeee
+
 4.1.1 (2025-01-23)
 ------------------
 * Remove empty Doxygen mainpage files (`#106 <https://github.com/ros/bond_core/issues/106>`_)

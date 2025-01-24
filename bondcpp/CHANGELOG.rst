@@ -2,6 +2,9 @@
 Changelog for package bondcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 4.1.1 (2025-01-23)
 ------------------
 * Fix copyright/license headers and enable lint (`#107 <https://github.com/ros/bond_core/issues/107>`_)
