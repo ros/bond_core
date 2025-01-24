@@ -170,7 +170,7 @@ class Bond(object):
     def start(self):
         with self.lock:
             self.connect_timer.reset()
-            self.sub = self.node.create_subscription(Status, self.topic, self._on_bond_status, 1)
+            self.sub = self.node.create_subscription(Status, self.topic, self._on_bond_status, 100)
 
             self.thread = threading.Thread(target=self._publishing_thread)
             self.thread.daemon = True
