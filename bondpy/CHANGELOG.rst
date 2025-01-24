@@ -2,8 +2,8 @@
 Changelog for package bondpy
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+4.1.2 (2025-01-24)
+------------------
 * increase buffer size of bond_status callback in bondpy (`#96 <https://github.com/ros/bond_core/issues/96>`_)
 * Contributors: sosoeeee
 

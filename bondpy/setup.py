@@ -5,7 +5,7 @@ package_name = 'bondpy'
 
 setup(
     name=package_name,
-    version='4.1.1',
+    version='4.1.2',
     packages=find_packages(exclude=['test']),
     data_files=[
         ('share/ament_index/resource_index/packages', ['resource/' + package_name]),
