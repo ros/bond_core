@@ -37,9 +37,10 @@
 template<typename T, typename MessageT>
 auto createSafeSubscriptionMemFuncCallback(
   std::shared_ptr<T> obj,
-  void (T::*memberFunc)(const MessageT &))
+  void (T::* memberFunc)(const MessageT &))
 {
-  static_assert(std::is_base_of_v<std::enable_shared_from_this<T>, T>,
+  static_assert(
+    std::is_base_of_v<std::enable_shared_from_this<T>, T>,
     "Type expected to inherit from std::enable_shared_from_this");
 
   std::weak_ptr<T> weak_obj = obj;

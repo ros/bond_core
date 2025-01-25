@@ -375,7 +375,8 @@ void Bond::start()
         &Bond::bondStatusCB)
     );
   } else {
-    RCLCPP_WARN(node_logging_->get_logger(),
+    RCLCPP_WARN(
+      node_logging_->get_logger(),
       "start() already started skipping subscription recreation");
   }
 
@@ -574,7 +575,7 @@ void Bond::publishStatus(bool active)
   msg->active = active;
   msg->heartbeat_timeout = static_cast<float>(heartbeat_timeout_.seconds());
   msg->heartbeat_period = static_cast<float>(heartbeat_period_.seconds());
-  if(pub_->get_subscription_count() < 1){ return; }
+  if (pub_->get_subscription_count() < 1) {return;}
   pub_->publish(std::move(msg));
 }
 
