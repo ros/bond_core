@@ -45,7 +45,10 @@ if(BUILD_TESTING)
   if(TARGET test_callbacks_cpp)
     target_include_directories(test_callbacks_cpp PRIVATE include)
     target_link_libraries(test_callbacks_cpp ${uuid_ABS_PATH})
-    ament_target_dependencies(test_callbacks_cpp bond bondcpp rclcpp rclcpp_lifecycle)
+    target_link_libraries(test_callbacks_cpp
+      bondcpp::bondcpp
+      rclcpp::rclcpp
+      rclcpp_lifecycle::rclcpp_lifecycle)
 
     rosidl_get_typesupport_target(cpp_typesupport_target ${PROJECT_NAME} "rosidl_typesupport_cpp")
     target_link_libraries(test_callbacks_cpp "${cpp_typesupport_target}")
