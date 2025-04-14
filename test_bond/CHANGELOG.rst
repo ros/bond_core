@@ -2,6 +2,16 @@
 Changelog for package test_bond
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.1.2 (2025-01-24)
+------------------
+
+4.1.1 (2025-01-23)
+------------------
+* Fix copyright/license headers and enable lint (`#107 <https://github.com/ros/bond_core/issues/107>`_)
+* Remove empty Doxygen mainpage files (`#106 <https://github.com/ros/bond_core/issues/106>`_)
+* Clarify licenses of bond_core and smclib (`#105 <https://github.com/ros/bond_core/issues/105>`_)
+* Contributors: Michael Carroll
+
 4.1.0 (2024-06-03)
 ------------------
 * Fix osx and win32 builds (`#83 <https://github.com/ros/bond_core/issues/83>`_)

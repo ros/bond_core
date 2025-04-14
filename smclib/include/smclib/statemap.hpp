@@ -46,25 +46,12 @@
 #ifndef SMCLIB__STATEMAP_HPP_
 #define SMCLIB__STATEMAP_HPP_
 
-#if (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1))
 #if defined(SMC_NO_EXCEPTIONS)
 #include <cassert>
-#endif  // SMC_NO_EXCEPTIONS
 #include <cstdio>
-#elif defined(WIN32)
-#include <windows.h>
-#if defined(SMC_NO_EXCEPTIONS)
-#include <cassert>
-#endif  // SMC_NO_EXCEPTIONS
 #else
-#if defined(SMC_NO_EXCEPTIONS)
-#include <assert.h>
-#endif  // SMC_NO_EXCEPTIONS
-#include <stdio.h>
-#endif
-#if !defined(SMC_NO_EXCEPTIONS)
-#include <stdexcept>
 #include <cstring>
+#include <stdexcept>
 #endif
 
 #include <string>

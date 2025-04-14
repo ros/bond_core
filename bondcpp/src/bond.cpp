@@ -583,9 +583,15 @@ void Bond::flushPendingCallbacks()
 {
   std::vector<EventCallback> callbacks;
   {
-    std::unique_lock<std::mutex> lock(callbacks_mutex_);
-    callbacks = pending_callbacks_;
-    pending_callbacks_.clear();
+    // Check the availability of the mutex before locking
+    // This is a temporary fix before https://github.com/ros/bond_core/pull/108 is merged
+    if (callbacks_mutex_.try_lock()) {
+      callbacks = pending_callbacks_;
+      pending_callbacks_.clear();
+      callbacks_mutex_.unlock();
+    } else {
+      return;
+    }
   }
 
   for (size_t i = 0; i < callbacks.size(); ++i) {

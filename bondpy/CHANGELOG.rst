@@ -2,6 +2,17 @@
 Changelog for package bondpy
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.1.2 (2025-01-24)
+------------------
+* increase buffer size of bond_status callback in bondpy (`#96 <https://github.com/ros/bond_core/issues/96>`_)
+* Contributors: sosoeeee
+
+4.1.1 (2025-01-23)
+------------------
+* Remove empty Doxygen mainpage files (`#106 <https://github.com/ros/bond_core/issues/106>`_)
+* Clarify licenses of bond_core and smclib (`#105 <https://github.com/ros/bond_core/issues/105>`_)
+* Contributors: Michael Carroll
+
 4.1.0 (2024-06-03)
 ------------------
 * bondpy migration to ROS2 (`#89 <https://github.com/ros/bond_core/issues/89>`_)

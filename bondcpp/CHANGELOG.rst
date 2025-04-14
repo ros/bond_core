@@ -2,6 +2,16 @@
 Changelog for package bondcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.1.2 (2025-01-24)
+------------------
+
+4.1.1 (2025-01-23)
+------------------
+* Fix copyright/license headers and enable lint (`#107 <https://github.com/ros/bond_core/issues/107>`_)
+* Remove empty Doxygen mainpage files (`#106 <https://github.com/ros/bond_core/issues/106>`_)
+* Clarify licenses of bond_core and smclib (`#105 <https://github.com/ros/bond_core/issues/105>`_)
+* Contributors: Michael Carroll
+
 4.1.0 (2024-06-03)
 ------------------
 * Update bond_core to modern cmake. (`#94 <https://github.com/ros/bond_core/issues/94>`_)

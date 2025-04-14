@@ -2,6 +2,18 @@
 Changelog for package smclib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.1.2 (2025-01-24)
+------------------
+
+4.1.1 (2025-01-23)
+------------------
+* Do not include windows.h in statemap.hpp (`#109 <https://github.com/ros/bond_core/issues/109>`_)
+  * Do not include windows.h in statemap.hpp
+  * Simplify ifdef structure
+* Remove empty Doxygen mainpage files (`#106 <https://github.com/ros/bond_core/issues/106>`_)
+* Clarify licenses of bond_core and smclib (`#105 <https://github.com/ros/bond_core/issues/105>`_)
+* Contributors: Michael Carroll, Silvio Traversaro
+
 4.1.0 (2024-06-03)
 ------------------
 * Update bond_core to modern cmake. (`#94 <https://github.com/ros/bond_core/issues/94>`_)
