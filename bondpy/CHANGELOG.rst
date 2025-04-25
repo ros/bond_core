@@ -2,6 +2,9 @@
 Changelog for package bondpy
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 1.8.6 (2020-08-28)
 ------------------
 * bondpy: Prevent exception in Bond.shutdown() (`#62 <https://github.com/ros/bond_core/issues/62>`_)

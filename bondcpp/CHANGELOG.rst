@@ -2,6 +2,11 @@
 Changelog for package bondcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Use the first sister message as a Heartbeat (`#93 <https://github.com/ros/bond_core/issues/93>`_)
+* Contributors: Martin Pecka
+
 1.8.6 (2020-08-28)
 ------------------
 * narrow down required boost dependencies (`#68 <https://github.com/ros/bond_core/issues/68>`_)
