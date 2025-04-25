@@ -2,8 +2,8 @@
 Changelog for package bondcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.8.7 (2025-04-25)
+------------------
 * Use the first sister message as a Heartbeat (`#93 <https://github.com/ros/bond_core/issues/93>`_)
 * Contributors: Martin Pecka
 
