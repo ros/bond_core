@@ -34,10 +34,10 @@ import uuid
 
 from bond.msg import Constants, Status
 from bondpy.BondSM_sm import BondSM_sm
-from rclpy.exceptions import ParameterAlreadyDeclaredException
 
 import rclpy
 from rclpy.duration import Duration
+from rclpy.exceptions import ParameterAlreadyDeclaredException
 
 
 def duration_to_sec(duration):
