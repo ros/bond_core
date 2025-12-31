@@ -85,6 +85,8 @@ TEST_F(TestCallbacksCpp, dieInLifeCallback)
   std::string id1 = genId();
   auto a = std::make_shared<bond::Bond>(TOPIC, id1, nh1);
   auto b = std::make_shared<bond::Bond>(TOPIC, id1, nh1);
+  rclcpp::executors::SingleThreadedExecutor executor;
+  executor.add_node(nh1);
 
   a->setFormedCallback(
     [&a]() {
@@ -95,9 +97,9 @@ TEST_F(TestCallbacksCpp, dieInLifeCallback)
 
   std::atomic<bool> isRunning {true};
   auto runThread = std::thread(
-    [&isRunning, &nh1]() {
+    [&isRunning, &nh1, &executor]() {
       while (isRunning) {
-        rclcpp::spin_some(nh1);
+        executor.spin_some();
       }
     });
 
@@ -113,14 +115,16 @@ TEST_F(TestCallbacksCpp, remoteNeverConnects)
   auto nh2 = rclcpp::Node::make_shared("test_callbacks_cpp_2");
   std::string id2 = genId();
   auto a1 = std::make_shared<bond::Bond>(TOPIC, id2, nh2);
+  rclcpp::executors::SingleThreadedExecutor executor;
+  executor.add_node(nh2);
 
   a1->start();
 
   std::atomic<bool> isRunning {true};
   auto runThread = std::thread(
-    [&isRunning, &nh2]() {
+    [&isRunning, &nh2, &executor]() {
       while (isRunning) {
-        rclcpp::spin_some(nh2);
+        executor.spin_some();
       }
     });
 
