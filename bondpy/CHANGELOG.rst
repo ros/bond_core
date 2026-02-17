@@ -2,6 +2,9 @@
 Changelog for package bondpy
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.1.3 (2026-02-17)
+------------------
+
 4.1.2 (2025-01-24)
 ------------------
 * increase buffer size of bond_status callback in bondpy (`#96 <https://github.com/ros/bond_core/issues/96>`_)
@@ -46,7 +49,7 @@ Changelog for package bondpy
 
 1.7.17 (2016-03-15)
 -------------------
-* Queue size for a publisher `#10 <https://github.com/ros/bond_core/issues/10>`_ 
+* Queue size for a publisher `#10 <https://github.com/ros/bond_core/issues/10>`_
   Squash the warning.
 * update maintainer
 * Made code a bit more readable `#12 <https://github.com/ros/bond_core/pull/12>`_

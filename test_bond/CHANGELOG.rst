@@ -2,6 +2,13 @@
 Changelog for package test_bond
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.1.3 (2026-02-17)
+------------------
+* get rid of deprecated rclcpp::spin_some() (`#115 <https://github.com/ros/bond_core//issues/115>`_)
+* memory safe subscription callback (`#108 <https://github.com/ros/bond_core//issues/108>`_)
+* Use target_link_libraries instead of ament_target_dependencies (`#112 <https://github.com/ros/bond_core//issues/112>`_)
+* Contributors: Alejandro Hernández Cordero, Maurice Alexander Purnawan, ewak
+
 4.1.2 (2025-01-24)
 ------------------
 

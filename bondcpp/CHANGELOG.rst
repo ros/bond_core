@@ -2,6 +2,12 @@
 Changelog for package bondcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.1.3 (2026-02-17)
+------------------
+* memory safe subscription callback (`#108 <https://github.com/ros/bond_core//issues/108>`_)
+* Check the availability of mutex before locking it. (`#111 <https://github.com/ros/bond_core//issues/111>`_)
+* Contributors: ChenYing Kuo (CY), ewak
+
 4.1.2 (2025-01-24)
 ------------------
 
