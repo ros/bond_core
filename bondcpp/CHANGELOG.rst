@@ -2,6 +2,11 @@
 Changelog for package bondcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.1.4 (2026-03-17)
+------------------
+* Check the availability of mutex before locking it. (`#111 <https://github.com/ros/bond_core/issues/111>`_)
+* Contributors: ChenYing Kuo (CY)
+
 4.1.2 (2025-01-24)
 ------------------
 
