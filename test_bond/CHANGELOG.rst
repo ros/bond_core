@@ -2,6 +2,9 @@
 Changelog for package test_bond
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.4.0 (2026-03-17)
+------------------
+
 4.1.3 (2026-02-17)
 ------------------
 * get rid of deprecated rclcpp::spin_some() (`#115 <https://github.com/ros/bond_core//issues/115>`_)

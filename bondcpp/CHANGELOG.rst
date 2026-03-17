@@ -2,6 +2,9 @@
 Changelog for package bondcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.4.0 (2026-03-17)
+------------------
+
 4.1.3 (2026-02-17)
 ------------------
 * memory safe subscription callback (`#108 <https://github.com/ros/bond_core//issues/108>`_)
