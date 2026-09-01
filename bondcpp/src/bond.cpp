@@ -45,8 +45,20 @@
 #include <utility>
 #include <vector>
 
-#include <rclcpp/rclcpp.hpp>
-#include <rclcpp_lifecycle/lifecycle_node.hpp>
+#include "bond/msg/constants.hpp"
+
+#include "rclcpp/clock.hpp"
+#include "rclcpp/create_publisher.hpp"
+#include "rclcpp/create_subscription.hpp"
+#include "rclcpp/create_timer.hpp"
+#include "rclcpp/duration.hpp"
+#include "rclcpp/logging.hpp"
+#include "rclcpp/parameter.hpp"
+#include "rclcpp/qos.hpp"
+#include "rclcpp/rate.hpp"
+#include "rclcpp/time.hpp"
+#include "rclcpp/utilities.hpp"
+#include "rclcpp_lifecycle/lifecycle_node.hpp"
 
 using namespace std::chrono_literals;
 
@@ -265,6 +277,11 @@ void Bond::setHeartbeatTimeout(double dur)
 
 void Bond::heartbeatTimerReset()
 {
+  if (heartbeat_timer_) {
+    heartbeat_timer_->reset();
+    return;
+  }
+
   //  Callback function of heartbeat timer
   auto heartbeatTimerResetCallback =
     [this]() -> void
