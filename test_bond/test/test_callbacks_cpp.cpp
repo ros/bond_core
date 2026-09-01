@@ -40,8 +40,8 @@
 
 #include "rclcpp/duration.hpp"
 #include "rclcpp/executors/single_threaded_executor.hpp"
-#include "rclcpp/init.hpp"
 #include "rclcpp/node.hpp"
+#include "rclcpp/utilities.hpp"
 #include "rclcpp_lifecycle/lifecycle_node.hpp"
 
 #include "test_bond/srv/test_bond.hpp"
