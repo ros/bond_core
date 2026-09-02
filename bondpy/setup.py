@@ -18,13 +18,14 @@ setup(
     keywords=['ROS'],
     classifiers=[
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: Apache Software License',
         'Programming Language :: Python',
         'Topic :: Software Development',
     ],
     description=(
         'Python implementation of bond.'
     ),
-    license='BSD',
-    tests_require=['pytest'],
+    extras_require={
+        'test': ['pytest'],
+    },
+    license='BSD-3-Clause',
 )
