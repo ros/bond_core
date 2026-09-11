@@ -38,14 +38,22 @@
 #include <string>
 #include <vector>
 
-#include "bond/msg/constants.hpp"
 #include "bond/msg/status.hpp"
 
 #include "bondcpp/BondSM_sm.hpp"
 #include "bondcpp/visibility_control.hpp"
 
-#include <rclcpp/rclcpp.hpp>
-#include <rclcpp_lifecycle/lifecycle_node.hpp>
+#include "rclcpp/duration.hpp"
+#include "rclcpp/node.hpp"
+#include "rclcpp/node_interfaces/node_base_interface.hpp"
+#include "rclcpp/node_interfaces/node_logging_interface.hpp"
+#include "rclcpp/node_interfaces/node_parameters_interface.hpp"
+#include "rclcpp/node_interfaces/node_timers_interface.hpp"
+#include "rclcpp/node_interfaces/node_topics_interface.hpp"
+#include "rclcpp/publisher.hpp"
+#include "rclcpp/subscription.hpp"
+#include "rclcpp/timer.hpp"
+#include "rclcpp_lifecycle/lifecycle_node.hpp"
 
 namespace bond
 {
@@ -276,7 +284,6 @@ private:
   rclcpp::Duration heartbeat_period_;
   rclcpp::Duration dead_publish_period_;
 
-  rclcpp::CallbackGroup::SharedPtr sub_callback_group_;
   rclcpp::Subscription<bond::msg::Status>::SharedPtr sub_;
   rclcpp::Publisher<bond::msg::Status>::SharedPtr pub_;
 };
