@@ -2,6 +2,11 @@
 Changelog for package bondpy
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.4.1 (2026-09-11)
+------------------
+* Fix deprecated bondpy setuptools options (`#117 <https://github.com/ros/bond_core//issues/117>`_)
+* Contributors: Maurice Alexander Purnawan
+
 4.4.0 (2026-03-17)
 ------------------
 * fix ParameterAlreadyDeclaredException in _on_heartbeat_timeout (`#114 <https://github.com/ros/bond_core/issues/114>`_)

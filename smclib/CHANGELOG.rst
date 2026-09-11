@@ -2,6 +2,11 @@
 Changelog for package smclib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.4.1 (2026-09-11)
+------------------
+* Reuse bond heartbeat watchdog timer (`#116 <https://github.com/ros/bond_core//issues/116>`_)
+* Contributors: Maurice Alexander Purnawan
+
 4.4.0 (2026-03-17)
 ------------------
 
